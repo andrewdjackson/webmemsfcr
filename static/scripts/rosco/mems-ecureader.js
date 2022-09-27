@@ -30,17 +30,71 @@ export class ECUReader {
     };
 
     // abstract functions
-    Connect() {}
-    Disconnect() {}
-    GetDataframes() {}
-    SendCommand(command) {}
+    Connect() {
+        this._isConnected = true;
+    }
+
+    Disconnect() {
+        this._isConnected = false;
+    }
+
+    // send ECUCommand and return the ECUResponse
+    async SendAndReceive(ecuCommand) {
+        ecuCommand.id = this.messageId;
+        console.log(`queuing command ${ecuCommand}`);
+
+        // add command to the queue
+        this._addCommandToQueue(ecuCommand);
+    }
+
+    get messageId() {
+        return this._messageId++;
+    }
+
+    //
+    // request dataframes at the specified rate
+    //
+
+    async GetDataframes() {
+        while (this.isConnected) {
+            this._queueDataframeCommand();
+
+            // wait before sending another request
+            return await this._sleep(this._refreshInterval);
+        }
+    }
+
+    _queueDataframeCommand() {
+        let ecuCommand;
+        let id = this._messageId++;
+
+        if (!this.isPaused) {
+            console.log(`queuing dataframe request`)
+            // queue a request for the dataframes
+            ecuCommand = new ECUCommand(id, EventTopic.Dataframe, ECUCommandType.Dataframe );
+        } else {
+            console.log(`queuing heartbeat`)
+            // queue a heartbeat command
+            ecuCommand = new ECUCommand(id, EventTopic.Heartbeat, ECUCommandType.Heartbeat );
+        }
+
+        // add command to the queue
+        this._addCommandToQueue(ecuCommand);
+
+        // service the queue
+        // await this._sendToECU();
+    }
+
+    get isConnected() {
+        return this._isConnected;
+    }
 
     //
     // pause getting dataframes from the ecu
     // heatbeats are sent whilst the loop is paused
     //
 
-    get paused() {
+    get isPaused() {
         return this._paused;
     }
 
@@ -58,36 +112,6 @@ export class ECUReader {
 
     set interval(interval) {
         this._refreshInterval = interval;
-    }
-
-    //
-    // runs the loop that sends a request for dataframes when not paused
-    // when paused a keep-alive heartbeat is sent to the ecu to keep the connection open
-    //
-
-    async dataframeLoop() {
-        while(this._isConnected) {
-            let ecuCommand;
-            let id = this._messageId++;
-
-            if (!this.paused) {
-                console.log(`queuing dataframe request`)
-                // queue a request for the dataframes
-                ecuCommand = new ECUCommand(id, EventTopic.Dataframe, ECUCommandType.Dataframe );
-            } else {
-                console.log(`queuing heartbeat`)
-                // queue a heartbeat command
-                ecuCommand = new ECUCommand(id, EventTopic.Heartbeat, ECUCommandType.Heartbeat );
-            }
-
-            // add command to the queue
-            this._addCommandToQueue(ecuCommand);
-        }
-    }
-
-    async sendLoop() {
-        // service the queue
-        await this._sendToECU();
     }
 
     //
@@ -146,7 +170,7 @@ export class ECUReader {
     //
 
     _sleep(ms) {
-        console.debug(`${Date.now().toString()} : _sleep Timer set for ${ms}ms`);
+        console.debug(`${Date.now().toString()} : sleeping for ${ms}ms`);
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 }
