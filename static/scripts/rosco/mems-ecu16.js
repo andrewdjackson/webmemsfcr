@@ -18,21 +18,20 @@ export class MemsEcu16 extends ECUReader {
             });
     }
 
-    async  _initialise() {
-        await this._serial.SendAndReceive(0xca, 1);
-        await this._serial.SendAndReceive(0x75, 1);
-        await this._serial.SendAndReceive(0xf4, 1);
-        await this._serial.SendAndReceive(0xd0, 5);
-    }
-
     Disconnect() {
         return this._serial.Disconnect();
     }
 
-    async GetDataframes(callback) {
-        await this._serial.SendAndReceive(0x80, 29);
-        await this._serial.SendAndReceive(0x7d, 33);
 
-        callback();
+    // override for Mems 1.6
+    async SendToECU(ecuCommand) {
+        return await this._serial.SendAndReceive(ecuCommand.command, ecuCommand.responseSize);
+    }
+
+    async  _initialise() {
+        await this._serial.SendAndReceive(0xca, 1);
+        await this._serial.SendAndReceive(0x75, 1);
+        await this._serial.SendAndReceive(0xf4, 1);
+        await this._serial.SendAndReceive(0xd0, 6);
     }
 }

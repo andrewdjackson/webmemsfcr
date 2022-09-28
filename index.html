@@ -13,13 +13,15 @@
 <script type="module">
 	//import { MemsSerialInterface } from "./static/scripts/rosco/mems-serial.js"
 	import {MemsEcu16} from "./static/scripts/rosco/mems-ecu16.js";
-	import {EventQueue} from "./static/scripts/rosco/mems-queue.js";
+	import {EventTopic, EventQueue} from "./static/scripts/rosco/mems-queue.js";
 
 	var q = new EventQueue();
-	var m = new MemsEcu16(q);
+	q.subscribe(EventTopic.Dataframe, dataframeReceived);
+
+	var e = new MemsEcu16(q);
 
 	window.connect=()=> {
-		m.Connect()
+		e.Connect()
 			.then((result) => {
 				console.log(`index.html: connect ${result}`);
 			})
@@ -29,7 +31,9 @@
 	}
 
 	window.disconnect=()=> {
-		m.Disconnect()
+		e.Stop();
+
+		e.Disconnect()
 			.then((result) => {
 					console.log(`index.html: disconnected (connected ${result})`);
 			})
@@ -39,16 +43,17 @@
 	}
 
 	window.getdataframe=()=> {
-		m.GetDataframes(receivedDataframe);
+		e.Start();
 	}
 
 	window.sendCommand=()=> {
 		let command = parseInt(document.getElementById("command").value, 16);
-		m.SendAndReceive(command, 100);
+
+		e.SendAndReceive(command, 100);
 	}
 
-	function receivedDataframe() {
-		console.log(`received dataframe`);
+	function dataframeReceived(data) {
+		console.log(`subscriber received ${JSON.stringify(data)}`);
 	}
 </script>
 </body>
