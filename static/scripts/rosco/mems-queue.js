@@ -5,6 +5,8 @@ export const EventTopic = {
     Actuator: "actuator",
     Reset: "reset",
     IAC: "iac",
+    Initialisation: "initialisation",
+    Status: "status",
 };
 
 export class EventQueue {

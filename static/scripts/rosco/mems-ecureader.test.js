@@ -25,7 +25,7 @@ describe('send dataframe request commands at send rate', () => {
     it(`should send 2 commands at ${sendRate} ms intervals`, async () => {
         let numberOfCommands = 2;
         // calculate how long is required to send n messages with the send rate, plus a margin for processing
-        let timeToSend = 2 * sendRate + 10;
+        let timeToSend = numberOfCommands * sendRate;
 
         e.interval = sendRate;
 
@@ -33,14 +33,15 @@ describe('send dataframe request commands at send rate', () => {
         expect(e.isConnected).toBe(true);
 
         // start sending dataframe commands and sending commands from the command queue
-        e.Start();
+        let startTime = Date.now();
+        e.StartDataframeLoop();
 
-        await e._sleep(timeToSend);
+        await e._sleep(timeToSend + 10);
 
         // stop sending dataframe requests and sending command from the command queue
-        e.Stop();
+        e.StopDataframeLoop();
 
-        expect(e.sent).toBe(numberOfCommands);
+        expect(receivedData.command.id).greaterThanOrEqual(startTime + timeToSend);
 
         await e.Disconnect();
         expect(e.isConnected).toBe(false);

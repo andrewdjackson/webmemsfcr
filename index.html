@@ -2,59 +2,50 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Title</title>
+	<title>Web MemsFCR</title>
+
+	<!-- Bootstrap 5 -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
 <body>
-<button onclick="connect()">Connect</button>
-<button onclick="disconnect()">Disconnect</button>
-<button onclick="getdataframe()">Dataframe</button>
-<span><input id="command"><button onclick="sendCommand()">Send</button></span>
+
+<div class="page-wrapper toggled">
+	<main class="page-content">
+		<div class="container-fluid">
+			<div class="tab-content">
+
+				<div id="main" class="tab-pane fade show active" aria-labelledby="record">
+					<div class="card mt-3">
+						<div class="card-body text-center">
+							<button class="btn btn-success" onclick="window.memsfcr.connect()">Connect</button>
+							<button class="btn btn-danger" onclick="window.memsfcr.disconnect()">Disconnect</button>
+							<button class="btn btn-warning" onclick="window.memsfcr.pauseDataframe()">Pause</button>
+							<button class="btn btn-danger" onclick="window.memsfcr.clearFaults()">Clear Faults</button>
+							<button class="btn btn-danger" onclick="window.memsfcr.resetECU()">Reset ECU</button>
+						</div>
+					</div>
+					<div id="commands-alert" class="commands-alert alert alert-success alert-dismissible fade show"></div>
+					<div class="card mt-3">
+						<div class="card-body text-center">
+							<div class="row align-items-start justify-content-evenly text-start">
+								<div class="col"><table class="table table-striped"><tbody id="df80table"></tbody></table></div>
+								<div class="col"><table class="table table-striped"><tbody id="df7dtable"></tbody></table></div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</main>
+</div>
 
 <script type="module">
-	//import { MemsSerialInterface } from "./static/scripts/rosco/mems-serial.js"
-	import {MemsEcu16} from "./static/scripts/rosco/mems-ecu16.js";
-	import {EventTopic, EventQueue} from "./static/scripts/rosco/mems-queue.js";
-
-	var q = new EventQueue();
-	q.subscribe(EventTopic.Dataframe, dataframeReceived);
-
-	var e = new MemsEcu16(q);
-
-	window.connect=()=> {
-		e.Connect()
-			.then((result) => {
-				console.log(`index.html: connect ${result}`);
-			})
-			.catch((error) => {
-				console.error(`index.html: connect ${error}`);
-			});
-	}
-
-	window.disconnect=()=> {
-		e.Stop();
-
-		e.Disconnect()
-			.then((result) => {
-					console.log(`index.html: disconnected (connected ${result})`);
-			})
-			.catch((error) => {
-				console.error(`index.html: disconnect ${error}`);
-			});
-	}
-
-	window.getdataframe=()=> {
-		e.Start();
-	}
-
-	window.sendCommand=()=> {
-		let command = parseInt(document.getElementById("command").value, 16);
-
-		e.SendAndReceive(command, 100);
-	}
-
-	function dataframeReceived(data) {
-		console.log(`subscriber received ${JSON.stringify(data)}`);
-	}
+	import {Memsfcr} from "./memsfcr.js";
+	window.memsfcr = new Memsfcr();
+	window.memsfcr.createTable();
 </script>
 </body>
 </html>
