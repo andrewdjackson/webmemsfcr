@@ -11,28 +11,86 @@
 </head>
 <body>
 
+<div aria-live="polite" aria-atomic="true" class="position-relative" style="z-index: 10000;">
+	<div class="toast-container position-absolute top-0 end-0 p-3">
+		<div id="command-alert" class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+			<div class="d-flex">
+				<div id="command-alert-body" class="toast-body"></div>
+				<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div class="page-wrapper toggled">
+	<header>
+		<nav class="navbar-light bg-light">
+			<div class="nav nav-tabs" id="nav-tab" role="tablist">
+				<button class="nav-link navbar-brand active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">ECU Data</button>
+				<button class="nav-link navbar-brand" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Profile</button>
+			</div>
+		</nav>
+	</header>
+
 	<main class="page-content">
 		<div class="container-fluid">
 			<div class="tab-content">
 
-				<div id="main" class="tab-pane fade show active" aria-labelledby="record">
+				<!-- home tab -->
+				<div id="home" class="tab-pane fade show active" aria-labelledby="record">
 					<div class="card mt-3">
 						<div class="card-body text-center">
-							<button class="btn btn-success" onclick="window.memsfcr.connect()">Connect</button>
-							<button class="btn btn-danger" onclick="window.memsfcr.disconnect()">Disconnect</button>
-							<button class="btn btn-warning" onclick="window.memsfcr.pauseDataframe()">Pause</button>
-							<button class="btn btn-danger" onclick="window.memsfcr.clearFaults()">Clear Faults</button>
-							<button class="btn btn-danger" onclick="window.memsfcr.resetECU()">Reset ECU</button>
+							<button id="connect" class="btn btn-success" onclick="window.memsfcr.connect(updateConnected)">Connect</button>
+							<button id="disconnect" class="btn btn-danger" disabled onclick="window.memsfcr.disconnect(updateConnected)">Disconnect</button>
+							<button id="pause" class="btn btn-warning" disabled onclick="window.memsfcr.pauseDataframe()">Pause</button>
+							<button id="clear" class="btn btn-danger" disabled onclick="window.memsfcr.clearFaults()">Clear Faults</button>
+							<button id="reset" class="btn btn-danger" disabled onclick="window.memsfcr.resetECU()">Reset ECU</button>
+						</div>
+						<div class="card-body text-center">
+							<button id="" class="btn btn-primary" onclick="">Temperature Gauge</button>
+							<button id="" class="btn btn-primary" onclick="">Fuel Pump</button>
+							<button id="" class="btn btn-primary" onclick="">Manifold Heater</button>
+							<button id="" class="btn btn-primary" onclick="">Air Con</button>
+							<button id="" class="btn btn-primary" onclick="">Purge Valve</button>
+							<button id="" class="btn btn-primary" onclick="">Lambda Heater</button>
+							<button id="" class="btn btn-primary" onclick="">Fan 1</button>
+							<button id="" class="btn btn-primary" onclick="">Fan 2</button>
+							<button id="" class="btn btn-primary" onclick="">Injectors</button>
+							<button id="" class="btn btn-primary" onclick="">Coil</button>
+							<button id="" class="btn btn-primary" onclick="">RPM Gauge</button>
+						</div>
+						<div class="card-body text-center">
+							<div class="btn-group" role="group" aria-label="Idle Speed Offset">
+							<button id="" class="btn btn-outline-secondary" onclick="">- Idle Speed Offset</button>
+							<button id="" class="btn btn-outline-secondary" onclick="">+ Idle Speed Offset</button>
+							</div>
+							<button id="" class="btn btn-warning" onclick="">Manifold Heater</button>
+							<button id="" class="btn btn-warning" onclick="">Air Con</button>
+							<button id="" class="btn btn-warning" onclick="">Purge Valve</button>
+							<button id="" class="btn btn-warning" onclick="">Lambda Heater</button>
+							<button id="" class="btn btn-warning" onclick="">Fan 1</button>
+							<button id="" class="btn btn-warning" onclick="">Fan 2</button>
+							<button id="" class="btn btn-warning" onclick="">Injectors</button>
+							<button id="" class="btn btn-warning" onclick="">Coil</button>
+							<button id="" class="btn btn-warning" onclick="">RPM Gauge</button>
 						</div>
 					</div>
-					<div id="commands-alert" class="commands-alert alert alert-success alert-dismissible fade show"></div>
+
 					<div class="card mt-3">
 						<div class="card-body text-center">
 							<div class="row align-items-start justify-content-evenly text-start">
-								<div class="col"><table class="table table-striped"><tbody id="df80table"></tbody></table></div>
-								<div class="col"><table class="table table-striped"><tbody id="df7dtable"></tbody></table></div>
+								<div class="col"><table class="table table-striped table-sm small"><tbody id="df80table"></tbody></table></div>
+								<div class="col"><table class="table table-striped table-sm small"><tbody id="df7dtable"></tbody></table></div>
 							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- profile -->
+				<div id="profile" class="tab-pane fade" aria-labelledby="diary">
+					<div class="card mt-3">
+						<div class="card-body">
+
 						</div>
 					</div>
 				</div>
@@ -42,10 +100,29 @@
 	</main>
 </div>
 
+<script async src="https://ga.jspm.io/npm:es-module-shims@1.5.5/dist/es-module-shims.js"></script>
+<script type="importmap">
+    {
+      "imports": {
+        "@popperjs/core": "https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.2/dist/esm/popper.js",
+        "bootstrap": "https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.esm.min.js"
+      }
+    }
+</script>
 <script type="module">
 	import {Memsfcr} from "./memsfcr.js";
 	window.memsfcr = new Memsfcr();
-	window.memsfcr.createTable();
 </script>
+
+<script>
+	function updateConnected(connected) {
+		document.getElementById("connect").disabled = connected;
+		document.getElementById("pause").disabled = !connected;
+		document.getElementById("clear").disabled = !connected;
+		document.getElementById("reset").disabled = !connected;
+		document.getElementById("disconnect").disabled = !connected;
+	}
+</script>
+
 </body>
 </html>

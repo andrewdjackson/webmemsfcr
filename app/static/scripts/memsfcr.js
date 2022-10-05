@@ -1,8 +1,8 @@
-import {MEMS_ClearFaults, MEMS_ResetECU} from "./static/scripts/rosco/mems-commands.js";
-import {MemsEcu16} from "./static/scripts/rosco/mems-ecu16.js";
-import {EventTopic, EventQueue} from "./static/scripts/rosco/mems-queue.js";
-import * as Command from "./static/scripts/rosco/mems-commands.js";
-import {MemsEcu13} from "./static/scripts/rosco/mems-ecu13.js";
+import {MEMS_ClearFaults, MEMS_ResetECU} from "./rosco/mems-commands.js";
+import {MemsEcu16} from "./rosco/mems-ecu16.js";
+import {EventTopic, EventQueue} from "./rosco/mems-queue.js";
+import * as Command from "./rosco/mems-commands.js";
+import {MemsEcu13} from "./rosco/mems-ecu13.js";
 import * as bootstrap from 'bootstrap';
 
 export class Memsfcr {

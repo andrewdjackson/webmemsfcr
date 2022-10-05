@@ -12,7 +12,7 @@ from flask import Flask, render_template, request, redirect, url_for, send_from_
 from flask_wtf.csrf import CSRFProtect, CSRFError
 
 app = Flask(__name__)
-app.secret_key = b'wevmemsfcr'
+app.secret_key = b'webmemsfcr'
 #csrf = CSRFProtect(app)
 
 @app.errorhandler(CSRFError)
