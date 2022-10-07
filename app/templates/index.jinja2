@@ -11,7 +11,14 @@
 	<title>Web MemsFCR</title>
 
 	{% include 'includes.jinja2' %}
-	{% include 'modules.jinja2' %}
+
+	<script type="module">
+		 //
+		 // initialise the ecu and event queue
+		 //
+		 import {initialise} from "../static/scripts/view/memsecu.js";
+       initialise();
+	</script>
 </head>
 
 <body>

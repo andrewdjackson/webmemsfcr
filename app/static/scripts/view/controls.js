@@ -1,4 +1,8 @@
-import {enabledWhenEcuIsConnected, enabledWhenEcuIsDisconnected, enabledWhenKeyOnEngineOff} from "./identifiers.js";
+import * as Identifier from "./identifiers.js";
+import * as Command from "../rosco/mems-commands.js";
+import * as View from "./view.js";
+import * as Dataframe from "./dataframe.js";
+import {ecu, sendCommand} from "./memsecu.js";
 
 export function attachControlEventListeners() {
     document.getElementById("connectButton").addEventListener('click', connect);
@@ -11,53 +15,70 @@ export function attachControlEventListeners() {
 function connect() {
     console.info(`connect`);
 
-    memsfcr.connect().then((result) => {
+    ecu.connect().then((result) => {
         setButtonsOnConnectionState();
+    }).catch((error) => {
+        console.error(`index.html: connect ${error}`);
     })
 }
 
 function disconnect() {
     console.info(`disconnect`);
 
-    memsfcr.disconnect().then((result) => {
+    Dataframe.stopDataframeLoop();
+
+    ecu.disconnect().then((result) => {
         setButtonsOnConnectionState();
-    })
+    }).catch((error) => {
+        console.error(`index.html: disconnect ${error}`);
+    });
 }
 
 function pause() {
     console.info(`pause`);
-
-    memsfcr.pauseDataframe();
+    Dataframe.pauseDataframe();
 }
+
 
 function clearFaults() {
     console.info(`clear`);
 
-    memsfcr.clearFaults();
+    sendCommand(Command.MEMS_ClearFaults);
 }
 
 function reset() {
     console.info(`reset`);
 
-    memsfcr.resetECU();
+    sendCommand(Command.MEMS_ResetECU);
+}
+
+export function resetReceived(ecuResponse) {
+    console.info(`adjustment received ${JSON.stringify(ecuResponse)}`);
+
+    switch (ecuResponse.command.command ) {
+        case Command.MEMS_ClearFaults.command: View.showToast("Cleared Faults");
+            break;
+        case Command.MEMS_ResetECU.command: View.showToast("Reset ECU");
+            break;
+    }
 }
 
 export function setButtonsOnConnectionState() {
-    let control = document.querySelectorAll(`.${enabledWhenEcuIsConnected}`);
+    let control = document.querySelectorAll(`.${Identifier.enabledWhenEcuIsConnected}`);
     for (let i = 0; i < control.length; i++) {
-        control[i].disabled = !memsfcr.isConnected;
+        control[i].disabled = !ecu.isConnected;
     }
 
-    control = document.querySelectorAll(`.${enabledWhenEcuIsDisconnected}`);
+    control = document.querySelectorAll(`.${Identifier.enabledWhenEcuIsDisconnected}`);
     for (let i = 0; i < control.length; i++) {
-        control[i].disabled = memsfcr.isConnected;
+        control[i].disabled = ecu.isConnected;
     }
 }
 
 export function setButtonsOnEngineRunning() {
-    let control = document.querySelectorAll(`.${enabledWhenKeyOnEngineOff}`);
+    let control = document.querySelectorAll(`.${Identifier.enabledWhenKeyOnEngineOff}`);
     for (let i = 0; i < control.length; i++) {
-        control[i].disabled = memsfcr.isEngineRunning;
+        control[i].disabled = ecu.isEngineRunning;
     }
 }
 

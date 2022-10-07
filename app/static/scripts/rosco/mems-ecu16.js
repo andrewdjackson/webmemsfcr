@@ -12,6 +12,7 @@ export class MemsEcu16 extends ECUReader {
     constructor(responseEventQueue) {
         super(responseEventQueue);
         this._serial = new MemsSerialInterface();
+        this.test = false;
     }
 
     //

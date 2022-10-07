@@ -1,6 +1,7 @@
 import * as Identifier from "./identifiers.js";
 import * as Command from "../rosco/mems-commands.js";
 import * as View from "./view.js";
+import {sendCommand} from "./memsecu.js";
 
 export function attachAdjustmentsEventListeners() {
     let adjustment = document.querySelectorAll(`.${Identifier.adjustmentClass}`);
@@ -34,6 +35,6 @@ function sendAdjustment(event) {
     let ecuCommand = getAdjustmentEcuCommand(adjustment.name, adjustment.value);
 
     if (ecuCommand !== undefined) {
-        memsfcr.sendCommand(ecuCommand);
+        sendCommand(ecuCommand);
     }
 }
