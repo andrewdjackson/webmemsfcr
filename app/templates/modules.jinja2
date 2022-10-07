@@ -1,0 +1,11 @@
+<script type="module">
+	import {Memsfcr} from "./static/scripts/memsfcr.js";
+	import * as View from "./static/scripts/view/view.js";
+	import * as Controls from "./static/scripts/view/controls.js";
+
+	window.memsfcr = new Memsfcr();
+
+	View.attachEventListeners();
+	Controls.setButtonsOnConnectionState();
+	Controls.setButtonsOnEngineRunning();
+</script>

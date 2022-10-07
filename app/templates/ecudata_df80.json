@@ -1,0 +1,104 @@
+{
+  "ecudata": [
+    {
+      "id": "CoolantTempSensorFault",
+      "name": "Coolant Sensor Fault"
+    },
+    {
+      "id": "FuelPumpCircuitFault",
+      "name": "Fuel Pump Circuit Fault"
+    },
+    {
+      "id": "IntakeAirTempSensorFault",
+      "name": "Intake Air Sensor Fault"
+    },
+    {
+      "id": "ThrottlePotCircuitFault",
+      "name": "Throttle Pot. Fault"
+    },
+    {
+      "id": "_80x00_Time",
+      "name": "Time"
+    },
+    {
+      "id": "_80x01_EngineRPM",
+      "name": "RPM"
+    },
+    {
+      "id": "_80x03_CoolantTemp",
+      "name": "Coolant (\u00b0C)"
+    },
+    {
+      "id": "_80x04_AmbientTemp",
+      "name": "Ambient (\u00b0C)"
+    },
+    {
+      "id": "_80x05_IntakeAirTemp",
+      "name": "Intake Air (\u00b0C)"
+    },
+    {
+      "id": "_80x06_FuelTemp",
+      "name": "Fuel \u00b0C"
+    },
+    {
+      "id": "_80x07_ManifoldAbsolutePressure",
+      "name": "MAP (kPA)"
+    },
+    {
+      "id": "_80x08_BatteryVoltage",
+      "name": "Battery (V)"
+    },
+    {
+      "id": "_80x09_ThrottlePotSensor",
+      "name": "Throttle Pot. (mV)"
+    },
+    {
+      "id": "_80x0A_IdleSwitch",
+      "name": "Idle Switch"
+    },
+    {
+      "id": "_80x0B_AirconSwitch",
+      "name": "Air Con. Switch"
+    },
+    {
+      "id": "_80x0C_ParkNeutralSwitch",
+      "name": "Neutral Switch"
+    },
+    {
+      "id": "_80x0F_IdleSetPoint",
+      "name": "Idle Set Point"
+    },
+    {
+      "id": "_80x10_IdleHot",
+      "name": "Hot Idle"
+    },
+    {
+      "id": "_80x12_IACPosition",
+      "name": "IAC Position"
+    },
+    {
+      "id": "_80x13_IdleSpeedDeviation",
+      "name": "Idle Speed Deviation"
+    },
+    {
+      "id": "_80x15_IgnitionAdvanceOffset",
+      "name": "Ignition Adv. Offset"
+    },
+    {
+      "id": "_80x16_IgnitionAdvance",
+      "name": "Ignition Adv."
+    },
+    {
+      "id": "_80x17_CoilTime",
+      "name": "Coil Time (ms)"
+    },
+    {
+      "id": "_80x19_CrankshaftPositionSensor",
+      "name": "Crankshaft Position"
+    },
+    {
+      "id": "_80_RawData",
+      "name": "ECU Response"
+    }
+  ]
+}

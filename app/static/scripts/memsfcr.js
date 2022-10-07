@@ -1,31 +1,37 @@
-import {MEMS_ClearFaults, MEMS_ResetECU} from "./rosco/mems-commands.js";
 import {MemsEcu16} from "./rosco/mems-ecu16.js";
 import {EventTopic, EventQueue} from "./rosco/mems-queue.js";
 import * as Command from "./rosco/mems-commands.js";
-import {MemsEcu13} from "./rosco/mems-ecu13.js";
-import * as bootstrap from 'bootstrap';
+import * as Adjustment from "./view/adjustments.js";
+import * as Controls from "./view/controls.js";
+import * as View from "./view/view.js";
 
 export class Memsfcr {
     constructor() {
         this.q = new EventQueue();
         this.initialiseSubscribers();
         this.e = new MemsEcu16(this.q);
-
-        this.createTable();
     }
 
     initialiseSubscribers() {
         this.q.subscribe(EventTopic.Dataframe, this.dataframeReceived.bind(this));
         this.q.subscribe(EventTopic.Heartbeat, this.heartbeatReceived.bind(this));
         this.q.subscribe(EventTopic.Actuator, this.actuatorReceived.bind(this));
+        this.q.subscribe(EventTopic.Adjustment, Adjustment.adjustmentReceived.bind(this));
         this.q.subscribe(EventTopic.Reset, this.resetReceived.bind(this));
     }
 
-    connect(callback) {
-        this.e.connect()
+    get isConnected() {
+        return this.e.isConnected;
+    }
+
+    get isEngineRunning() {
+        return this.e.isEngineRunning;
+    }
+
+    connect() {
+        return this.e.connect()
             .then((result) => {
-                console.log(`index.html: connect ${result}`);
-                callback(this.e.isConnected);
+                console.info(`index.html: connect ${result}`);
             })
             .catch((error) => {
                 console.error(`index.html: connect ${error}`);
@@ -35,10 +41,9 @@ export class Memsfcr {
     disconnect(callback) {
         this.e.stopDataframeLoop();
 
-        this.e.disconnect()
+        return this.e.disconnect()
             .then((result) => {
-                console.log(`index.html: disconnected (connected ${result})`);
-                callback(this.e.isConnected);
+                console.info(`index.html: disconnected (connected ${result})`);
             })
             .catch((error) => {
                 console.error(`index.html: disconnect ${error}`);
@@ -65,55 +70,35 @@ export class Memsfcr {
         this.e.addCommandToSendQueue(ecuCommand, true);
     }
 
-    createTable() {
-        var table = window.document.getElementById("df80table");
-        var data = new Command.Dataframe80();
-        Object.keys(data).sort().forEach(
-            function(key) {
-                table.innerHTML += `<td>${key}</td><td id="ecudata${key}">${data[key]}</td>`;
-            });
-
-        table = window.document.getElementById("df7dtable");
-        data = new Command.Dataframe7d();
-        Object.keys(data).sort().forEach(
-            function(key) {
-                table.innerHTML += `<td>${key}</td><td id="ecudata${key}">${data[key]}</td>`;
-            });
-    }
-
-    updateTable(df) {
-        Object.entries(df).forEach((entry) => {
-            const [key, value] = entry;
-            let element = window.document.getElementById("ecudata" + key);
-            element.innerHTML = `${value}`;
-        });
-    }
-
     dataframeReceived(ecuResponse) {
-        console.log(`dataframe received ${JSON.stringify(ecuResponse)}`);
+        console.info(`dataframe received ${JSON.stringify(ecuResponse)}`);
         let df = this.e.generateDataframeFromECUResponse(ecuResponse);
-        this.updateTable(df);
+        View.updateDataframeTable(df);
+        Controls.setButtonsOnEngineRunning();
     }
 
     heartbeatReceived(ecuResponse) {
-        console.log(`heartbeat received ${JSON.stringify(ecuResponse)}`);
+        console.debug(`heartbeat received ${JSON.stringify(ecuResponse)}`);
     }
 
     actuatorReceived(ecuResponse) {
-        console.log(`actuator received ${JSON.stringify(ecuResponse)}`);
+        console.info(`actuator received ${JSON.stringify(ecuResponse)}`);
+        View.showToast(`Actuator Successful (${JSON.stringify(ecuResponse.response[1])})`)
+    }
+
+    adjustmentReceived(ecuResponse) {
+        console.info(`adjustment received ${JSON.stringify(ecuResponse)}`);
+        View.showToast(`Adjustment Successful (${JSON.stringify(ecuResponse.response[1])})`);
     }
 
     resetReceived(ecuResponse) {
-        let alertText = window.document.getElementById("command-alert-body");
+        console.info(`adjustment received ${JSON.stringify(ecuResponse)}`);
 
         switch (ecuResponse.command.command ) {
-            case MEMS_ClearFaults.command: alertText.innerHTML = "Cleared Faults";
+            case Command.MEMS_ClearFaults.command: View.showToast("Cleared Faults");
                 break;
-            case MEMS_ResetECU.command: alertText.innerHTML = "Reset ECU";
+            case Command.MEMS_ResetECU.command: View.showToast("Reset ECU");
                 break;
         }
-
-        let toast = new window.bootstrap.Toast(document.querySelector('#command-alert'));
-        toast.show();
     }
 }

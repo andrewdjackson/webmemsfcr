@@ -60,7 +60,9 @@ export class MemsEcu16 extends ECUReader {
             await this._serial.sendAndReceiveFromSerial(Command.MEMS_InitB.command, Command.MEMS_InitB.responseSize);
             await this._serial.sendAndReceiveFromSerial(Command.MEMS_Heartbeat.command, Command.MEMS_Heartbeat.responseSize);
             await this._serial.sendAndReceiveFromSerial(Command.MEMS_ECUId.command, Command.MEMS_ECUId.responseSize);
+
             this.startDataframeLoop();
+
             return true;
         }
 
@@ -72,12 +74,14 @@ export class MemsEcu16 extends ECUReader {
 
         if (ecuResponse.command.command === Command.MEMS_Dataframe80.command) {
             df = new Command.Dataframe80();
-            df.Update(ecuResponse);
-            console.log(`dataframe80 generated ${JSON.stringify(df)}`);
+            df.updateValuesFromEcuResponse(ecuResponse);
+            this._engineRunning = (df._80x01_EngineRPM > 0);
+
+            console.info(`dataframe80 generated ${JSON.stringify(df)}`);
         } else {
             df = new Command.Dataframe7d();
-            df.Update(ecuResponse);
-            console.log(`dataframe7d generated ${JSON.stringify(df)}`);
+            df.updateValuesFromEcuResponse(ecuResponse);
+            console.info(`dataframe7d generated ${JSON.stringify(df)}`);
         }
 
         return df;

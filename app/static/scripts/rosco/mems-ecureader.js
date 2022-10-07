@@ -30,7 +30,17 @@ export class ECUReader {
         // this is the fastest rate at which the ECU can respond to a dataframe request
         this._commandQueueInterval = MAX_ECU_SERIAL_RW_INTERVAL;
         this._commandQueueTimer;
+
+        this._engineRunning = false;
     };
+
+    get isConnected() {
+        return this._isConnected;
+    }
+
+    get isEngineRunning() {
+        return this._engineRunning;
+    }
 
     //
     // base function
@@ -40,6 +50,7 @@ export class ECUReader {
     //
     async connect() {
         this._isConnected = true;
+        this._paused = false;
         this._startSendingCommandEvents();
     }
 
@@ -66,10 +77,6 @@ export class ECUReader {
             .finally(() => {
                 this._stopSendingCommandEvents();
             });
-    }
-
-    get isConnected() {
-        return this._isConnected;
     }
 
     setDataframeCommands(commands) {
@@ -120,7 +127,9 @@ export class ECUReader {
             console.debug(`${Date.now().toString()} : send next command ${JSON.stringify(ecuCommand)} from the queue`);
 
             // send the command and publish the response
-            this._sendAndReceive(ecuCommand);
+            this._sendAndReceive(ecuCommand)
+                .then((ecuResponse) => {})
+                .catch((error) => {console.error(`${error}`)})
         }
     }
 
@@ -144,11 +153,11 @@ export class ECUReader {
                     this._responseEventQueue.publish(ecuCommand.topic, ecuResponse);
                     return ecuResponse;
                 } else {
-                    return Promise.reject(ecuResponse);
+                    return Promise.reject(`_sendAndReceive command response do not match ${JSON.stringify(ecuResponse)}`);
                 }
             })
-            .catch(() => {
-                return Promise.reject();
+            .catch((error) => {
+                return Promise.reject(`_sendAndReceive exception ${error}`);
             });
     }
 
@@ -156,11 +165,11 @@ export class ECUReader {
         if (!this.isPaused) {
             // queue a request for the dataframes
             this._dataframeCommands.forEach(ecuCommand => {
-                console.log(`queuing dataframe request ${JSON.stringify(ecuCommand)}`);
+                console.debug(`queuing dataframe request ${JSON.stringify(ecuCommand)}`);
                 this.addCommandToSendQueue(ecuCommand);
             });
         } else {
-            console.log(`queuing heartbeat`)
+            console.debug(`queuing heartbeat`)
             // queue a heartbeat command
             this.addCommandToSendQueue(Command.MEMS_Heartbeat);
         }
@@ -191,7 +200,7 @@ export class ECUReader {
     //
     addCommandToSendQueue(ecuCommand, top) {
         ecuCommand.id = this.getMessageId();
-        console.log(`queuing command ${JSON.stringify(ecuCommand)}`);
+        console.debug(`queuing command ${JSON.stringify(ecuCommand)}`);
 
         let currentSize = this._commandQueue.length;
         let newLength = currentSize;
@@ -211,13 +220,13 @@ export class ECUReader {
     // send the command to the ECU and wait for the response
     //
     async sendToECU(ecuCommand) {
-        console.log(`sent command (${this.sent}) ${ecuCommand.command}`);
+        console.info(`sent command (${this.sent}) ${ecuCommand.command}`);
 
         // generate a response
         let response = Array(ecuCommand.responseSize).fill(0);
         response[0] = ecuCommand.command;
 
-        console.log(`received response ${response}`);
+        console.info(`received response ${response}`);
         return Promise.resolve(response);
     }
 

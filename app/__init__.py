@@ -1,6 +1,7 @@
 import os
 import sys
-
+import json
+import pathlib
 #
 # add the app folder to the system path so the application classes and modules can be found
 #
@@ -21,7 +22,27 @@ def csrf_error(e):
 
 @app.route('/', methods=['GET'])
 def render_index():
-    return render_template('index.html')
+    data = load_template_data()
+    return render_template('index.jinja2', data=data)
+
+
+def load_template_data():
+    data = {}
+    files = get_template_data_filelist()
+
+    for file in files:
+        with open(f'templates/{file}') as f:
+             data[file] = json.load(f)
+
+    return data
+
+def get_template_data_filelist():
+    files = []
+    pathlist = pathlib.Path('./templates').rglob('*.json')
+    for path in pathlist:
+        files.append(path.name)
+
+    return files
 
 if __name__ == '__main__':
     app.run(debug=True)

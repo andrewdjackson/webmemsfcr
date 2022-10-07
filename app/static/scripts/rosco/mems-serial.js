@@ -127,10 +127,10 @@ export class MemsSerialInterface {
 
             return await this._writer.write(view)
                 .then((result) => {
-                    console.log(`tx: ${this._arrayAsHexString(view)}`);
+                    console.debug(`tx: ${this._arrayAsHexString(view)}`);
                 })
                 .catch((error) => {
-                    console.log(`error ${error}`);
+                    console.error(`error ${error}`);
                 })
                 .finally((result) => {
                     this._writer.releaseLock();
@@ -155,21 +155,19 @@ export class MemsSerialInterface {
                         const {value, done} = await this._reader.read();
 
                         if (done) {
-                            console.log(`reading cancelled`);
+                            console.error(`serial reading cancelled`);
                             break;
                         }
                         data[count++] = value[0];
-
-                        //console.log(`rx: ${this._numberAsHexString(value[0])}`);
                     }
                 } catch (error) {
-                    console.log(`error ${error}`);
+                    console.error(`error ${error}`);
                 } finally {
                     this._reader.releaseLock();
-                    console.log(`rx: ${this._arrayAsHexString(data)}`);
+                    console.debug(`rx: ${this._arrayAsHexString(data)}`);
                 }
             } else {
-                console.log(`no longer readable`);
+                console.error(`serial no longer readable`);
             }
 
             return data;

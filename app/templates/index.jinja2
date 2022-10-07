@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="MemsFCR Online Analysis">
+	<meta name="author" content="Andrew Jackson">
+	<meta name="google" content="notranslate"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<title>Web MemsFCR</title>
+
+	{% include 'includes.jinja2' %}
+	{% include 'modules.jinja2' %}
+</head>
+
+<body>
+<div class="page-wrapper toggled">
+	<header>
+		{% include 'header.jinja2' %}
+	</header>
+
+	{% include 'toast.jinja2' %}
+
+	<main class="page-content">
+		<div class="container-fluid">
+			<div class="tab-content">
+
+				<div class="card-body text-center">
+					{% include 'controls.jinja2' %}
+				</div>
+
+				<!-- home tab -->
+				<div id="home" class="tab-pane fade show active" aria-labelledby="home">
+					<div class="card mt-3">
+						<div class="card-body text-center">
+							{% include 'adjustments.jinja2' %}
+						</div>
+					</div>
+
+					<div class="card mt-3">
+						<div class="card-body text-center">
+							{% include 'ecudata.jinja2' %}
+						</div>
+					</div>
+				</div>
+
+				<!-- profile -->
+				<div id="profile" class="tab-pane fade" aria-labelledby="profile">
+					<div class="card mt-3">
+						<div class="card-body">
+							{% include 'profile.jinja2' %}
+						</div>
+					</div>
+				</div>
+
+				<!-- test actuators -->
+				<div id="test" class="tab-pane fade" aria-labelledby="test">
+					<div class="card mt-3">
+						<div class="card-body">
+							{% include 'actuators.jinja2' %}
+						</div>
+					</div>
+				</div>
+
+				<!-- rosco -->
+				<div id="rosco" class="tab-pane fade" aria-labelledby="rosco">
+					<div class="card mt-3">
+						<div class="card-body">
+							{% include 'rosco.jinja2' %}
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</main>
+
+	<footer class="page-footer font-small pt-4">
+		{% include 'footer.jinja2' %}
+	</footer>
+
+</div>
+
+</body>
+</html>

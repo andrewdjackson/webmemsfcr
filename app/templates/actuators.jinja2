@@ -1,0 +1,6 @@
+<div class="card-body text-center">
+	<p>Make sure the ignition is on but the engine is not running befiore testing actuators.</p>
+{% for item in data["actuators.json"]["actuators"] %}
+	<button id="{{ item['id'] | safe }}" class="btn btn-primary actuator koeo-enabled" name="{{ item['id'] | safe }}" value="{{ item['id'] | safe }}">{{ item['name'] | safe }}</button>
+{% endfor %}
+</div>

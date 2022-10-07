@@ -1,0 +1,7 @@
+{% for item in data["adjustments.json"]["adjustments"] %}
+	<div class="btn-group" role="group">
+		<button id="{{ item['id'] | safe }}_increase" name="{{ item['id'] | safe }}" value="decrease" class="btn btn-outline-secondary adjustment ecu-enabled-connected">- </button>
+		<button class="btn btn-outline-dark" disabled>{{ item['name'] | safe }}</button>
+		<button id="{{ item['id'] | safe }}_decrease" name="{{ item['id'] | safe }}" value="increase" class="btn btn-outline-secondary adjustment ecu-enabled-connected">+ </button>
+	</div>
+{% endfor %}
