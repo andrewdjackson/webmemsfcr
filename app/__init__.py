@@ -33,8 +33,10 @@ def not_found(error):
 @app.route('/', methods=['GET'])
 def render_index():
     data = load_template_data()
-    return render_template('index.jinja2', data=data)
-
+    if len(data) > 0:
+        return render_template('index.jinja2', data=data)
+    else:
+        return render_template('error.html')
 
 def load_template_data():
     data = {}
