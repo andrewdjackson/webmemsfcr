@@ -1,7 +1,7 @@
 import os
 import sys
 import json
-import pathlib
+
 #
 # add the app folder to the system path so the application classes and modules can be found
 #
@@ -43,16 +43,20 @@ def load_template_data():
     files = get_template_data_filelist()
 
     for file in files:
-        with open(f'{template_data_folder}/{file}') as f:
+        filepath = os.path.join(template_data_folder, file)
+        with open(f'{filepath}') as f:
              data[file] = json.load(f)
 
     return data
 
 def get_template_data_filelist():
     files = []
-    pathlist = pathlib.Path(template_data_folder).rglob('*.json')
-    for path in pathlist:
-        files.append(path.name)
+
+     # iterate directory
+    for file in os.listdir(template_data_folder):
+        # check only text files
+        if file.endswith('.json'):
+            files.append(file)
 
     return files
 
