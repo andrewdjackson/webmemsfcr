@@ -22,6 +22,14 @@ template_data_folder = './static/templates'
 def csrf_error(e):
     return e.description, 400
 
+@app.errorhandler(404)
+def not_found(error):
+    return render_template('error.html'), 404
+
+@app.errorhandler(500)
+def not_found(error):
+    return render_template('error.html'), 500
+
 @app.route('/', methods=['GET'])
 def render_index():
     data = load_template_data()
