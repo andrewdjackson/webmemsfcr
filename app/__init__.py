@@ -16,7 +16,7 @@ app = Flask(__name__)
 app.secret_key = b'webmemsfcr'
 #csrf = CSRFProtect(app)
 
-template_data_folder = os.path.abspath('./static/templates')
+template_data_folder = os.path.join(basedir, './static/templates')
 
 @app.errorhandler(CSRFError)
 def csrf_error(e):
