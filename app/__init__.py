@@ -16,6 +16,8 @@ app = Flask(__name__)
 app.secret_key = b'webmemsfcr'
 #csrf = CSRFProtect(app)
 
+template_data_folder = './static/templates'
+
 @app.errorhandler(CSRFError)
 def csrf_error(e):
     return e.description, 400
@@ -31,14 +33,14 @@ def load_template_data():
     files = get_template_data_filelist()
 
     for file in files:
-        with open(f'templates/{file}') as f:
+        with open(f'{template_data_folder}/{file}') as f:
              data[file] = json.load(f)
 
     return data
 
 def get_template_data_filelist():
     files = []
-    pathlist = pathlib.Path('./templates').rglob('*.json')
+    pathlist = pathlib.Path(template_data_folder).rglob('*.json')
     for path in pathlist:
         files.append(path.name)
 
