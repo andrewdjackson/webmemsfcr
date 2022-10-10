@@ -77,7 +77,15 @@ export class MemsSerialInterface {
     //
     async sendAndReceiveFromSerial(command, expectedResponseSize) {
         await this._write(command);
-        return await this._read(expectedResponseSize);
+        return Promise.any([
+            this._read(expectedResponseSize),
+            new Promise(resolve => setTimeout(resolve, 1000, 'timeout'))
+        ]).then((response) => {
+            return response;
+        }).catch(((value) => {
+            console.info(`promise ${value}`);
+        }))
+        //return await this._read(expectedResponseSize);
     }
 
     //
@@ -207,5 +215,12 @@ export class MemsSerialInterface {
 
     _numberAsHexString(value) {
         return value.toString(16).padStart(2, '0');
+    }
+
+    //
+    // asynchronously "sleep" for a period of time
+    //
+    _sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms, 'timeout'));
     }
 }

@@ -1,6 +1,7 @@
 import {MemsSerialInterface} from "./mems-serial.js";
 import {ECUReader} from "./mems-ecureader.js";
 import * as Command from "./mems-commands.js";
+import * as Dataframe from "./mems-dataframe.js";
 
 //
 // MEMS 1.6 ECU Reader
@@ -56,15 +57,25 @@ export class MemsEcu16 extends ECUReader {
     // this function requires the command as a byte array and returns the response as a byte array
     //
     async  _initialise() {
-        let response = await this._serial.sendAndReceiveFromSerial(Command.MEMS_InitA.command, Command.MEMS_InitA.responseSize);
-        if (Command.MEMS_InitA.command === response[0]) {
-            await this._serial.sendAndReceiveFromSerial(Command.MEMS_InitB.command, Command.MEMS_InitB.responseSize);
+        if (this._serial.isConnected) {
+            let response;
+
+            // send heartbeat to 'wake-up' serial port
+            // hack to fix what seems the first byte not getting a response to over the web serial api
             await this._serial.sendAndReceiveFromSerial(Command.MEMS_Heartbeat.command, Command.MEMS_Heartbeat.responseSize);
-            await this._serial.sendAndReceiveFromSerial(Command.MEMS_ECUId.command, Command.MEMS_ECUId.responseSize);
 
-            this.startDataframeLoop();
+            // initialisation sequence
+            response = await this._serial.sendAndReceiveFromSerial(Command.MEMS_InitA.command, Command.MEMS_InitA.responseSize);
 
-            return true;
+            if (Command.MEMS_InitA.command === response[0]) {
+                await this._serial.sendAndReceiveFromSerial(Command.MEMS_InitB.command, Command.MEMS_InitB.responseSize);
+                await this._serial.sendAndReceiveFromSerial(Command.MEMS_Heartbeat.command, Command.MEMS_Heartbeat.responseSize);
+                await this._serial.sendAndReceiveFromSerial(Command.MEMS_ECUId.command, Command.MEMS_ECUId.responseSize);
+
+                this.startDataframeLoop();
+
+                return true;
+            }
         }
 
         return false;
@@ -74,13 +85,13 @@ export class MemsEcu16 extends ECUReader {
         let df;
 
         if (ecuResponse.command.command === Command.MEMS_Dataframe80.command) {
-            df = new Command.Dataframe80();
+            df = new Dataframe.Dataframe80();
             df.updateValuesFromEcuResponse(ecuResponse);
             this._engineRunning = (df._80x01_EngineRPM > 0);
 
             console.info(`dataframe80 generated ${JSON.stringify(df)}`);
         } else {
-            df = new Command.Dataframe7d();
+            df = new Dataframe.Dataframe7d();
             df.updateValuesFromEcuResponse(ecuResponse);
             console.info(`dataframe7d generated ${JSON.stringify(df)}`);
         }

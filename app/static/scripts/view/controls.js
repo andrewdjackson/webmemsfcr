@@ -2,7 +2,7 @@ import * as Identifier from "./identifiers.js";
 import * as Command from "../rosco/mems-commands.js";
 import * as View from "./view.js";
 import * as Dataframe from "./dataframe.js";
-import {ecu, sendCommand} from "./memsecu.js";
+import {ecu, sendCommand, dataframeLog} from "./memsecu.js";
 
 export function attachControlEventListeners() {
     document.getElementById("connectButton").addEventListener('click', connect);
@@ -10,13 +10,18 @@ export function attachControlEventListeners() {
     document.getElementById("pauseButton").addEventListener('click', pause);
     document.getElementById("clearFaultsButton").addEventListener('click', clearFaults);
     document.getElementById("resetECUButton").addEventListener('click', reset);
+    document.getElementById("downloadLogButton").addEventListener('click', downloadLog);
 }
 
 function connect() {
     console.info(`connect`);
 
-    ecu.connect().then((result) => {
-        setButtonsOnConnectionState();
+    ecu.connect().then((connected) => {
+        if (connected === true) {
+            setButtonsOnConnectionState();
+        } else {
+            showConnectErrorDialog();
+        }
     }).catch((error) => {
         console.error(`index.html: connect ${error}`);
     })
@@ -50,6 +55,20 @@ function reset() {
     console.info(`reset`);
 
     sendCommand(Command.MEMS_ResetECU);
+}
+
+function downloadLog() {
+    console.info(`download csv`);
+
+    dataframeLog.getLog();
+}
+
+function showConnectErrorDialog() {
+    document.getElementById(Identifier.messageModalTitleId).textContent = "Unable to Connect to ECU"
+    document.getElementById(Identifier.messageModalTextId).innerHTML = "<p>Web MemsFCR was unable to connect to the ECU</p><ol><li>Check Diagnostic Cable is connected correctly and ignition is On.</li><li>Check that you selected the  correct Serial Port.</li></ol>"
+
+    let modal = new bootstrap.Modal(document.getElementById(Identifier.messageModalId));
+    modal.show();
 }
 
 export function resetReceived(ecuResponse) {

@@ -157,7 +157,8 @@ export class ECUReader {
                 }
             })
             .catch((error) => {
-                return Promise.reject(`_sendAndReceive exception ${error}`);
+                console.error(`_sendAndReceive exception ${error}`);
+                //return Promise.reject(`_sendAndReceive exception ${error}`);
             });
     }
 

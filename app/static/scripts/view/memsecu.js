@@ -1,5 +1,7 @@
 import {EventQueue, EventTopic} from "../rosco/mems-queue.js";
 import {MemsEcu16} from "../rosco/mems-ecu16.js";
+import {DataframeLog} from "../rosco/mems-dataframe.js";
+
 import * as Dataframe from "./dataframe.js";
 import * as Actuator from "./actuators.js";
 import * as Adjustment from "./adjustments.js";
@@ -7,6 +9,7 @@ import * as Controls from "./controls.js";
 
 export const responseEventQueue = new EventQueue();
 export const ecu = new MemsEcu16(responseEventQueue);
+export const dataframeLog = new DataframeLog();
 export var initialised = false;
 
 export function initialise() {

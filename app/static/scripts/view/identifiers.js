@@ -5,6 +5,10 @@ export const ecuControlClass = "ecu-control";
 export const alertToastId = "alert-toast";
 export const alertToastTextId = "alert-toast-body";
 
+export const messageModalId = "modalMessage";
+export const messageModalTitleId = "modalMessageTitle";
+export const messageModalTextId = "modalMessageText";
+
 export const enabledWhenEcuIsConnected = "ecu-enabled-connected";
 export const enabledWhenEcuIsDisconnected = "ecu-enabled-disconnected";
 export const enabledWhenKeyOnEngineOff = "koeo-enabled";

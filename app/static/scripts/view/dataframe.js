@@ -1,12 +1,14 @@
 import * as View from "./view.js";
 import * as Controls from "./controls.js";
-import {ecu} from "./memsecu.js";
+import {ecu, dataframeLog} from "./memsecu.js";
 
 export function dataframeReceived(ecuResponse) {
     console.info(`dataframe received ${JSON.stringify(ecuResponse)}`);
     let df = ecu.generateDataframeFromECUResponse(ecuResponse);
     View.updateDataframeTable(df);
     Controls.setButtonsOnEngineRunning();
+
+    dataframeLog.addDataframe(df);
 }
 
 export function pauseDataframe() {
