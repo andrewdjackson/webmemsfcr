@@ -6,6 +6,7 @@ export function dataframeReceived(ecuResponse) {
     console.info(`dataframe received ${JSON.stringify(ecuResponse)}`);
     let df = ecu.generateDataframeFromECUResponse(ecuResponse);
     View.updateDataframeTable(df);
+    View.setButtonsWhenDataHasBeenLogged();
     Controls.setButtonsOnEngineRunning();
 
     dataframeLog.addDataframe(df);

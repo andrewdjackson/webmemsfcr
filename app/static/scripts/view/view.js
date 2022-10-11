@@ -1,4 +1,5 @@
 import * as Identifier from "./identifiers.js";
+import {dataframeLog} from "./memsecu.js";
 
 export function showToast(message) {
     let alertText = window.document.getElementById(Identifier.alertToastTextId);
@@ -16,6 +17,13 @@ export function updateDataframeTable(df) {
             element.innerHTML = `${value}`;
         }
     });
+}
+
+export function setButtonsWhenDataHasBeenLogged() {
+    let control = document.querySelectorAll(`.${Identifier.hasLoggedDataClass}`);
+    for (let i = 0; i < control.length; i++) {
+        control[i].disabled = !dataframeLog.hasLoggedData;
+    }
 }
 
 

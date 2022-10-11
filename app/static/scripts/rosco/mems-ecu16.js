@@ -26,6 +26,7 @@ export class MemsEcu16 extends ECUReader {
             .then((connected) => {
                 return this._initialise();
             }).catch((error) => {
+                console.error(`exception connecting to port ${error}`);
                 return false;
             });
     }
@@ -77,6 +78,9 @@ export class MemsEcu16 extends ECUReader {
                 return true;
             }
         }
+
+        console.error(`initialisation of the ecu failed`);
+        await this._serial.close();
 
         return false;
     }

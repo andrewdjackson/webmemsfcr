@@ -7,7 +7,14 @@ export class DataframeLog {
 
     initialise() {
         this.dataframe80 = [];
+        this.id80 = 0;
+
         this.dataframe7d = [];
+        this.id7d = 0;
+    }
+
+    get hasLoggedData() {
+        return this.id80 > 0;
     }
 
     addDataframe(dataframe) {
