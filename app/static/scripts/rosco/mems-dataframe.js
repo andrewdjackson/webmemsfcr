@@ -1,36 +1,43 @@
+const csvHeader = [`#time`,`80x01-02_engine-rpm`,`80x03_coolant_temp`,`80x04_ambient_temp`,`80x05_intake_air_temp`,`80x06_fuel_temp`,`80x07_map_kpa`,`80x08_battery_voltage`,`80x09_throttle_pot`,`80x0A_idle_switch`,`80x0B_aircon`,`80x0C_park_neutral_switch`,`80x0F_idle_set_point`,`80x10_idle_hot`,`80x12_iac_position`,`80x13-14_idle_error`,`80x15_ignition_advance_offset`,`80x16_ignition_advance`,`80x17-18_coil_time`,`80x19_crankshaft_position_sensor`,`coolant_sensor_fault`,`air_intake_sensor_fault`,`fuel_pump_circuit_fault`,`throttle_pot_fault`,`0x80_raw`,`7dx01_ignition_switch`,`7dx02_throttle_angle`,`7dx04_air_fuel_ratio`,`7dx06_lambda_voltage`,`7dx07_lambda_sensor_frequency`,`7dx08_lambda_sensor_dutycycle`,`7dx09_lambda_sensor_status`,`7dx0A_closed_loop`,`7dx0B_long_term_fuel_trim`,`7dx0C_short_term_fuel_trim`,`7dx0D_carbon_canister_dutycycle`,`7dx0F_idle_base_pos`,`7dx12_ignition_advance2`,`7dx13_idle_speed_offset`,`7dx1F_jack_count`,`0x7d_raw`];
+
 export class DataframeLog {
     constructor() {
         this.initialise();
-        this.id80 = 0;
-        this.id7d = 0;
     }
 
     initialise() {
         this.dataframe80 = [];
-        this.id80 = 0;
-
         this.dataframe7d = [];
-        this.id7d = 0;
     }
 
     get hasLoggedData() {
-        return this.id80 > 0;
+        return this.dataframe80.length > 0;
     }
 
+    //
+    // add the dataframe to the log
+    // there are arrays for 0x80 and 0x7d dataframes
+    // this is due to early ecu's only supporting 0x80 dataframes and the commands as issued
+    // independent of each other.
+    //
     addDataframe(dataframe) {
         if (dataframe !== undefined) {
             if (dataframe instanceof Dataframe80) {
-                dataframe['id'] = this.id80++;
+                dataframe['id'] = this.dataframe80.length;
                 this.dataframe80.push(dataframe);
             }
 
             if (dataframe instanceof Dataframe7d) {
-                dataframe['id'] = this.id7d++;
+                dataframe['id'] = this.dataframe7d.length;
                 this.dataframe7d.push(dataframe);
             }
         }
     }
 
+    //
+    // the arrays for 0x80 and 0x7d responses are merged together based on id
+    // this ensures we pair the commands correctly
+    //
     mergeLoggedDataframesByIndex() {
         return [...this.dataframe80.concat(this.dataframe7d)
             .reduce((r, o) => {
@@ -47,21 +54,87 @@ export class DataframeLog {
             }, new Map()).values()];
     }
 
-    getLog() {
+    downloadCSVFile(ecuId) {
         let df = this.mergeLoggedDataframesByIndex();
-        let csv = this.convertToCSV(df);
-        console.log(csv);
+        let mergedDataframes = this.cleanLog(df);
+        let csv = this.convertToCSV(mergedDataframes);
+        this.exportCSV(csv, ecuId);
+
+        console.info('exported csv file');
     }
 
     convertToCSV(items) {
         const replacer = (key, value) => value === null ? '' : value; // specify how you want to handle null values here
         const header = Object.keys(items[0]);
-        const csv = [
-            header.join(','), // header row first
+        let csv = [
+            csvHeader.join(','), // header row first
             ...items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
         ].join('\r\n');
 
+        // remove quotes from dates and raw data strings
+        csv = csv.replaceAll('"','');
+
         return csv;
+    }
+
+    //
+    // remove properties not required in csv
+    //
+    cleanLog(items) {
+        items.forEach(function(v) {
+            delete v.id;
+            delete v._7Dx00_Time;
+        });
+
+        return items;
+    }
+    //
+    // create a hidden link in the document, attach the url for the file data
+    // and call the click() function to download the file
+    //
+    exportCSV(csv, ecuId) {
+        let link = document.createElement("a");
+
+        if (link.download !== undefined) {
+            // create a 'file' for download from the csv data
+            let blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            let url = URL.createObjectURL(blob);
+
+            // generate a filename
+            let filename = this.getFilename(ecuId);
+
+            // update the link with the relevant attributes
+            link.setAttribute("href", url);
+            link.setAttribute("download", filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+
+            // click the link to start the download
+            link.click();
+
+            // tidy up
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+    }
+
+    getFilename(ecuId) {
+        // generate a filename based on the date and time
+        let filename = getDateTimeString();
+        // trim milliseconds
+        filename = filename.substring(0, filename.length - 4);
+        // replace spaces with dashes
+        filename = filename.replaceAll(' ', '-');
+        // remove colons
+        filename = filename.replaceAll(':', '');
+
+        if (ecuId === undefined) {
+            filename += "-memsfcr.csv";
+        } else {
+            filename += `-${ecuId}.csv`;
+        }
+
+        return filename;
     }
 }
 
@@ -169,7 +242,7 @@ export class Dataframe7d {
     }
 }
 
-function getDateTimeString(unixtime) {
+export function getDateTimeString(unixtime) {
     let date = new Date();
 
     if (unixtime !== undefined) {
@@ -184,7 +257,7 @@ function getDateTimeString(unixtime) {
 //
 // convert bytes into a hex string
 //
-function arrayAsHexString(data) {
+export function arrayAsHexString(data) {
     let hex = "";
 
     data.forEach(value => {

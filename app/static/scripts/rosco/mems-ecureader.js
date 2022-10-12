@@ -1,14 +1,18 @@
 import * as Command from "./mems-commands.js";
 
+// rate at which commands will be sent to the ECU
 const MAX_ECU_SERIAL_RW_INTERVAL = 250;
-const STANDARD_DATAFRAME_REQUEST_INTERVAL = 200;
+// rate at which dataframes will be requested
+const STANDARD_DATAFRAME_REQUEST_INTERVAL = 250;
+// rate at which heartbeats will be requested
+const STANDARD_HEARTBEAT_REQUEST_INTERVAL = 1000;
 
 export class ECUResponse {
     constructor(command, response) {
         this.command = command;
         this.response = response;
     }
-};
+}
 
 export class ECUReader {
     constructor(responseEventQueue) {
@@ -17,6 +21,7 @@ export class ECUReader {
         this._paused = false;
         this._isDataframeRequestLoopRunning = false;
         this._sentCount = 0;
+        this._ecuId = "";
 
         // queues
         this._responseEventQueue = responseEventQueue;
@@ -40,6 +45,10 @@ export class ECUReader {
 
     get isEngineRunning() {
         return this._engineRunning;
+    }
+
+    get ecuId() {
+        return this._ecuId;
     }
 
     //
@@ -128,7 +137,7 @@ export class ECUReader {
 
             // send the command and publish the response
             this._sendAndReceive(ecuCommand)
-                .then((ecuResponse) => {})
+                .then(() => {})
                 .catch((error) => {console.error(`${error}`)})
         }
     }
@@ -172,7 +181,7 @@ export class ECUReader {
         } else {
             console.debug(`queuing heartbeat`)
             // queue a heartbeat command
-            this.addCommandToSendQueue(Command.MEMS_Heartbeat);
+            //this.addCommandToSendQueue(Command.MEMS_Heartbeat);
         }
     }
 
@@ -204,7 +213,7 @@ export class ECUReader {
         console.debug(`queuing command ${JSON.stringify(ecuCommand)}`);
 
         let currentSize = this._commandQueue.length;
-        let newLength = currentSize;
+        let newLength;
 
         if (top === true) {
             newLength = this._commandQueue.unshift(ecuCommand);
@@ -254,13 +263,21 @@ export class ECUReader {
     }
 
     set paused(pause) {
+        let interval = STANDARD_DATAFRAME_REQUEST_INTERVAL;
         this._paused = pause;
 
         if (this._paused) {
             // clear the queue if when pausing the dataframe loop
             // this ensures the pause happens immediately
             this._clearQueue();
+            // increase the interval time, so heartbeats are sent at 1s intervals
+            interval = STANDARD_HEARTBEAT_REQUEST_INTERVAL;
         }
+
+        // stop and start the dataframe interval timer for new timing to take effect
+        this._dataframeRequestInterval = interval;
+        this.stopDataframeLoop();
+        this.startDataframeLoop();
     };
 
     //

@@ -1,3 +1,5 @@
+const SERIAL_TIMEOUT = 2000;
+
 export class MemsSerialInterface {
     constructor() {
         this._isConnected = false;
@@ -58,7 +60,7 @@ export class MemsSerialInterface {
     async disconnect() {
         if (this._isConnected) {
             await this.close()
-                .then((closed) => {
+                .then(() => {
                     console.log(`disconnect: closed port`);
                     this._isConnected = false;
                 })
@@ -80,7 +82,7 @@ export class MemsSerialInterface {
             await this._write(command);
             return Promise.any([
                 this._read(expectedResponseSize),
-                new Promise(resolve => setTimeout(resolve, 1000, 'timeout'))
+                new Promise(resolve => setTimeout(resolve, SERIAL_TIMEOUT, 'serial read timeout'))
             ]).then((response) => {
                 return response;
             }).catch(((value) => {
@@ -99,7 +101,7 @@ export class MemsSerialInterface {
             .then((port) => {
                 return port;
             })
-            .catch((error) => {
+            .catch(() => {
                 return undefined;
             })
     }
@@ -118,9 +120,9 @@ export class MemsSerialInterface {
     //
     async _open() {
         return await this._port.open({baudRate: 9600, bufferSize: 1,})
-            .then((opened) => {
+            .then(() => {
                 return true;
-            }).catch((error) => {
+            }).catch(() => {
                 this._port = undefined;
                 return false;
             });
@@ -148,7 +150,7 @@ export class MemsSerialInterface {
 
         await Promise.any([
             this._sleep(250),
-            this._read(20)
+            this._read(1)
         ]).catch(() => {
             // eat the errors
         }).finally(() => {
@@ -172,13 +174,13 @@ export class MemsSerialInterface {
         view[0] = data;
 
         return await this._writer.write(view)
-            .then((result) => {
+            .then(() => {
                 console.debug(`tx: ${this._arrayAsHexString(view)}`);
             })
             .catch((error) => {
                 console.error(`error ${error}`);
             })
-            .finally((result) => {
+            .finally(() => {
                 this._writer.releaseLock();
             });
     }
@@ -258,6 +260,6 @@ export class MemsSerialInterface {
     // asynchronously "sleep" for a period of time
     //
     _sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms, 'timeout'));
+        return new Promise(resolve => setTimeout(resolve, ms, 'sleep timeout'));
     }
 }

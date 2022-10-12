@@ -13,7 +13,6 @@ export class MemsEcu16 extends ECUReader {
     constructor(responseEventQueue) {
         super(responseEventQueue);
         this._serial = new MemsSerialInterface();
-        this.test = false;
     }
 
     //
@@ -23,7 +22,7 @@ export class MemsEcu16 extends ECUReader {
         await super.connect();
 
         return await this._serial.connect()
-            .then((connected) => {
+            .then(() => {
                 return this._initialise();
             }).catch((error) => {
                 console.error(`exception connecting to port ${error}`);
@@ -63,15 +62,17 @@ export class MemsEcu16 extends ECUReader {
 
             // send heartbeat to 'wake-up' serial port
             // hack to fix what seems the first byte not getting a response to over the web serial api
-            await this._serial.sendAndReceiveFromSerial(Command.MEMS_Heartbeat.command, Command.MEMS_Heartbeat.responseSize);
+            //await this._serial.sendAndReceiveFromSerial(Command.MEMS_Heartbeat.command, Command.MEMS_Heartbeat.responseSize);
 
             // initialisation sequence
-            response = await this._serial.sendAndReceiveFromSerial(Command.MEMS_InitA.command, Command.MEMS_InitA.responseSize);
+            await this._serial.sendAndReceiveFromSerial(Command.MEMS_InitA.command, Command.MEMS_InitA.responseSize);
+            await this._serial.sendAndReceiveFromSerial(Command.MEMS_InitB.command, Command.MEMS_InitB.responseSize);
+            response = await this._serial.sendAndReceiveFromSerial(Command.MEMS_Heartbeat.command, Command.MEMS_Heartbeat.responseSize);
 
-            if (Command.MEMS_InitA.command === response[0]) {
-                await this._serial.sendAndReceiveFromSerial(Command.MEMS_InitB.command, Command.MEMS_InitB.responseSize);
-                await this._serial.sendAndReceiveFromSerial(Command.MEMS_Heartbeat.command, Command.MEMS_Heartbeat.responseSize);
-                await this._serial.sendAndReceiveFromSerial(Command.MEMS_ECUId.command, Command.MEMS_ECUId.responseSize);
+            if (Command.MEMS_Heartbeat.command === response[0]) {
+                let ecuId = await this._serial.sendAndReceiveFromSerial(Command.MEMS_ECUId.command, Command.MEMS_ECUId.responseSize);
+                this._ecuId = Dataframe.arrayAsHexString(ecuId.slice(1));
+                console.info(`ecu id ${this._ecuId}`);
 
                 this.startDataframeLoop();
 

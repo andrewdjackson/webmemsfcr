@@ -19,6 +19,7 @@ function connect() {
     ecu.connect().then((connected) => {
         if (connected === true) {
             setButtonsOnConnectionState();
+            View.updateECUID(ecu.ecuId);
         } else {
             showConnectErrorDialog();
         }
@@ -32,8 +33,9 @@ function disconnect() {
 
     Dataframe.stopDataframeLoop();
 
-    ecu.disconnect().then((result) => {
+    ecu.disconnect().then(() => {
         setButtonsOnConnectionState();
+        View.setButtonsWhenDataHasBeenLogged();
     }).catch((error) => {
         console.error(`index.html: disconnect ${error}`);
     });
@@ -60,7 +62,7 @@ function reset() {
 function downloadLog() {
     console.info(`download csv`);
 
-    dataframeLog.getLog();
+    dataframeLog.downloadCSVFile(ecu.ecuId);
 }
 
 function showConnectErrorDialog() {
