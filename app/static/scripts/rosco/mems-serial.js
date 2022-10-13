@@ -30,8 +30,7 @@ export class MemsSerialInterface {
         await this._connectToPort()
             .then((port) => {
                 this._port = port;
-                console.info(`connect: connected to port`);
-                this.flush();
+                console.info(`connect: connected to port`);;
             })
             .catch(() => {
                 console.error(`connect: error connecting to port`);
@@ -120,7 +119,9 @@ export class MemsSerialInterface {
     //
     async _open() {
         return await this._port.open({baudRate: 9600, bufferSize: 1,})
-            .then(() => {
+            .then(async () => {
+                //this._reader = this._port.readable.getReader();
+                //await this.flush();
                 return true;
             }).catch(() => {
                 this._port = undefined;
@@ -137,10 +138,11 @@ export class MemsSerialInterface {
             await this._reader.cancel()
                 .catch(() => {
                 });
+            await this._reader.releaseLock();
         }
 
         // forget the port
-        this._port.forget();
+        await this._port.forget();
         // close the port
         return await this._port.close();
     }
@@ -153,10 +155,10 @@ export class MemsSerialInterface {
             this._read(1)
         ]).catch(() => {
             // eat the errors
-        }).finally(() => {
+        }).finally(async () => {
             if (this._reader !== undefined) {
-                this._reader.cancel().catch(() => {
-                });
+                await this._reader.cancel().catch(() => {});
+                //await this._reader.releaseLock();
             }
         })
 
@@ -167,22 +169,25 @@ export class MemsSerialInterface {
     // write the command to the serial port
     //
     async _write(data) {
-        this._initialiseSerialPortWriter();
-
         const buffer = new ArrayBuffer(1);
         const view = new Uint8Array(buffer);
         view[0] = data;
 
-        return await this._writer.write(view)
-            .then(() => {
-                console.debug(`tx: ${this._arrayAsHexString(view)}`);
-            })
-            .catch((error) => {
-                console.error(`error ${error}`);
-            })
-            .finally(() => {
-                this._writer.releaseLock();
-            });
+        if (this._port !== undefined) {
+            if (await this._port.writable) {
+                this._writer = this._port.writable.getWriter();
+                return await this._writer.write(view)
+                    .then(() => {
+                        console.debug(`tx: ${this._arrayAsHexString(view)}`);
+                    })
+                    .catch((error) => {
+                        console.error(`error ${error}`);
+                    })
+                    .finally(() => {
+                        this._writer.releaseLock();
+                    });
+            }
+        }
     }
 
     //
@@ -194,9 +199,8 @@ export class MemsSerialInterface {
         let count = 0;
 
         if (this._port !== undefined) {
-            if (this._port.readable) {
-                this._initialiseSerialPortReader();
-
+            if (await this._port.readable) {
+                this._reader = this._port.readable.getReader();
                 try {
                     while (count < n) {
                         const {value, done} = await this._reader.read();
@@ -219,24 +223,6 @@ export class MemsSerialInterface {
         }
 
         return data;
-    }
-
-    //
-    // initialise the port reader
-    //
-    _initialiseSerialPortReader() {
-        if (this._isConnected) {
-            this._reader = this._port.readable.getReader();
-        }
-    }
-
-    //
-    // initialise the port writer
-    //
-    _initialiseSerialPortWriter() {
-        if (this._isConnected) {
-            this._writer = this._port.writable.getWriter();
-        }
     }
 
     //

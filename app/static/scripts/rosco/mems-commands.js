@@ -48,8 +48,8 @@ export const MEMS_Fan2_Deactivate = new ECUCommand(0, EventTopic.Actuator, 0x0e,
 export const MEMS_Injector_Activate = new ECUCommand(0, EventTopic.Actuator, 0xf7, 2);
 export const MEMS_Coil_Activate = new ECUCommand(0, EventTopic.Actuator, 0xf8, 2);
 
-export const MEMS_RPMGauge_Activate = new ECUCommand(0, EventTopic.Actuator, 0x63, 2);
-export const MEMS_RPMGauge_Deactivate = new ECUCommand(0, EventTopic.Actuator, 0x60, 2);
+export const MEMS_RPMGauge_Activate = new ECUCommand(0, EventTopic.Actuator, 0x63, 1);
+export const MEMS_RPMGauge_Deactivate = new ECUCommand(0, EventTopic.Actuator, 0x60, 1);
 
 export const MEMS_STFT_Dec = new ECUCommand(0, EventTopic.Adjustment, 0x7a, 2);
 export const MEMS_STFT_Inc = new ECUCommand(0, EventTopic.Adjustment, 0x79, 2);

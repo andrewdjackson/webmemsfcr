@@ -22,83 +22,83 @@
     },
     {
       "id": "_80x01_EngineRPM",
-      "name": "RPM"
+      "name": "80x01 RPM"
     },
     {
       "id": "_80x03_CoolantTemp",
-      "name": "Coolant (\u00b0C)"
+      "name": "80x03 Coolant (\u00b0C)"
     },
     {
       "id": "_80x04_AmbientTemp",
-      "name": "Ambient (\u00b0C)"
+      "name": "80x04 Ambient (\u00b0C)"
     },
     {
       "id": "_80x05_IntakeAirTemp",
-      "name": "Intake Air (\u00b0C)"
+      "name": "80x05 Intake Air (\u00b0C)"
     },
     {
       "id": "_80x06_FuelTemp",
-      "name": "Fuel \u00b0C"
+      "name": "80x06 Fuel \u00b0C"
     },
     {
       "id": "_80x07_ManifoldAbsolutePressure",
-      "name": "MAP (kPA)"
+      "name": "80x07 MAP (kPA)"
     },
     {
       "id": "_80x08_BatteryVoltage",
-      "name": "Battery (V)"
+      "name": "80x08 Battery (V)"
     },
     {
       "id": "_80x09_ThrottlePotSensor",
-      "name": "Throttle Pot. (mV)"
+      "name": "80x09 Throttle Pot. (mV)"
     },
     {
       "id": "_80x0A_IdleSwitch",
-      "name": "Idle Switch"
+      "name": "80x0a Idle Switch"
     },
     {
       "id": "_80x0B_AirconSwitch",
-      "name": "Air Con. Switch"
+      "name": "80x0b Air Con. Switch"
     },
     {
       "id": "_80x0C_ParkNeutralSwitch",
-      "name": "Neutral Switch"
+      "name": "80x0c Neutral Switch"
     },
     {
       "id": "_80x0F_IdleSetPoint",
-      "name": "Idle Set Point"
+      "name": "80x0f Idle Set Point"
     },
     {
       "id": "_80x10_IdleHot",
-      "name": "Hot Idle"
+      "name": "80x10 Hot Idle"
     },
     {
       "id": "_80x12_IACPosition",
-      "name": "IAC Position"
+      "name": "80x12 IAC Position"
     },
     {
       "id": "_80x13_IdleSpeedDeviation",
-      "name": "Idle Speed Deviation"
+      "name": "80x13 Idle Speed Deviation"
     },
     {
       "id": "_80x15_IgnitionAdvanceOffset",
-      "name": "Ignition Adv. Offset"
+      "name": "80x15 Ignition Adv. Offset"
     },
     {
       "id": "_80x16_IgnitionAdvance",
-      "name": "Ignition Adv."
+      "name": "80x16 Ignition Adv."
     },
     {
       "id": "_80x17_CoilTime",
-      "name": "Coil Time (ms)"
+      "name": "80x17 Coil Time (ms)"
     },
     {
       "id": "_80x19_CrankshaftPositionSensor",
-      "name": "Crankshaft Position"
+      "name": "80x19 Crankshaft Position"
     },
     {
       "id": "_80_RawData",
-      "name": "ECU Response"
+      "name": "80 Raw Data"
     }
   ]
 }

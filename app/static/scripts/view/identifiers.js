@@ -16,6 +16,9 @@ export const enabledWhenEcuIsConnected = "ecu-enabled-connected";
 export const enabledWhenEcuIsDisconnected = "ecu-enabled-disconnected";
 export const enabledWhenKeyOnEngineOff = "koeo-enabled";
 export const ecuDataMetric = "ecudata";
+export const ecuDataChart = "ecuchart";
+export const ecuDataTimeMetric80 = "_80x00_Time";
+export const ecuDataTimeMetric7d = "_7Dx00_Time";
 
 // adjustments controls
 export const increaseAdjustment = 'increase';

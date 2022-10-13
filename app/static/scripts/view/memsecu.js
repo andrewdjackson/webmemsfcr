@@ -6,10 +6,13 @@ import * as Dataframe from "./dataframe.js";
 import * as Actuator from "./actuators.js";
 import * as Adjustment from "./adjustments.js";
 import * as Controls from "./controls.js";
+import * as Chart from "./charts.js";
 
 export const responseEventQueue = new EventQueue();
 export const ecu = new MemsEcu16(responseEventQueue);
 export const dataframeLog = new DataframeLog();
+
+export var charts = [];
 export var initialised = false;
 
 export function initialise() {
@@ -25,6 +28,8 @@ export function initialise() {
 
         Controls.setButtonsOnConnectionState();
         Controls.setButtonsOnEngineRunning();
+
+        Chart.createCharts();
     }
 }
 

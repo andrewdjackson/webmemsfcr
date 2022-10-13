@@ -1,0 +1,18 @@
+{% set excludes = ['Time', '7d Raw Data', '80 Raw Data'] %}
+
+{% for item in data["ecudata_df80.json"]["ecudata"] %}
+	{% if item["name"] not in excludes %}
+	<div class="chart-container">
+		<canvas id="{{ item['id'] | safe }}_ecuchart" title="{{ item['name'] | safe }}" class="ecuchart"></canvas>
+	</div>
+	{% endif %}
+{% endfor %}
+
+{% for item in data["ecudata_df7d.json"]["ecudata"] %}
+	{% if item["name"] not in excludes  %}
+	<div class="chart-container">
+		<canvas id="{{ item['id'] | safe }}_ecuchart" title="{{ item['name'] | safe }}" class="ecuchart"></canvas>
+	</div>
+	{% endif %}
+{% endfor %}
+

@@ -22,8 +22,11 @@ export class MemsEcu16 extends ECUReader {
         await super.connect();
 
         return await this._serial.connect()
-            .then(() => {
-                return this._initialise();
+            .then(async () => {
+                if (await this._initialise()) {
+                    super.connected();
+                    return true;
+                }
             }).catch((error) => {
                 console.error(`exception connecting to port ${error}`);
                 return false;

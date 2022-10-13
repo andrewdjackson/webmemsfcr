@@ -58,6 +58,11 @@ export class ECUReader {
     // todo: should be inherited by subclass with specific hardware implementation (e.g open serial port and initialise)
     //
     async connect() {
+        this._isConnected = false;
+        this._paused = false;
+    }
+
+    async connected() {
         this._isConnected = true;
         this._paused = false;
         this._startSendingCommandEvents();

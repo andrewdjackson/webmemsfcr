@@ -1,6 +1,13 @@
 <div class="card-body text-center">
-	<p>Make sure the ignition is on but the engine is not running befiore testing actuators.</p>
+	<p>Make sure the ignition is on but the engine is not running before testing actuators.</p>
+	<div class="container">
 {% for item in data["actuators.json"]["actuators"] %}
-	<button id="{{ item['id'] | safe }}" class="btn btn-primary actuator koeo-enabled" name="{{ item['id'] | safe }}" value="activate">{{ item['name'] | safe }}</button>
+	<div class="d-grid d-md-block justify-content-md-center btn-group p-2">
+		<button id="{{ item['id'] | safe }}_activate" name="{{ item['id'] | safe }}" value="activate" class="btn btn-outline-success col-1 actuator koeo-enabled">ON</button>
+		<button id="{{ item['id'] | safe }}" class="btn btn-outline-dark col-3" disabled>{{ item['name'] | safe }}</button>
+		<button id="{{ item['id'] | safe }}_deactivate" name="{{ item['id'] | safe }}" value="deactivate" class="btn btn-outline-danger col-1 actuator koeo-enabled">OFF</button>
+	</div>
 {% endfor %}
+	</div>
 </div>
+

@@ -10,7 +10,6 @@
     {"id": "actuate_fan_1", "name":  "Fan 1"},
     {"id": "actuate_fan_2", "name":  "Fan 2"},
     {"id": "actuate_injector", "name":  "Injector"},
-    {"id": "actuate_coil", "name":  "Coil"},
-    {"id": "actuate_rpm_gauge", "name":  "RPM Gauge"}
+    {"id": "actuate_coil", "name":  "Coil"}
   ]
 }
