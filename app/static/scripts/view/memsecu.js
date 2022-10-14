@@ -7,6 +7,7 @@ import * as Actuator from "./actuators.js";
 import * as Adjustment from "./adjustments.js";
 import * as Controls from "./controls.js";
 import * as Chart from "./charts.js";
+import * as View from "./view.js";
 
 export const responseEventQueue = new EventQueue();
 export const ecu = new MemsEcu16(responseEventQueue);
@@ -26,8 +27,8 @@ export function initialise() {
         Adjustment.attachAdjustmentsEventListeners();
         Actuator.attachActuatorEventListeners();
 
-        Controls.setButtonsOnConnectionState();
-        Controls.setButtonsOnEngineRunning();
+        View.setButtonsOnConnectionState();
+        View.setButtonsOnEngineRunning();
 
         Chart.createCharts();
     }

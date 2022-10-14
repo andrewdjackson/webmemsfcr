@@ -1,6 +1,5 @@
 import * as Identifier from "./identifiers.js";
-import {ecu, dataframeLog, charts} from "./memsecu.js";
-import * as Chart from "./charts.js";
+import {dataframeLog, ecu} from "./memsecu.js";
 
 export function showToast(message) {
     let alertText = window.document.getElementById(Identifier.alertToastTextId);
@@ -25,24 +24,6 @@ export function updateECUID(ecuId) {
     ecuIdText.innerHTML = `ECU ID: ${ecuId}`;
 }
 
-export function updateCharts(df) {
-    let time = df[Identifier.ecuDataTimeMetric80];
-    if (time === undefined) {
-        time = df[Identifier.ecuDataTimeMetric7d];
-    }
-
-    Object.entries(df).forEach((entry) => {
-        const [key, value] = entry;
-        let chartId = `${key}_${Identifier.ecuDataChart}`;
-        let chart = Chart.findChart(chartId);
-        let fault = false;
-
-        if (chart !== undefined) {
-            Chart.addData(chart, time, value, fault);
-        }
-    });
-}
-
 
 //
 // enable buttons when data has been logged and the ecu has been disconnected
@@ -51,6 +32,25 @@ export function setButtonsWhenDataHasBeenLogged() {
     let control = document.querySelectorAll(`.${Identifier.hasLoggedDataClass}`);
     for (let i = 0; i < control.length; i++) {
         control[i].disabled = !(dataframeLog.hasLoggedData && !ecu.isConnected);
+    }
+}
+
+export function setButtonsOnConnectionState() {
+    let control = document.querySelectorAll(`.${Identifier.enabledWhenEcuIsConnected}`);
+    for (let i = 0; i < control.length; i++) {
+        control[i].disabled = !ecu.isConnected;
+    }
+
+    control = document.querySelectorAll(`.${Identifier.enabledWhenEcuIsDisconnected}`);
+    for (let i = 0; i < control.length; i++) {
+        control[i].disabled = ecu.isConnected;
+    }
+}
+
+export function setButtonsOnEngineRunning() {
+    let control = document.querySelectorAll(`.${Identifier.enabledWhenKeyOnEngineOff}`);
+    for (let i = 0; i < control.length; i++) {
+        control[i].disabled = ecu.isEngineRunning;
     }
 }
 

@@ -68,7 +68,20 @@ export class MemsEcu16 extends ECUReader {
             //await this._serial.sendAndReceiveFromSerial(Command.MEMS_Heartbeat.command, Command.MEMS_Heartbeat.responseSize);
 
             // initialisation sequence
-            await this._serial.sendAndReceiveFromSerial(Command.MEMS_InitA.command, Command.MEMS_InitA.responseSize);
+            response = await this._serial.sendAndReceiveFromSerial(Command.MEMS_InitA.command, Command.MEMS_InitA.responseSize);
+
+            // when the line is initialised for the first time, a x00 byte can be returned
+            // read again until we receive the expected response
+            if (response[0] !== Command.MEMS_InitA.command) {
+                await this._sleep(100);
+
+                // read 1 byte again
+                response = await this._serial._read(1);
+                if (response[0] !== Command.MEMS_InitA.command) {
+                    console.error(`initialisation fault: expected ${Command.MEMS_InitA.command} received ${response}`);
+                }
+            }
+
             await this._serial.sendAndReceiveFromSerial(Command.MEMS_InitB.command, Command.MEMS_InitB.responseSize);
             response = await this._serial.sendAndReceiveFromSerial(Command.MEMS_Heartbeat.command, Command.MEMS_Heartbeat.responseSize);
 

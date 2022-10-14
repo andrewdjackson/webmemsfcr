@@ -1,16 +1,27 @@
 import * as View from "./view.js";
-import * as Controls from "./controls.js";
-import {ecu, dataframeLog} from "./memsecu.js";
+import * as Chart from "./charts.js";
+import * as Identifier from "./identifiers.js";
+import {dataframeLog, ecu} from "./memsecu.js";
 
 export function dataframeReceived(ecuResponse) {
     console.info(`dataframe received ${JSON.stringify(ecuResponse)}`);
     let df = ecu.generateDataframeFromECUResponse(ecuResponse);
-    View.updateDataframeTable(df);
-    View.updateCharts(df);
+    updateDataframeTable(df);
+    Chart.updateCharts(df);
     View.setButtonsWhenDataHasBeenLogged();
-    Controls.setButtonsOnEngineRunning();
+    View.setButtonsOnEngineRunning();
 
     dataframeLog.addDataframe(df);
+}
+
+export function updateDataframeTable(df) {
+    Object.entries(df).forEach((entry) => {
+        const [key, value] = entry;
+        let element = document.getElementById(`${Identifier.ecuDataMetric}_${key}`);
+        if (element !== undefined) {
+            element.innerHTML = `${value}`;
+        }
+    });
 }
 
 export function pauseDataframe() {

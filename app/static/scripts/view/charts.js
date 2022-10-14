@@ -2,7 +2,6 @@ import 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js';
 import * as Identifier from "./identifiers.js";
 import {charts} from "./memsecu.js";
 
-const sparkLength = 60;
 const chartLength = 120;
 const skipped = (ctx, value) => ctx.p0.skip || ctx.p0.parsed.y === 0 ? value : undefined;
 const faulty = (ctx, value) => ctx.p0.parsed.y > 0 ? value : undefined;
@@ -19,6 +18,24 @@ export function createCharts() {
         let graph = createChart(chartCtx, chartId, chartTitle);
         charts.push(graph);
     }
+}
+
+export function updateCharts(df) {
+    let time = df[Identifier.ecuDataTimeMetric80];
+    if (time === undefined) {
+        time = df[Identifier.ecuDataTimeMetric7d];
+    }
+
+    Object.entries(df).forEach((entry) => {
+        const [key, value] = entry;
+        let chartId = `${key}_${Identifier.ecuDataChart}`;
+        let chart = findChart(chartId);
+        let fault = false;
+
+        if (chart !== undefined) {
+            addData(chart, time, value, fault);
+        }
+    });
 }
 
 function createChart(ctx, id, title) {
@@ -213,8 +230,7 @@ function isNewFault(chart) {
         var lastFaultAnnotation = faultsArray[id][len - 1].xValue
         var lastFaultPosition = chart.data.datasets[0].data[chartLength - 1]
 
-        var newFault = (lastFaultAnnotation !== chartLength - 2) && (lastFaultPosition === 0)
-        return newFault
+        return (lastFaultAnnotation !== chartLength - 2) && (lastFaultPosition === 0)
     } else {
         return true
     }

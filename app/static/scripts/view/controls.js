@@ -18,7 +18,7 @@ function connect() {
 
     ecu.connect().then((connected) => {
         if (connected === true) {
-            setButtonsOnConnectionState();
+            View.setButtonsOnConnectionState();
             View.updateECUID(ecu.ecuId);
         } else {
             showConnectErrorDialog();
@@ -34,7 +34,7 @@ function disconnect() {
     Dataframe.stopDataframeLoop();
 
     ecu.disconnect().then(() => {
-        setButtonsOnConnectionState();
+        View.setButtonsOnConnectionState();
         View.setButtonsWhenDataHasBeenLogged();
     }).catch((error) => {
         console.error(`index.html: disconnect ${error}`);
@@ -84,22 +84,7 @@ export function resetReceived(ecuResponse) {
     }
 }
 
-export function setButtonsOnConnectionState() {
-    let control = document.querySelectorAll(`.${Identifier.enabledWhenEcuIsConnected}`);
-    for (let i = 0; i < control.length; i++) {
-        control[i].disabled = !ecu.isConnected;
-    }
 
-    control = document.querySelectorAll(`.${Identifier.enabledWhenEcuIsDisconnected}`);
-    for (let i = 0; i < control.length; i++) {
-        control[i].disabled = ecu.isConnected;
-    }
-}
 
-export function setButtonsOnEngineRunning() {
-    let control = document.querySelectorAll(`.${Identifier.enabledWhenKeyOnEngineOff}`);
-    for (let i = 0; i < control.length; i++) {
-        control[i].disabled = ecu.isEngineRunning;
-    }
-}
+
 
