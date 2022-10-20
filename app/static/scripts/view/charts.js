@@ -33,9 +33,12 @@ export async function updateCharts(df, faults) {
         const chart = findChart(chartId);
 
         if (chart !== undefined) {
-            //let currentFault = faults.at(-1);
-            //let fault = currentFault[key];
-            const fault = false;
+            let fault = false;
+
+            if (faults !== undefined) {
+                fault = faults[key];
+            }
+
             addData(chart, time, value, fault);
         }
     });

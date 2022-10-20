@@ -22,9 +22,11 @@ export class Analysis {
     //
     analyse() {
         if (this.dataframeLog.hasLoggedData) {
-            const opstatus = new OperationalStatus(this.dataframes);
-            //this._faults.push(opstatus.faults);
-            this._status.push(opstatus);
+            const opStatus = new OperationalStatus(this.dataframes);
+            const opFaults = opStatus.faults;
+
+            this._faults.push(opFaults);
+            this._status.push(opStatus);
         }
     }
 }
