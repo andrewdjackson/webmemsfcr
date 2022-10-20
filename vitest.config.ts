@@ -5,6 +5,7 @@ export default defineConfig({
     test: {
         environment: "happy-dom",
         testTimeout: 10000,
-        reporters: "tap-flat"
+        reporters: "tap-flat",
+        passWithNoTests: true
     },
 })

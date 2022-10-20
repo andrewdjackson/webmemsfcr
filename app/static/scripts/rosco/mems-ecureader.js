@@ -53,15 +53,18 @@ export class ECUReader {
 
     //
     // base function
-    // starts the listener for sending commands
-    // from the command queue
-    // todo: should be inherited by subclass with specific hardware implementation (e.g open serial port and initialise)
+    // todo: must be OVERRIDDEN by subclass with specific hardware implementation (e.g open serial port and initialise)
     //
     async connect() {
         this._isConnected = false;
         this._paused = false;
+        return await this.connected();
     }
 
+    //
+    // todo: should be INHERITED by subclass once physical connection has completed successfully
+    // starts the listener for sending commands from the command queue
+    //
     async connected() {
         this._isConnected = true;
         this._paused = false;

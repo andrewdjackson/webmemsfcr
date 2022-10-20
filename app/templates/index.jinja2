@@ -34,12 +34,13 @@
 		<div class="container-fluid">
 			<div class="tab-content">
 
+				<!-- spacing from navbar -->
 				<div class="card-body text-center">
-					{% include 'controls.jinja2' %}
+					&nbsp;
 				</div>
 
-				<!-- home tab -->
-				<div id="home" class="tab-pane fade show active" aria-labelledby="home">
+				<!-- ecu data -->
+				<div id="home" class="tab-pane fade" aria-labelledby="home">
 					<div class="card mt-3">
 						<div class="card-body text-center">
 							{% include 'adjustments.jinja2' %}
@@ -53,11 +54,11 @@
 					</div>
 				</div>
 
-				<!-- profile -->
-				<div id="profile" class="tab-pane fade" aria-labelledby="profile">
+				<!-- charts -->
+				<div id="profile" class="tab-pane fade show active" aria-labelledby="profile">
 					<div class="card mt-3">
 						<div class="card-body">
-							{% include 'profile.jinja2' %}
+							{% include 'charts.jinja2' %}
 						</div>
 					</div>
 				</div>

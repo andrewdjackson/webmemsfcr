@@ -9,21 +9,15 @@ export function showToast(message) {
     toast.show();
 }
 
-export function updateDataframeTable(df) {
-    Object.entries(df).forEach((entry) => {
-        const [key, value] = entry;
-        let element = document.getElementById(`${Identifier.ecuDataMetric}_${key}`);
-        if (element !== undefined) {
-            element.innerHTML = `${value}`;
-        }
-    });
+export function showTab(tabId) {
+    let tab = new window.bootstrap.Tab(document.getElementById(tabId));
+    tab.show();
 }
 
 export function updateECUID(ecuId) {
     let ecuIdText = document.getElementById(Identifier.ecuId);
     ecuIdText.innerHTML = `ECU ID: ${ecuId}`;
 }
-
 
 //
 // enable buttons when data has been logged and the ecu has been disconnected

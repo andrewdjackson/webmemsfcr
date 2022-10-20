@@ -30,7 +30,7 @@ export class MemsSerialInterface {
         await this._connectToPort()
             .then((port) => {
                 this._port = port;
-                console.info(`connect: connected to port`);;
+                console.info(`connect: connected to port`);
             })
             .catch(() => {
                 console.error(`connect: error connecting to port`);

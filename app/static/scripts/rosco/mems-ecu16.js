@@ -19,7 +19,8 @@ export class MemsEcu16 extends ECUReader {
     // connect the serial port
     //
     async connect() {
-        await super.connect();
+        this._isConnected = false;
+        this._paused = false;
 
         return await this._serial.connect()
             .then(async () => {

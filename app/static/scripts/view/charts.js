@@ -1,6 +1,7 @@
 import 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js';
+import "../thirdparty/chartjs-plugin-annotation.min.js";
 import * as Identifier from "./identifiers.js";
-import {charts} from "./memsecu.js";
+import {charts, analysis} from "./memsecu.js";
 
 const chartLength = 120;
 const skipped = (ctx, value) => ctx.p0.skip || ctx.p0.parsed.y === 0 ? value : undefined;
@@ -8,19 +9,19 @@ const faulty = (ctx, value) => ctx.p0.parsed.y > 0 ? value : undefined;
 
 var faultsArray = {}
 
-export function createCharts() {
+export async function createCharts() {
     let chart = document.querySelectorAll(`.${Identifier.ecuDataChart}`);
     for (let i = 0; i < chart.length; i++) {
-        let chartCtx = document.getElementById(chart[i].id);
-        let chartId = `${chart[i].id}_graph`;
-        let chartTitle = `${chartCtx.title}`;
+        const chartCtx = document.getElementById(chart[i].id);
+        const chartId = `${chart[i].id}_graph`;
+        const chartTitle = `${chartCtx.title}`;
 
-        let graph = createChart(chartCtx, chartId, chartTitle);
+        const graph = await createChart(chartCtx, chartId, chartTitle);
         charts.push(graph);
     }
 }
 
-export function updateCharts(df) {
+export async function updateCharts(df, faults) {
     let time = df[Identifier.ecuDataTimeMetric80];
     if (time === undefined) {
         time = df[Identifier.ecuDataTimeMetric7d];
@@ -28,17 +29,19 @@ export function updateCharts(df) {
 
     Object.entries(df).forEach((entry) => {
         const [key, value] = entry;
-        let chartId = `${key}_${Identifier.ecuDataChart}`;
-        let chart = findChart(chartId);
-        let fault = false;
+        const chartId = `${key}_${Identifier.ecuDataChart}`;
+        const chart = findChart(chartId);
 
         if (chart !== undefined) {
+            //let currentFault = faults.at(-1);
+            //let fault = currentFault[key];
+            const fault = false;
             addData(chart, time, value, fault);
         }
     });
 }
 
-function createChart(ctx, id, title) {
+async function createChart(ctx, id, title) {
     return new Chart(ctx, {
         id: id,
         type: 'line',

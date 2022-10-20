@@ -1,6 +1,7 @@
 import {EventQueue, EventTopic} from "../rosco/mems-queue.js";
 import {MemsEcu16} from "../rosco/mems-ecu16.js";
-import {DataframeLog} from "../rosco/mems-dataframe.js";
+import {DataframeLog} from "../rosco/mems-dataframe-log.js";
+import {Analysis} from "../analysis/analysis.js";
 
 import * as Dataframe from "./dataframe.js";
 import * as Actuator from "./actuators.js";
@@ -12,16 +13,23 @@ import * as View from "./view.js";
 export const responseEventQueue = new EventQueue();
 export const ecu = new MemsEcu16(responseEventQueue);
 export const dataframeLog = new DataframeLog();
+export const analysis = new Analysis(dataframeLog);
 
 export var charts = [];
 export var initialised = false;
 
-export function initialise() {
+export async function initialise() {
     if (!initialised) {
         // prevent initialisation occurring more than once.
         initialised = true;
 
         initialiseSubscribers();
+
+        // create the charts and then show the ecu data tab
+        // rendering of the charts gets deferred which interrupts the js loop
+        // causing serial errors.
+        await Chart.createCharts();
+        View.showTab('nav-home-tab');
 
         Controls.attachControlEventListeners();
         Adjustment.attachAdjustmentsEventListeners();
@@ -29,8 +37,6 @@ export function initialise() {
 
         View.setButtonsOnConnectionState();
         View.setButtonsOnEngineRunning();
-
-        Chart.createCharts();
     }
 }
 
