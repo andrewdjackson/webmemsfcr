@@ -140,7 +140,7 @@ export class ECUReader {
     _sendNextCommandFromQueue() {
         if (this._commandQueue.length > 0) {
             if (this._waitingForResponse) {
-                console.error(`tx/rx behind the queue, ${this._commandQueue.length} waiting`);
+                console.error(`tx/rx behind the queue, ${this._commandQueue.length} requests waiting`);
             } else {
                 // get command from the head of the queue and set the message id
                 let ecuCommand = this._commandQueue.shift();
