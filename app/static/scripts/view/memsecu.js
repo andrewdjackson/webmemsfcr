@@ -29,6 +29,7 @@ export async function initialise() {
         // rendering of the charts gets deferred which interrupts the js loop
         // causing serial errors.
         await Chart.createCharts();
+        await Chart.createSparks();
         View.showTab('nav-home-tab');
 
         Controls.attachControlEventListeners();

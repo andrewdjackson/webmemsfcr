@@ -3,6 +3,7 @@ import "../thirdparty/chartjs-plugin-annotation.min.js";
 import * as Identifier from "./identifiers.js";
 import {charts} from "./memsecu.js";
 
+const sparkLength = 120;
 const chartLength = 120;
 const skipped = (ctx, value) => ctx.p0.skip || ctx.p0.parsed.y === 0 ? value : undefined;
 const faulty = (ctx, value) => ctx.p0.parsed.y > 0 ? value : undefined;
@@ -30,6 +31,40 @@ export async function updateCharts(df, faults) {
     Object.entries(df).forEach((entry) => {
         const [key, value] = entry;
         const chartId = `${key}_${Identifier.ecuDataChart}`;
+        const chart = findChart(chartId);
+
+        if (chart !== undefined) {
+            let fault = false;
+
+            if (faults !== undefined) {
+                fault = faults[key];
+            }
+
+            addData(chart, time, value, fault);
+        }
+    });
+}
+
+export async function createSparks() {
+    let chart = document.querySelectorAll(`.${Identifier.ecuDataSpark}`);
+    for (let i = 0; i < chart.length; i++) {
+        const chartCtx = document.getElementById(chart[i].id);
+        const chartId = `${chart[i].id}_spark`;
+
+        const graph = await createSpark(chartCtx, chartId);
+        charts.push(graph);
+    }
+}
+
+export async function updateSparks(df, faults) {
+    let time = df[Identifier.ecuDataTimeMetric80];
+    if (time === undefined) {
+        time = df[Identifier.ecuDataTimeMetric7d];
+    }
+
+    Object.entries(df).forEach((entry) => {
+        const [key, value] = entry;
+        const chartId = `${key}_${Identifier.ecuDataSpark}`;
         const chart = findChart(chartId);
 
         if (chart !== undefined) {
@@ -114,6 +149,69 @@ async function createChart(ctx, id, title) {
                 }
             },
         }
+    });
+}
+
+async function createSpark(ctx, id) {
+    return new Chart(ctx, {
+        id: id,
+        type: 'line',
+        data: {
+            labels: Array.apply(null, Array(sparkLength)).map(function() { return '' }),
+            datasets: [{
+                data: Array.apply(null, Array(sparkLength)).map(function() { return 0 }),
+                borderColor: 'rgba(102,102,255,0.9)',
+                //backgroundColor: 'rgba(102,153,204,0.1)',
+                fillColor: "rgba(102,153,51,0.2)",
+                strokeColor: "rgba(220,220,220,1)",
+                borderWidth: 1,
+                cubicInterpolationMode: 'monotone',
+                tension: 0.4,
+                fill: true,
+            },{
+                data: Array.apply(null, Array(sparkLength)).map(function() { return 0 }),
+                cubicInterpolationMode: 'monotone',
+                tension: 0.4,
+                borderWidth: 1,
+                segment: {
+                    borderColor: ctx => skipped(ctx, 'rgba(102,102,255,0)') || faulty(ctx, 'rgba(202,12,55,1.0)'),
+                    backgroundColor: ctx => skipped(ctx, 'rgba(102,102,255,0)') || faulty(ctx, 'rgba(255,0,0,0.3)'),
+                },
+                fill: true,
+            }],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            spanGaps: true,
+            radius: 0,
+            plugins: {
+                legend: {
+                    display: false,
+                }
+            },
+            tooltips: {
+                enabled: false
+            },
+            scales: {
+                y: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        display:false
+                    },
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        display:false
+                    },
+                }
+            }
+        },
     });
 }
 

@@ -8,7 +8,11 @@
 			<tbody id="df80table">
 			{% for item in data["ecudata_df80.json"]["ecudata"] %}
 				{% if item["name"] not in excludes %}
-				<tr><td>{{ item['name'] | safe }}</td><td class="ecudata_{{ item['id'] | safe }}">&nbsp;</td></tr>
+				<tr>
+					<td>{{ item['name'] | safe }}</td>
+					<td class="ecudata_{{ item['id'] | safe }}">&nbsp;</td>
+					<td style="width: 30%"><div class="spark-container"><canvas id="{{ item['id'] | safe }}_ecuspark" title="{{ item['name'] | safe }}" class="ecuspark" height="30"></canvas></div></td>
+				</tr>
 				{% endif %}
 			{% endfor %}
 			</tbody>
@@ -20,7 +24,11 @@
 			<tbody id="df7dtable">
 			{% for item in data["ecudata_df7d.json"]["ecudata"] %}
 				{% if item["name"] not in excludes %}
-					<tr><td>{{ item['name'] | safe }}</td><td class="ecudata_{{ item['id'] | safe }}">&nbsp;</td></tr>
+					<tr>
+						<td>{{ item['name'] | safe }}</td>
+						<td class="ecudata_{{ item['id'] | safe }}">&nbsp;</td>
+						<td style="width: 30%"><div class="spark-container"><canvas id="{{ item['id'] | safe }}_ecuspark" title="{{ item['name'] | safe }}" class="ecuspark" height="30"></canvas></div></td>
+					</tr>
 				{% endif %}
 			{% endfor %}
 			</tbody>

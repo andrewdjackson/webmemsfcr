@@ -14,6 +14,7 @@ export function dataframeReceived(ecuResponse) {
     updateDataframeMetrics(df);
     const faults = analysis.faults;
     Chart.updateCharts(df, faults.at(-1));
+    Chart.updateSparks(df, faults.at(-1));
     View.setButtonsWhenDataHasBeenLogged();
     View.setButtonsOnEngineRunning();
 }
