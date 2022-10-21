@@ -67,18 +67,19 @@ export class Dataframe80 {
         this._80x07_ManifoldAbsolutePressure = data[7];
         this._80x08_BatteryVoltage = data[8] / 10;
         this._80x09_ThrottlePotSensor = data[9] * 0.02;  // 0.02V per LSB
+        this._80x09_ThrottlePotSensor = roundDecimalPlaces(this._80x09_ThrottlePotSensor);
         this._80x0A_IdleSwitch = (data[0x0a] & 0x00001000) >> 3;
         this._80x0B_AirconSwitch = data[0x0b] > 0;
         this._80x0C_ParkNeutralSwitch = data[0x0c] > 0;
         this._80x0F_IdleSetPoint = data[0x0f] * 6.1;
+        this._80x0F_IdleSetPoint = roundDecimalPlaces(this._80x0F_IdleSetPoint);
         this._80x10_IdleHot = data[0x10];
         this._80x12_IACPosition = data[0x12];
         this._80x13_IdleSpeedDeviation = (data[0x13] << 8) + data[14];
         this._80x15_IgnitionAdvanceOffset = data[0x15];
         this._80x16_IgnitionAdvance = (data[0x16] / 2) - 24;
         this._80x17_CoilTime = ((data[0x17] << 8) + data[0x18]) * 0.002;
-        // round to 2 decimal place
-        this._80x17_CoilTime = Math.round(this._80x17_CoilTime * 100) / 100
+        this._80x17_CoilTime = roundDecimalPlaces(this._80x17_CoilTime);
         this._80x19_CrankshaftPositionSensor = data[0x19];
         this.CoolantTempSensorFault = ((data[13] >> 0) & 1 ) > 0;
         this.IntakeAirTempSensorFault = ((data[13] >> 2) & 1 ) > 0;
@@ -133,8 +134,7 @@ export class Dataframe7d {
         this._7Dx00_Time = getDateTimeString(ecuResponse.command.id);
         this._7Dx01_IgnitionSwitch = data[1] > 0;
         this._7Dx02_ThrottleAngle = data[2] * 0.6;
-        // round to 2 decimal places
-        this._7Dx02_ThrottleAngle = Math.round(this._7Dx02_ThrottleAngle * 100) / 100
+        this._7Dx02_ThrottleAngle = roundDecimalPlaces(this._7Dx02_ThrottleAngle)
         this._7Dx04_AirFuelRatio = data[4] / 10;
         this._7Dx06_LambdaVoltage = data[6] * 5;
         this._7Dx07_LambdaFrequency = data[7];
@@ -150,6 +150,10 @@ export class Dataframe7d {
         this._7Dx1F_JackCount = data[0x1f];
         this._7D_RawData = arrayAsHexString(ecuResponse.response);
     }
+}
+
+function roundDecimalPlaces(metric) {
+    return Math.round(metric * 100) / 100
 }
 
 export class Dataframe {

@@ -1,4 +1,4 @@
-{% set excludes = ['Time', '7d ECU Response', '80 ECU Response', "Coolant Sensor Fault", "Fuel Pump Circuit Fault", "Intake Air Sensor Fault", "Throttle Pot. Fault"] %}
+{% set excludes = ['Time', '7d ECU Response', '80 ECU Response', "Coolant Sensor Fault", "Fuel Pump Circuit Fault", "Intake Air Sensor Fault", "Throttle Pot. Fault", '80x04 Ambient (°C)', '80x06 Fuel °C', '80x0b Air Con. Switch'] %}
 
 {% for item in data["ecudata_df80.json"]["ecudata"] %}
 	{% if item["name"] not in excludes %}
