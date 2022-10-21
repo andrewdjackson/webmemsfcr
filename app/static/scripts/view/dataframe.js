@@ -10,7 +10,8 @@ export function dataframeReceived(ecuResponse) {
     dataframeLog.addDataframe(df);
     analysis.analyse();
 
-    updateDataframeTable(df);
+    //updateDataframeTable(df);
+    updateDataframeMetrics(df);
     const faults = analysis.faults;
     Chart.updateCharts(df, faults.at(-1));
     View.setButtonsWhenDataHasBeenLogged();
@@ -28,6 +29,23 @@ export function updateDataframeTable(df) {
             element.innerHTML = `${value}`;
         }
     });
+}
+
+function updateDataframeMetrics(df) {
+    Object.entries(df).forEach((entry) => {
+        const [key, value] = entry;
+        const metric = `${Identifier.ecuDataMetric}_${key}`;
+        updateMetric(metric, value);
+    });
+}
+
+function updateMetric(metric, value) {
+    let elements = document.querySelectorAll(`.${metric}`);
+    for (let i = 0; i < elements.length; i++) {
+        if (elements[i] !== undefined) {
+            elements[i].innerHTML = `${value}`;
+        }
+    }
 }
 
 export function pauseDataframe() {

@@ -49,5 +49,14 @@
 .chart-container {
     position: relative;
     height: 150px;
-    background-color: rgba(221, 221, 221, 0.05);
+    width: 100%;
+    /*background-color: rgba(221, 221, 221, 0.05);*/
+    padding: 3px;
+    margin: 3px;
+}
+
+.ecuchart {
+    position: relative;
+    height:150px;
+    width: 100%;
 }

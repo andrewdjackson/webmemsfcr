@@ -1,7 +1,7 @@
 import 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js';
 import "../thirdparty/chartjs-plugin-annotation.min.js";
 import * as Identifier from "./identifiers.js";
-import {charts, analysis} from "./memsecu.js";
+import {charts} from "./memsecu.js";
 
 const chartLength = 120;
 const skipped = (ctx, value) => ctx.p0.skip || ctx.p0.parsed.y === 0 ? value : undefined;
@@ -75,6 +75,7 @@ async function createChart(ctx, id, title) {
         },
         options: {
             responsive: true,
+            resizeDelay: 100,
             maintainAspectRatio: false,
             spanGaps: true,
             radius: 0,

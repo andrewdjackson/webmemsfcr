@@ -1,18 +1,22 @@
-{% set excludes = ['Time', '7d ECU Response', '80 ECU Response'] %}
+{% set excludes = ['Time', '7d ECU Response', '80 ECU Response', "Coolant Sensor Fault", "Fuel Pump Circuit Fault", "Intake Air Sensor Fault", "Throttle Pot. Fault"] %}
 
 {% for item in data["ecudata_df80.json"]["ecudata"] %}
 	{% if item["name"] not in excludes %}
-	<div class="chart-container">
-		<canvas id="{{ item['id'] | safe }}_ecuchart" title="{{ item['name'] | safe }}" class="ecuchart"></canvas>
-	</div>
+		<div class="position-relative">
+			<div class="chart-container"><canvas id="{{ item['id'] | safe }}_ecuchart" title="{{ item['name'] | safe }}" class="ecuchart" height="150"></canvas></div>
+			<div class="position-absolute top-50 end-0 m-3 ecudata-label">{{ item['name'] | safe }}</div>
+			<div class="position-absolute bottom-0 end-0 m-3 ecudata_{{ item['id'] | safe }}">0</div>
+		</div>
 	{% endif %}
 {% endfor %}
 
 {% for item in data["ecudata_df7d.json"]["ecudata"] %}
 	{% if item["name"] not in excludes  %}
-	<div class="chart-container">
-		<canvas id="{{ item['id'] | safe }}_ecuchart" title="{{ item['name'] | safe }}" class="ecuchart"></canvas>
-	</div>
+		<div class="position-relative">
+			<div class="chart-container"><canvas id="{{ item['id'] | safe }}_ecuchart" title="{{ item['name'] | safe }}" class="ecuchart" height="150"></canvas></div>
+			<div class="position-absolute top-50 end-0 m-3 ecudata-label">{{ item['name'] | safe }}</div>
+			<div class="position-absolute bottom-0 end-0 m-3 ecudata_{{ item['id'] | safe }}">0</div>
+		</div>
 	{% endif %}
 {% endfor %}
 
