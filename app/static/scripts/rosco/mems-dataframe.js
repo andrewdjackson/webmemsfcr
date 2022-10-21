@@ -40,7 +40,7 @@ export class Dataframe80 {
         this._80x06_FuelTemp = data[6] - 55;
         this._80x07_ManifoldAbsolutePressure = data[7];
         this._80x08_BatteryVoltage = data[8] / 10;
-        this._80x09_ThrottlePotSensor = data[9] * 0.02;
+        this._80x09_ThrottlePotSensor = data[9] * 0.02;  // 0.02V per LSB
         this._80x0A_IdleSwitch = (data[0x0a] & 0x00001000) >> 3;
         this._80x0B_AirconSwitch = data[0x0b] > 0;
         this._80x0C_ParkNeutralSwitch = data[0x0c] > 0;
@@ -86,7 +86,7 @@ export class Dataframe7d {
 
         this._7Dx00_Time = getDateTimeString(ecuResponse.command.id);
         this._7Dx01_IgnitionSwitch = data[1] > 0;
-        this._7Dx02_ThrottleAngle = data[2] / 2; // * 0.6?
+        this._7Dx02_ThrottleAngle = data[2] * 0.6;
         this._7Dx04_AirFuelRatio = data[4] / 10;
         this._7Dx06_LambdaVoltage = data[6] * 5;
         this._7Dx07_LambdaFrequency = data[7];

@@ -1,4 +1,5 @@
 import * as Constant from "./analysis-constants.js"
+import {defaultIdleThrottlePot} from "./analysis-constants.js";
 
 const SAMPLE_SIZE = 30;
 const CURRENT_DATAFRAME = -1;
@@ -72,7 +73,7 @@ export class OperationalStatus {
     // later MEMS ECUs use the throttle pot to determine the idle position
     //
     get isEngineIdle() {
-        return ((this.isEngineRunning) && (this._dataframe._7Dx02_ThrottleAngle <= Constant.defaultIdleThrottleAngle));
+        return ((this.isEngineRunning) && (this._dataframe._80x09_ThrottlePotSensor <= Constant.defaultIdleThrottlePot));
     }
 
     get isLoopClosed() {
@@ -80,7 +81,7 @@ export class OperationalStatus {
     }
 
     get isThrottleActive() {
-        return ((this._dataframe._7Dx02_ThrottleAngle > Constant.defaultIdleThrottleAngle) || (this._dataframe._80x01_EngineRPM > Constant.highestIdleRPM));
+        return ((this._dataframe._80x09_ThrottlePotSensor > Constant.defaultIdleThrottlePot) || (this._dataframe._80x01_EngineRPM > Constant.highestIdleRPM));
     }
 
     get isBatteryVoltageLow() {
