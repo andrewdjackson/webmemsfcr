@@ -1,6 +1,32 @@
 import * as Constant from "../analysis/analysis-constants.js";
 
 export class Dataframe80 {
+    _80x00_Time;
+    _80x01_EngineRPM;
+    _80x03_CoolantTemp;
+    _80x04_AmbientTemp;
+    _80x05_IntakeAirTemp;
+    _80x06_FuelTemp;
+    _80x07_ManifoldAbsolutePressure;
+    _80x08_BatteryVoltage;
+    _80x09_ThrottlePotSensor;
+    _80x0A_IdleSwitch;
+    _80x0B_AirconSwitch;
+    _80x0C_ParkNeutralSwitch;
+    _80x0F_IdleSetPoint;
+    _80x10_IdleHot;
+    _80x12_IACPosition;
+    _80x13_IdleSpeedDeviation;
+    _80x15_IgnitionAdvanceOffset;
+    _80x16_IgnitionAdvance;
+    _80x17_CoilTime;
+    _80x19_CrankshaftPositionSensor;
+    CoolantTempSensorFault;
+    IntakeAirTempSensorFault;
+    FuelPumpCircuitFault;
+    ThrottlePotCircuitFault;
+    _80_RawData;
+
     constructor() {
         this._80x00_Time = getDateTimeString();
         this._80x01_EngineRPM = 0;
@@ -50,7 +76,9 @@ export class Dataframe80 {
         this._80x13_IdleSpeedDeviation = (data[0x13] << 8) + data[14];
         this._80x15_IgnitionAdvanceOffset = data[0x15];
         this._80x16_IgnitionAdvance = (data[0x16] / 2) - 24;
-        this._80x17_CoilTime =((data[0x17] << 8) + data[0x18]) * 0.002;
+        this._80x17_CoilTime = ((data[0x17] << 8) + data[0x18]) * 0.002;
+        // round to 2 decimal place
+        this._80x17_CoilTime = Math.round(this._80x17_CoilTime * 100) / 100
         this._80x19_CrankshaftPositionSensor = data[0x19];
         this.CoolantTempSensorFault = ((data[13] >> 0) & 1 ) > 0;
         this.IntakeAirTempSensorFault = ((data[13] >> 2) & 1 ) > 0;
@@ -61,6 +89,24 @@ export class Dataframe80 {
 }
 
 export class Dataframe7d {
+    _7Dx00_Time;
+    _7Dx01_IgnitionSwitch;
+    _7Dx02_ThrottleAngle;
+    _7Dx04_AirFuelRatio;
+    _7Dx06_LambdaVoltage;
+    _7Dx07_LambdaFrequency;
+    _7Dx08_LambdaDutycycle;
+    _7Dx09_LambdaStatus;
+    _7Dx0A_ClosedLoop;
+    _7Dx0B_LongTermFuelTrim;
+    _7Dx0C_ShortTermFuelTrim;
+    _7Dx0D_CarbonCanisterPurgeValve;
+    _7Dx0F_IdleBasePosition;
+    _7Dx12_IgnitionAdvanceOffset;
+    _7Dx13_IdleSpeedOffset;
+    _7Dx1F_JackCount;
+    _7D_RawData;
+
     constructor() {
         this._7Dx00_Time = getDateTimeString();
         this._7Dx01_IgnitionSwitch = 0;
@@ -87,6 +133,8 @@ export class Dataframe7d {
         this._7Dx00_Time = getDateTimeString(ecuResponse.command.id);
         this._7Dx01_IgnitionSwitch = data[1] > 0;
         this._7Dx02_ThrottleAngle = data[2] * 0.6;
+        // round to 2 decimal places
+        this._7Dx02_ThrottleAngle = Math.round(this._7Dx02_ThrottleAngle * 100) / 100
         this._7Dx04_AirFuelRatio = data[4] / 10;
         this._7Dx06_LambdaVoltage = data[6] * 5;
         this._7Dx07_LambdaFrequency = data[7];

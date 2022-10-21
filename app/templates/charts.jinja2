@@ -1,4 +1,4 @@
-{% set excludes = ['Time', '7d Raw Data', '80 Raw Data'] %}
+{% set excludes = ['Time', '7d ECU Response', '80 ECU Response'] %}
 
 {% for item in data["ecudata_df80.json"]["ecudata"] %}
 	{% if item["name"] not in excludes %}

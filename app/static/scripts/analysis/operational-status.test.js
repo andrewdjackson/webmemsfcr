@@ -1,8 +1,9 @@
-import {beforeEach, describe, expect, it, test} from "vitest";
+import {beforeEach, afterEach, describe, expect, it, test} from "vitest";
 import {Dataframe7d, Dataframe80} from "../rosco/mems-dataframe.js";
 import {OperationalStatus} from "./operational-status.js";
 import {DataframeLog} from "../rosco/mems-dataframe-log.js";
 import * as Constant from "../analysis/analysis-constants.js";
+import {defaultIdleThrottlePot} from "../analysis/analysis-constants.js";
 
 var dataframeLog;
 var status;
@@ -12,7 +13,11 @@ const LAST_DATAFRAME = -1;
 
 beforeEach(() => {
     dataframeLog = new DataframeLog();
-})
+});
+
+afterEach(() => {
+
+});
 
 //test.skip('skipped test', () => {
     describe('Analyse operational status of a dataframe', () => {
@@ -143,9 +148,11 @@ function createValidDataframes(isRunning, isIdle, isWarm) {
         dataframe80._80x0A_IdleSwitch = true;
         dataframe80._80x07_ManifoldAbsolutePressure = idleMAP;
         dataframe7d._7Dx02_ThrottleAngle = idleThrottleAngle;
+        dataframe80._80x09_ThrottlePotSensor = defaultIdleThrottlePot;
     } else {
         dataframe80._80x07_ManifoldAbsolutePressure = runningMAP;
         dataframe7d._7Dx02_ThrottleAngle = revThrottleAngle;
+        dataframe80._80x09_ThrottlePotSensor = defaultIdleThrottlePot + 0.5;
     }
 
     if (!isRunning) {

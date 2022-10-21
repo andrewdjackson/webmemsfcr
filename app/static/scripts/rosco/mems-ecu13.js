@@ -1,5 +1,3 @@
-import {MemsSerialInterface} from "./mems-serial.js";
-import {ECUReader} from "./mems-ecureader.js";
 import * as Command from "./mems-commands.js";
 import {MemsEcu16} from "./mems-ecu16.js";
 
