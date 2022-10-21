@@ -1,9 +1,9 @@
 import * as Command from "./mems-commands.js";
 
 // rate at which commands will be sent to the ECU
-const MAX_ECU_SERIAL_RW_INTERVAL = 250;
+const MAX_ECU_SERIAL_RW_INTERVAL = 300;
 // rate at which dataframes will be requested
-const STANDARD_DATAFRAME_REQUEST_INTERVAL = 250;
+const STANDARD_DATAFRAME_REQUEST_INTERVAL = 350;
 // rate at which heartbeats will be requested
 const STANDARD_HEARTBEAT_REQUEST_INTERVAL = 1000;
 
@@ -20,6 +20,7 @@ export class ECUReader {
         this._isConnected = false;
         this._paused = false;
         this._isDataframeRequestLoopRunning = false;
+        this._waitingForResponse = false;
         this._sentCount = 0;
         this._ecuId = "";
 
@@ -138,15 +139,22 @@ export class ECUReader {
     //
     _sendNextCommandFromQueue() {
         if (this._commandQueue.length > 0) {
-            // get command from the head of the queue and set the message id
-            let ecuCommand = this._commandQueue.shift();
+            if (this._waitingForResponse) {
+                console.error(`tx/rx behind the queue, ${this._commandQueue.length} waiting`);
+            } else {
+                // get command from the head of the queue and set the message id
+                let ecuCommand = this._commandQueue.shift();
 
-            console.debug(`${Date.now().toString()} : send next command ${JSON.stringify(ecuCommand)} from the queue`);
+                console.debug(`${Date.now().toString()} : send next command ${JSON.stringify(ecuCommand)} from the queue`);
 
-            // send the command and publish the response
-            this._sendAndReceive(ecuCommand)
-                .then(() => {})
-                .catch((error) => {console.error(`${error}`)})
+                // send the command and publish the response
+                this._sendAndReceive(ecuCommand)
+                    .then(() => {
+                    })
+                    .catch((error) => {
+                        console.error(`${error}`)
+                    })
+            }
         }
     }
 
@@ -156,6 +164,9 @@ export class ECUReader {
     // the response is published on the event queue
     //
     async _sendAndReceive(ecuCommand) {
+        // prevent another request whilst waiting for a response
+        this._lockSendRecieve();
+
         // send the command
         await this.sendToECU(ecuCommand)
             .then((response) => {
@@ -175,8 +186,18 @@ export class ECUReader {
             })
             .catch((error) => {
                 console.error(`_sendAndReceive exception ${error}`);
-                //return Promise.reject(`_sendAndReceive exception ${error}`);
+            })
+            .finally(() => {
+                this._unlockSendRecieve();
             });
+    }
+
+    _lockSendRecieve() {
+        this._waitingForResponse = true;
+    }
+
+    _unlockSendRecieve() {
+        this._waitingForResponse = false;
     }
 
     _queueDataframeCommand() {
