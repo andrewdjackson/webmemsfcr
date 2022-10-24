@@ -74,7 +74,10 @@ export class DataframeLog {
         }
         if (dataframe !== undefined) {
             this._addDataframe(dataframe);
+            return true;
         }
+
+        return false;
     }
 
     //

@@ -78,11 +78,13 @@ export class MemsSerialInterface {
     //
     async sendAndReceiveFromSerial(command, expectedResponseSize) {
         if (this._isConnected) {
+            console.debug(`serial tx at ${new Date().getTime()}`);
             await this._write(command);
             return Promise.any([
                 this._read(expectedResponseSize),
                 new Promise(resolve => setTimeout(resolve, SERIAL_TIMEOUT, 'serial read timeout'))
             ]).then((response) => {
+                console.debug(`serial rx at ${new Date().getTime()}`);
                 return response;
             }).catch(((value) => {
                 console.info(`promise ${value}`);
@@ -120,8 +122,6 @@ export class MemsSerialInterface {
     async _open() {
         return await this._port.open({baudRate: 9600, bufferSize: 1,})
             .then(async () => {
-                //this._reader = this._port.readable.getReader();
-                //await this.flush();
                 return true;
             }).catch(() => {
                 this._port = undefined;
@@ -145,24 +145,6 @@ export class MemsSerialInterface {
         await this._port.forget();
         // close the port
         return await this._port.close();
-    }
-
-    async flush() {
-        console.info(`flush: flushing read buffer`);
-
-        await Promise.any([
-            this._sleep(250),
-            this._read(1)
-        ]).catch(() => {
-            // eat the errors
-        }).finally(async () => {
-            if (this._reader !== undefined) {
-                await this._reader.cancel().catch(() => {});
-                //await this._reader.releaseLock();
-            }
-        })
-
-        console.info(`flush: read buffer flushed`);
     }
 
     //
@@ -236,10 +218,6 @@ export class MemsSerialInterface {
         });
 
         return hex;
-    }
-
-    _numberAsHexString(value) {
-        return value.toString(16).padStart(2, '0');
     }
 
     //

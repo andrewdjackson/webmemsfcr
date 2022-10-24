@@ -1,11 +1,11 @@
 import * as Command from "./mems-commands.js";
 
 // rate at which commands will be sent to the ECU
-const MAX_ECU_SERIAL_RW_INTERVAL = 300;
+const MAX_ECU_SERIAL_RW_INTERVAL = 200;
 // rate at which dataframes will be requested
-const STANDARD_DATAFRAME_REQUEST_INTERVAL = 350;
+const STANDARD_DATAFRAME_REQUEST_INTERVAL = 500;
 // rate at which heartbeats will be requested
-const STANDARD_HEARTBEAT_REQUEST_INTERVAL = 1000;
+const STANDARD_HEARTBEAT_REQUEST_INTERVAL = 2000;
 
 export class ECUResponse {
     constructor(command, response) {
@@ -140,12 +140,12 @@ export class ECUReader {
     _sendNextCommandFromQueue() {
         if (this._commandQueue.length > 0) {
             if (this._waitingForResponse) {
-                console.error(`tx/rx behind the queue, ${this._commandQueue.length} requests waiting`);
+                console.error(`serial behind the queue, ${this._commandQueue.length} requests waiting`);
             } else {
                 // get command from the head of the queue and set the message id
                 let ecuCommand = this._commandQueue.shift();
 
-                console.debug(`${Date.now().toString()} : send next command ${JSON.stringify(ecuCommand)} from the queue`);
+                console.debug(`${Date.now().toString()} : send next command ${JSON.stringify(ecuCommand)} from the queue (${this._commandQueue.length})`);
 
                 // send the command and publish the response
                 this._sendAndReceive(ecuCommand)
@@ -293,12 +293,23 @@ export class ECUReader {
 
     set paused(pause) {
         let interval = STANDARD_DATAFRAME_REQUEST_INTERVAL;
+        let dataframeRequest;
         this._paused = pause;
 
         if (this._paused) {
+            if (this._isNextCommand7dDataframeRequest()) {
+                // need to process this request to complete the dataframe pair before pausing
+                dataframeRequest = this._commandQueue.at(0);
+            }
             // clear the queue if when pausing the dataframe loop
             // this ensures the pause happens immediately
             this._clearQueue();
+
+            // add the dataframe pair request to be processed first
+            if (dataframeRequest !== undefined) {
+                this.addCommandToSendQueue(dataframeRequest, true);
+            }
+
             // increase the interval time, so heartbeats are sent at 1s intervals
             interval = STANDARD_HEARTBEAT_REQUEST_INTERVAL;
         }
@@ -309,6 +320,14 @@ export class ECUReader {
         this.startDataframeLoop();
     };
 
+    _isNextCommand7dDataframeRequest() {
+        if (this._commandQueue.length > 0) {
+            const command = this._commandQueue.at(0);
+            return (command.command === Command.MEMS_Dataframe7d.command);
+        }
+
+        return false;
+    }
     //
     // gets / sets the rate at which the dataframe requests are generated
     // this should be the same or higher than the rate commands are send and received from the ecu

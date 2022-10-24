@@ -31,6 +31,7 @@ export async function initialise() {
         await Chart.createCharts();
         await Chart.createSparks();
         View.showTab('nav-home-tab');
+        //View.showTab('nav-analysis-tab');
 
         Controls.attachControlEventListeners();
         Adjustment.attachAdjustmentsEventListeners();

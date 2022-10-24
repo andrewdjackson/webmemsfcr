@@ -1,4 +1,4 @@
 app==0.0.1
-Flask==2.1.1
+Flask==2.2.2
 Flask_WTF==1.0.1
 PyHamcrest==2.0.4
