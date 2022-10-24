@@ -7,31 +7,26 @@ export function dataframeReceived(ecuResponse) {
     console.info(`dataframe received ${JSON.stringify(ecuResponse)}`);
     let df = ecu.generateDataframeFromECUResponse(ecuResponse);
 
+    // add the dataframe to the log
     dataframeLog.addDataframe(df);
+    // analyse for faults and operation status
     analysis.analyse();
-
-    //updateDataframeTable(df);
-    updateDataframeMetrics(df);
     const faults = analysis.faults;
-    Chart.updateCharts(df, faults.at(-1));
-    Chart.updateSparks(df, faults.at(-1));
+
+    // set buttons based on state
     View.setButtonsWhenDataHasBeenLogged();
     View.setButtonsOnEngineRunning();
+
+    // update the values in the UI
+    updateDataframeMetrics(df);
+
+    // update the charts
+    Chart.updateCharts(df, faults.at(-1));
 }
 
 //
 // update the table in the UI that displays the ECU values
 //
-export function updateDataframeTable(df) {
-    Object.entries(df).forEach((entry) => {
-        const [key, value] = entry;
-        let element = document.getElementById(`${Identifier.ecuDataMetric}_${key}`);
-        if (element !== undefined) {
-            element.innerHTML = `${value}`;
-        }
-    });
-}
-
 function updateDataframeMetrics(df) {
     Object.entries(df).forEach((entry) => {
         const [key, value] = entry;

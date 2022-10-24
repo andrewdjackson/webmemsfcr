@@ -28,8 +28,8 @@ export async function initialise() {
         // create the charts and then show the ecu data tab
         // rendering of the charts gets deferred which interrupts the js loop
         // causing serial errors.
-        await Chart.createCharts();
-        await Chart.createSparks();
+        Chart.createCharts();
+        Chart.createSparks();
         View.showTab('nav-home-tab');
         //View.showTab('nav-analysis-tab');
 

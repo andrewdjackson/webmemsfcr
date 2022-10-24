@@ -10,76 +10,75 @@ const faulty = (ctx, value) => ctx.p0.parsed.y > 0 ? value : undefined;
 
 var faultsArray = {}
 
-export async function createCharts() {
+export function createCharts() {
     let chart = document.querySelectorAll(`.${Identifier.ecuDataChart}`);
     for (let i = 0; i < chart.length; i++) {
         const chartCtx = document.getElementById(chart[i].id);
         const chartId = `${chart[i].id}_graph`;
         const chartTitle = `${chartCtx.title}`;
 
-        const graph = await createChart(chartCtx, chartId, chartTitle);
+        const graph = createChart(chartCtx, chartId, chartTitle);
         charts.push(graph);
     }
 }
 
-export async function updateCharts(df, faults) {
-    let time = df[Identifier.ecuDataTimeMetric80];
-    if (time === undefined) {
-        time = df[Identifier.ecuDataTimeMetric7d];
-    }
-
-    Object.entries(df).forEach((entry) => {
-        const [key, value] = entry;
-        const chartId = `${key}_${Identifier.ecuDataChart}`;
-        const chart = findChart(chartId);
-
-        if (chart !== undefined) {
-            let fault = false;
-
-            if (faults !== undefined) {
-                fault = faults[key];
-            }
-
-            addData(chart, time, value, fault);
-        }
-    });
-}
-
-export async function createSparks() {
+export function createSparks() {
     let chart = document.querySelectorAll(`.${Identifier.ecuDataSpark}`);
     for (let i = 0; i < chart.length; i++) {
         const chartCtx = document.getElementById(chart[i].id);
         const chartId = `${chart[i].id}_spark`;
 
-        const graph = await createSpark(chartCtx, chartId);
+        const graph = createSpark(chartCtx, chartId);
         charts.push(graph);
     }
 }
 
-export async function updateSparks(df, faults) {
+export function updateCharts(df, faults) {
+    console.debug(`start chart at ${new Date().getTime()}`);
     let time = df[Identifier.ecuDataTimeMetric80];
     if (time === undefined) {
         time = df[Identifier.ecuDataTimeMetric7d];
     }
 
     Object.entries(df).forEach((entry) => {
-        const [key, value] = entry;
-        const chartId = `${key}_${Identifier.ecuDataSpark}`;
-        const chart = findChart(chartId);
-
-        if (chart !== undefined) {
-            let fault = false;
-
-            if (faults !== undefined) {
-                fault = faults[key];
-            }
-
-            addData(chart, time, value, fault);
-        }
+        const [id, value] = entry;
+        const fault = _hasFault(id, faults);
+        _updateCharts(id,time,value,fault);
     });
+    console.debug(`finish chart at ${new Date().getTime()}`);
 }
 
-async function createChart(ctx, id, title) {
+function _hasFault(id, faults) {
+    if (faults !== undefined) {
+        return faults[id];
+    }
+
+    return false;
+}
+
+function _updateCharts(id, time, value, fault) {
+    const chartId = `${id}_${Identifier.ecuDataChart}`;
+    const chart = findChart(chartId);
+    if (chart !== undefined) {
+        // update the main graph
+        _addDataToChart(chart, time, value, fault);
+    }
+
+    const sparkId = `${id}_${Identifier.ecuDataSpark}`;
+    const spark = findChart(sparkId);
+    if (spark !== undefined) {
+        // update the spark
+        _addDataToChart(spark, time, value, fault);
+    }
+}
+
+function _addDataToChart(chart, time, value, fault) {
+    if (chart !== undefined) {
+        addData(chart, time, value, fault);
+    }
+}
+
+function createChart(ctx, id, title) {
     return new Chart(ctx, {
         id: id,
         type: 'line',
@@ -88,7 +87,7 @@ async function createChart(ctx, id, title) {
             datasets: [{
                 data: Array.apply(null, Array(chartLength)).map(function() { return 0 }),
                 cubicInterpolationMode: 'monotone',
-                tension: 0.4,
+                tension: 0,
                 borderColor: 'rgba(102,102,255,1)',
                 backgroundColor: 'rgba(102,153,204,0.1)',
                 fillColor: "rgba(102,153,51,0.1)",
@@ -99,7 +98,7 @@ async function createChart(ctx, id, title) {
                 {
                     data: Array.apply(null, Array(chartLength)).map(function() { return 0 }),
                     cubicInterpolationMode: 'monotone',
-                    tension: 0.4,
+                    tension: 0,
                     borderWidth: 2,
                     segment: {
                         borderColor: ctx => skipped(ctx, 'rgba(102,102,255,0)') || faulty(ctx, 'rgba(178, 16, 28, 1.0)'),
@@ -108,9 +107,14 @@ async function createChart(ctx, id, title) {
                     fill: true,
                 }],
         },
+        elements: {
+            point: {
+                radius: 0 // default to disabled in all datasets
+            }
+        },
         options: {
+            normalized: true,
             responsive: true,
-            resizeDelay: 100,
             maintainAspectRatio: false,
             spanGaps: true,
             radius: 0,
@@ -120,6 +124,10 @@ async function createChart(ctx, id, title) {
                 },
                 annotation: {
                     annotations: faultsArray[id],
+                },
+                decimation: {
+                    enabled: true,
+                    algorithm: 'min-max',
                 }
             },
             scales: {
@@ -152,7 +160,7 @@ async function createChart(ctx, id, title) {
     });
 }
 
-async function createSpark(ctx, id) {
+function createSpark(ctx, id) {
     return new Chart(ctx, {
         id: id,
         type: 'line',
@@ -166,12 +174,12 @@ async function createSpark(ctx, id) {
                 strokeColor: "rgba(220,220,220,1)",
                 borderWidth: 1,
                 cubicInterpolationMode: 'monotone',
-                tension: 0.4,
+                tension: 0,
                 fill: true,
             },{
                 data: Array.apply(null, Array(sparkLength)).map(function() { return 0 }),
                 cubicInterpolationMode: 'monotone',
-                tension: 0.4,
+                tension: 0,
                 borderWidth: 1,
                 segment: {
                     borderColor: ctx => skipped(ctx, 'rgba(102,102,255,0)') || faulty(ctx, 'rgba(202,12,55,1.0)'),
@@ -180,15 +188,22 @@ async function createSpark(ctx, id) {
                 fill: true,
             }],
         },
+        elements: {
+            point: {
+                radius: 0 // default to disabled in all datasets
+            }
+        },
         options: {
+            normalized: true,
             responsive: true,
+            resizeDelay: 200,
             maintainAspectRatio: false,
             spanGaps: true,
             radius: 0,
             plugins: {
                 legend: {
                     display: false,
-                }
+                },
             },
             tooltips: {
                 enabled: false

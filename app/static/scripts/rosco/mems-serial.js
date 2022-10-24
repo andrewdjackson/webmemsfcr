@@ -78,13 +78,11 @@ export class MemsSerialInterface {
     //
     async sendAndReceiveFromSerial(command, expectedResponseSize) {
         if (this._isConnected) {
-            console.debug(`serial tx at ${new Date().getTime()}`);
             await this._write(command);
             return Promise.any([
                 this._read(expectedResponseSize),
                 new Promise(resolve => setTimeout(resolve, SERIAL_TIMEOUT, 'serial read timeout'))
             ]).then((response) => {
-                console.debug(`serial rx at ${new Date().getTime()}`);
                 return response;
             }).catch(((value) => {
                 console.info(`promise ${value}`);

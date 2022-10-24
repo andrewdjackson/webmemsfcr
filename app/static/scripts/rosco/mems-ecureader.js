@@ -1,10 +1,12 @@
 import * as Command from "./mems-commands.js";
 
 // rate at which commands will be sent to the ECU
+// MEMS 1.6 dataframe request / response takes 150ms
 const MAX_ECU_SERIAL_RW_INTERVAL = 200;
-// rate at which dataframes will be requested
-const STANDARD_DATAFRAME_REQUEST_INTERVAL = 500;
-// rate at which heartbeats will be requested
+// rate at which dataframes will be requested, since we request 0x80 and 0x7D at the same time
+// this must be a minimum of double the serial rw rate
+const STANDARD_DATAFRAME_REQUEST_INTERVAL = MAX_ECU_SERIAL_RW_INTERVAL * 2;
+// rate at which connection keep-alive heartbeats will be requested
 const STANDARD_HEARTBEAT_REQUEST_INTERVAL = 2000;
 
 export class ECUResponse {
