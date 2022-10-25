@@ -71,23 +71,23 @@ export class MemsEcu16 extends ECUReader {
             //await this._serial.sendAndReceiveFromSerial(Command.MEMS_Heartbeat.command, Command.MEMS_Heartbeat.responseSize);
 
             // initialisation sequence
-            for (let retries=0; retries < INITIALISATION_MAX_RETRIES; retries++) {
-                // when the line is initialised for the first time, a x00 byte can be returned
-                // read again until we receive the expected response
-                response = await this._serial.sendAndReceiveFromSerial(Command.MEMS_InitA.command, Command.MEMS_InitA.responseSize);
+            response = await this._serial.sendAndReceiveFromSerial(Command.MEMS_InitA.command, Command.MEMS_InitA.responseSize);
 
-                if (response[0] !== Command.MEMS_InitA.command) {
-                    console.error(`initialisation fault: expected ${Command.MEMS_InitA.command} received ${response}`);
+            // when the line is initialised for the first time, a x00 byte can be returned
+            // read again until we receive the expected response
+            if (response[0] !== Command.MEMS_InitA.command) {
+                for (let retries=0; retries < INITIALISATION_MAX_RETRIES; retries++) {
+                    // wait for the ecu to respond
                     await this._sleep(100);
-                    console.error(`initialisation attempt ${retries+1} of 10`);
-                    // read 1 byte again
-                    //response = await this._serial._read(1);
-                    //if (response[0] !== Command.MEMS_InitA.command) {
-                    //    console.error(`initialisation fault: expected ${Command.MEMS_InitA.command} received ${response}`);
-                    //}
-                } else {
-                    // valid initialisation received for first command, break out of the loop
-                    break;
+
+                    //  flush, read 1 byte
+                    response = await this._serial._read(1);
+                    if (response[0] !== Command.MEMS_InitA.command) {
+                        console.error(`initialisation fault, retrying (attempt ${retries+1})`);
+                    } else {
+                        // finally received the correct response
+                        break;
+                    }
                 }
             }
 
