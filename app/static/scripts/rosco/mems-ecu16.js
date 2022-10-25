@@ -63,6 +63,8 @@ export class MemsEcu16 extends ECUReader {
     // this function requires the command as a byte array and returns the response as a byte array
     //
     async  _initialise() {
+        let initialised = false;
+
         if (this._serial.isConnected) {
             let response;
 
@@ -83,32 +85,40 @@ export class MemsEcu16 extends ECUReader {
                     //  flush, read 1 byte
                     response = await this._serial._read(1);
                     if (response[0] !== Command.MEMS_InitA.command) {
-                        console.error(`initialisation fault, retrying (attempt ${retries+1})`);
+                        console.warn(`initialisation fault, retrying (attempt ${retries+1})`);
                     } else {
                         // finally received the correct response
+                        initialised = true;
                         break;
                     }
                 }
+            } else {
+                // response successful
+                initialised = true;
             }
 
-            await this._serial.sendAndReceiveFromSerial(Command.MEMS_InitB.command, Command.MEMS_InitB.responseSize);
-            response = await this._serial.sendAndReceiveFromSerial(Command.MEMS_Heartbeat.command, Command.MEMS_Heartbeat.responseSize);
+            // continue if first part of initialisation is successful
+            if (initialised) {
+                await this._serial.sendAndReceiveFromSerial(Command.MEMS_InitB.command, Command.MEMS_InitB.responseSize);
+                await this._serial.sendAndReceiveFromSerial(Command.MEMS_Heartbeat.command, Command.MEMS_Heartbeat.responseSize);
 
-            if (Command.MEMS_Heartbeat.command === response[0]) {
-                let ecuId = await this._serial.sendAndReceiveFromSerial(Command.MEMS_ECUId.command, Command.MEMS_ECUId.responseSize);
-                this._ecuId = Dataframe.arrayAsHexString(ecuId.slice(1));
-                console.info(`ecu id ${this._ecuId}`);
-
+                await this._getECUId();
                 this.startDataframeLoop();
-
-                return true;
             }
         }
 
-        console.error(`initialisation of the ecu failed`);
-        await this._serial.close();
+        if (!initialised) {
+            console.error(`initialisation of the ecu failed`);
+            await this._serial.close();
+        }
 
-        return false;
+        return initialised;
+    }
+
+    async _getECUId() {
+        let ecuId = await this._serial.sendAndReceiveFromSerial(Command.MEMS_ECUId.command, Command.MEMS_ECUId.responseSize);
+        this._ecuId = Dataframe.arrayAsHexString(ecuId.slice(1));
+        console.info(`ecu id ${this._ecuId}`);
     }
 
     generateDataframeFromECUResponse(ecuResponse) {
