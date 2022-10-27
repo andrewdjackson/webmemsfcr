@@ -28,12 +28,12 @@
       "cols" : [
         {
           "id": "_80x03_CoolantTemp",
-          "name": "Coolant Temp (°C)",
+          "name": "Coolant Temp (\u00b0C)",
           "graph": true
         },
         {
           "id": "_80x05_IntakeAirTemp",
-          "name": "Intake Air Temp (°C)",
+          "name": "Intake Air Temp (\u00b0C)",
           "graph": true
         },
         {
@@ -43,7 +43,7 @@
         },
         {
           "id": "_80x16_IgnitionAdvance",
-          "name": "Ignition Advance (°)",
+          "name": "Ignition Advance (\u00b0)",
           "graph": false
         }
       ]
