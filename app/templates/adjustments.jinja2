@@ -1,3 +1,12 @@
+<div class="card p-3 m-3 fs-5">
+	<p>
+	These controls allow you to make adjustments to key parameters. If you need to adjust these parameters, it's indicative of an issue elsewhere.
+	</p>
+	<p>
+		<strong>Only modify these parameters if you know what you're doing!</strong>
+	</p>
+</div>
+
 {% for item in data["adjustments.json"]["adjustments"] %}
 	<div class="btn-group" role="group">
 		<button id="{{ item['id'] | safe }}_increase" name="{{ item['id'] | safe }}" value="decrease" class="btn btn-outline-secondary adjustment ecu-enabled-connected">- </button>
@@ -5,3 +14,29 @@
 		<button id="{{ item['id'] | safe }}_decrease" name="{{ item['id'] | safe }}" value="increase" class="btn btn-outline-secondary adjustment ecu-enabled-connected">+ </button>
 	</div>
 {% endfor %}
+
+<div class="card p-3 m-3 text-start">
+	<div class="row">
+		<div class="col">
+			<div class="row">
+				<div class="col col-sm-2">
+					<button id="clearFaultsButton" class="btn btn-danger ecu-control ecu-enabled-connected" disabled>Clear Faults</button>
+				</div>
+				<div class="col">
+					Clears the faults raised by the ECU.<br> This will not clear any faults diagnosed by MemsFCR, you'll need a book and some spanners for that.
+				</div>
+			</div>
+		</div>
+
+		<div class="col">
+			<div class="row">
+				<div class="col col-sm-2">
+					<button id="resetECUButton" class="btn btn-danger ecu-control ecu-enabled-connected" disabled>Reset ECU</button>
+				</div>
+				<div class="col">
+					Resets all adjustments and computed values like fuel trim and jack count.<br> This is useful if you have made major changes to a number of key sensors.
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

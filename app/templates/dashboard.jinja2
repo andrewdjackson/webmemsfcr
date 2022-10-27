@@ -1,0 +1,27 @@
+<div class="container">
+{% for row in data["dashboard.json"]["rows"] %}
+	<div class="row row-cols-4 mt-2 mb-4">
+	{% for col in row["cols"] %}
+		<div class="col">
+			<div class="row">
+				<div class="col">
+					<div class="text-black-50 fault_{{ col['id'] | safe }}">{{ col['name'] | safe }}</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<div class="fs-1 ecudata_{{ col['id'] | safe }}">&nbsp;</div>
+				</div>
+			</div>
+			{% if col["graph"] == true %}
+				<div class="row">
+					<div class="col">
+						<div class="col dashboard-chart-container"><canvas title="{{ col['name'] | safe }}" class="ecuspark {{ col['id'] | safe }}" height="150"></canvas></div>
+					</div>
+				</div>
+			{% endif %}
+		</div>
+	{%  endfor %}
+	</div>
+{%  endfor %}
+</div>

@@ -74,3 +74,10 @@
     width: 220px;
 }
 
+.dashboard-chart-container {
+    position: relative;
+    height: 50px;
+    width: 250px;
+    padding: 0px;
+    margin: 0px;
+}

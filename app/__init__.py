@@ -9,6 +9,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(basedir)
 sys.path.append(basedir + "/app")
 
+from analysis import Analysis
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, session, flash, make_response, jsonify
 from flask_wtf.csrf import CSRFProtect, CSRFError
 
@@ -38,6 +39,17 @@ def render_index():
     else:
         return render_template('error.html')
 
+#
+# perform analysis on the log file
+#
+@app.route('/analysis', methods=['POST'])
+def analysis():
+    dataframes = request.json
+    analysis = Analysis(dataframes['dataframes'])
+    data = load_template_data()
+    print(analysis.faults.faults)
+    return render_template('analysis.jinja2', faults=analysis.faults.faults, data=data)
+
 def load_template_data():
     data = {}
     files = get_template_data_filelist()
@@ -59,6 +71,31 @@ def get_template_data_filelist():
             files.append(file)
 
     return files
+
+# returns true or false if the specified fault is active
+@app.context_processor
+def isActiveFault():
+    def _isActiveFault(fault, faults):
+        for f in faults:
+            if f["metric"] == fault and f["index"] is not None:
+                return True
+
+        return False
+
+    return dict(isActiveFault=_isActiveFault)
+
+@app.context_processor
+def faultCount():
+    def _faultCount(faults):
+        count = 0
+
+        for f in faults:
+            if f["index"] is not None and f["type"] == "alert":
+                count += 1
+
+        return count
+
+    return dict(faultCount=_faultCount)
 
 if __name__ == '__main__':
     app.run(debug=True)

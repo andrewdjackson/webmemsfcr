@@ -13,8 +13,8 @@ var faultsArray = {}
 export function createCharts() {
     let chart = document.querySelectorAll(`.${Identifier.ecuDataChart}`);
     for (let i = 0; i < chart.length; i++) {
-        const chartCtx = document.getElementById(chart[i].id);
-        const chartId = `${chart[i].id}_graph`;
+        const chartCtx = chart[i];
+        const chartId = `${chart[i].className}`; //`${chart[i].id}_graph_${Math.floor(Math.random() * 100)}`;
         const chartTitle = `${chartCtx.title}`;
 
         const graph = createChart(chartCtx, chartId, chartTitle);
@@ -25,8 +25,8 @@ export function createCharts() {
 export function createSparks() {
     let chart = document.querySelectorAll(`.${Identifier.ecuDataSpark}`);
     for (let i = 0; i < chart.length; i++) {
-        const chartCtx = document.getElementById(chart[i].id);
-        const chartId = `${chart[i].id}_spark`;
+        const chartCtx = chart[i];
+        const chartId = `${chart[i].className}`;
 
         const graph = createSpark(chartCtx, chartId);
         charts.push(graph);
@@ -57,14 +57,14 @@ function _hasFault(id, faults) {
 }
 
 function _updateCharts(id, time, value, fault) {
-    const chartId = `${id}_${Identifier.ecuDataChart}`;
+    const chartId = `${Identifier.ecuDataChart} ${id}`;
     const chart = findChart(chartId);
     if (chart !== undefined) {
         // update the main graph
         _addDataToChart(chart, time, value, fault);
     }
 
-    const sparkId = `${id}_${Identifier.ecuDataSpark}`;
+    const sparkId = `${Identifier.ecuDataSpark} ${id}`;
     const spark = findChart(sparkId);
     if (spark !== undefined) {
         // update the spark
@@ -125,9 +125,9 @@ function createChart(ctx, id, title) {
                 legend: {
                     display: false,
                 },
-                annotation: {
-                    annotations: faultsArray[id],
-                },
+                //annotation: {
+                //    annotations: faultsArray[id],
+                //},
                 decimation: {
                     enabled: true,
                     algorithm: 'min-max',
@@ -165,7 +165,7 @@ function createChart(ctx, id, title) {
 
 function createSpark(ctx, id) {
     return new Chart(ctx, {
-        id: id,
+        //id: id,
         type: 'line',
         data: {
             labels: Array.apply(null, Array(sparkLength)).map(function() { return '' }),
@@ -236,6 +236,17 @@ function createSpark(ctx, id) {
     });
 }
 
+export async function getChartAsImage(id) {
+    const chartId = `${Identifier.ecuDataChart} ${id}`;
+    const chart = findChart(chartId);
+    if (chart !== undefined) {
+        const imageData = await chart.toBase64Image('image/png', 1);
+        if (imageData.length > 6) {
+            return imageData;
+        }
+    }
+}
+
 export function addData(chart, label, data, fault) {
     chart.data.labels.shift()
     chart.data.labels.push(label);
@@ -271,7 +282,7 @@ export function addData(chart, label, data, fault) {
 
 export function findChart(id) {
     for (let i=0; i < charts.length; i++) {
-        if (charts[i].canvas.id === id) {
+        if (charts[i].canvas.className === id) {
             return charts[i];
         }
     }

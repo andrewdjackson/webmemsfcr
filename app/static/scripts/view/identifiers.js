@@ -2,6 +2,7 @@ export const actuatorClass = "actuator";
 export const adjustmentClass = "adjustment";
 export const ecuControlClass = "ecu-control";
 export const hasLoggedDataClass= "has-logged-data";
+export const analysisClass = "analysis";
 
 export const alertToastId = "alert-toast";
 export const alertToastTextId = "alert-toast-body";

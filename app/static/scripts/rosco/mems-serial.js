@@ -65,7 +65,7 @@ export class MemsSerialInterface {
                 })
                 .catch((error) => {
                     console.error(`disconnect: error closing port ${error}`);
-                    Promise.reject(error);
+                    reject();
                 });
         }
 
@@ -77,6 +77,8 @@ export class MemsSerialInterface {
     // the command as a byte array and returns the response as a byte array
     //
     async sendAndReceiveFromSerial(command, expectedResponseSize) {
+        if (expectedResponseSize < 1) expectedResponseSize = 1;
+
         if (this._isConnected) {
             await this._write(command);
             return Promise.any([
@@ -84,8 +86,9 @@ export class MemsSerialInterface {
                 new Promise(resolve => setTimeout(resolve, SERIAL_TIMEOUT, 'serial read timeout'))
             ]).then((response) => {
                 return response;
-            }).catch(((value) => {
-                console.info(`promise ${value}`);
+            }).catch(((err) => {
+                console.error(`sendAndReceiveFromSerial exception ${err}`);
+                reject(err);
             }))
         }
 
@@ -175,7 +178,7 @@ export class MemsSerialInterface {
     // n specifies the number of bytes to read
     //
     async _read(n) {
-        let data = Array(n).fill(0);
+        let rxData = Array(n).fill(0);
         let count = 0;
 
         if (this._port !== undefined) {
@@ -189,20 +192,20 @@ export class MemsSerialInterface {
                             console.error(`serial reading cancelled`);
                             break;
                         }
-                        data[count++] = value[0];
+                        rxData[count++] = value[0];
                     }
                 } catch (error) {
                     console.error(`error ${error}`);
                 } finally {
                     this._reader.releaseLock();
-                    console.debug(`rx: ${this._arrayAsHexString(data)}`);
+                    console.debug(`rx: ${this._arrayAsHexString(rxData)}`);
                 }
             } else {
                 console.error(`serial not readable`);
             }
         }
 
-        return data;
+        return rxData;
     }
 
     //

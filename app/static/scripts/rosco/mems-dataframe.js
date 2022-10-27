@@ -56,35 +56,35 @@ export class Dataframe80 {
     }
 
     updateValuesFromEcuResponse(ecuResponse) {
-        let data = ecuResponse.response.slice(1);
+        let ecuResponse80Data = ecuResponse.response.slice(1);
 
         this._80x00_Time = getDateTimeString(ecuResponse.command.id);
-        this._80x01_EngineRPM = (data[1] << 8) + data[2];
-        this._80x03_CoolantTemp = data[3] - 55;
-        this._80x04_AmbientTemp = data[4] - 55;
-        this._80x05_IntakeAirTemp = data[5] - 55;
-        this._80x06_FuelTemp = data[6] - 55;
-        this._80x07_ManifoldAbsolutePressure = data[7];
-        this._80x08_BatteryVoltage = data[8] / 10;
-        this._80x09_ThrottlePotSensor = data[9] * 0.02;  // 0.02V per LSB
+        this._80x01_EngineRPM = (ecuResponse80Data[1] << 8) + ecuResponse80Data[2];
+        this._80x03_CoolantTemp = ecuResponse80Data[3] - 55;
+        this._80x04_AmbientTemp = ecuResponse80Data[4] - 55;
+        this._80x05_IntakeAirTemp = ecuResponse80Data[5] - 55;
+        this._80x06_FuelTemp = ecuResponse80Data[6] - 55;
+        this._80x07_ManifoldAbsolutePressure = ecuResponse80Data[7];
+        this._80x08_BatteryVoltage = ecuResponse80Data[8] / 10;
+        this._80x09_ThrottlePotSensor = ecuResponse80Data[9] * 0.02;  // 0.02V per LSB
         this._80x09_ThrottlePotSensor = roundDecimalPlaces(this._80x09_ThrottlePotSensor);
-        this._80x0A_IdleSwitch = (data[0x0a] & 0x00001000) >> 3;
-        this._80x0B_AirconSwitch = data[0x0b] > 0;
-        this._80x0C_ParkNeutralSwitch = data[0x0c] > 0;
-        this._80x0F_IdleSetPoint = data[0x0f] * 6.1;
+        this._80x0A_IdleSwitch = (ecuResponse80Data[0x0a] & 0x00001000) >> 3;
+        this._80x0B_AirconSwitch = ecuResponse80Data[0x0b] > 0;
+        this._80x0C_ParkNeutralSwitch = ecuResponse80Data[0x0c] > 0;
+        this._80x0F_IdleSetPoint = ecuResponse80Data[0x0f] * 6.1;
         this._80x0F_IdleSetPoint = roundDecimalPlaces(this._80x0F_IdleSetPoint);
-        this._80x10_IdleHot = data[0x10];
-        this._80x12_IACPosition = data[0x12];
-        this._80x13_IdleSpeedDeviation = (data[0x13] << 8) + data[14];
-        this._80x15_IgnitionAdvanceOffset = data[0x15];
-        this._80x16_IgnitionAdvance = (data[0x16] / 2) - 24;
-        this._80x17_CoilTime = ((data[0x17] << 8) + data[0x18]) * 0.002;
+        this._80x10_IdleHot = ecuResponse80Data[0x10];
+        this._80x12_IACPosition = ecuResponse80Data[0x12];
+        this._80x13_IdleSpeedDeviation = (ecuResponse80Data[0x13] << 8) + ecuResponse80Data[14];
+        this._80x15_IgnitionAdvanceOffset = ecuResponse80Data[0x15];
+        this._80x16_IgnitionAdvance = (ecuResponse80Data[0x16] / 2) - 24;
+        this._80x17_CoilTime = ((ecuResponse80Data[0x17] << 8) + ecuResponse80Data[0x18]) * 0.002;
         this._80x17_CoilTime = roundDecimalPlaces(this._80x17_CoilTime);
-        this._80x19_CrankshaftPositionSensor = data[0x19];
-        this.CoolantTempSensorFault = ((data[13] >> 0) & 1 ) > 0;
-        this.IntakeAirTempSensorFault = ((data[13] >> 2) & 1 ) > 0;
-        this.FuelPumpCircuitFault = ((data[14] >> 1) & 3) > 0;
-        this.ThrottlePotCircuitFault = ((data[14] >> 7) & 4) > 0;
+        this._80x19_CrankshaftPositionSensor = ecuResponse80Data[0x19];
+        this.CoolantTempSensorFault = ((ecuResponse80Data[13] >> 0) & 1 ) > 0;
+        this.IntakeAirTempSensorFault = ((ecuResponse80Data[13] >> 2) & 1 ) > 0;
+        this.FuelPumpCircuitFault = ((ecuResponse80Data[14] >> 1) & 3) > 0;
+        this.ThrottlePotCircuitFault = ((ecuResponse80Data[14] >> 7) & 4) > 0;
         this._80_RawData = arrayAsHexString(ecuResponse.response);
     }
 }
@@ -129,25 +129,25 @@ export class Dataframe7d {
     }
 
     updateValuesFromEcuResponse(ecuResponse) {
-        let data = ecuResponse.response.slice(1);
+        let ecuResponse7dData = ecuResponse.response.slice(1);
 
         this._7Dx00_Time = getDateTimeString(ecuResponse.command.id);
-        this._7Dx01_IgnitionSwitch = data[1] > 0;
-        this._7Dx02_ThrottleAngle = data[2] * 0.6;
+        this._7Dx01_IgnitionSwitch = ecuResponse7dData[1] > 0;
+        this._7Dx02_ThrottleAngle = ecuResponse7dData[2] * 0.6;
         this._7Dx02_ThrottleAngle = roundDecimalPlaces(this._7Dx02_ThrottleAngle)
-        this._7Dx04_AirFuelRatio = data[4] / 10;
-        this._7Dx06_LambdaVoltage = data[6] * 5;
-        this._7Dx07_LambdaFrequency = data[7];
-        this._7Dx08_LambdaDutycycle = data[8];
-        this._7Dx09_LambdaStatus = data[9];
-        this._7Dx0A_ClosedLoop = data[0x0a] > 0;
-        this._7Dx0B_LongTermFuelTrim = data[0x0b] - 128;
-        this._7Dx0C_ShortTermFuelTrim = data[0x0c] - 100;
-        this._7Dx0D_CarbonCanisterPurgeValve = data[0x0d];
-        this._7Dx0F_IdleBasePosition = data[0x0f];
-        this._7Dx12_IgnitionAdvanceOffset = data[0x12] - 48;
-        this._7Dx13_IdleSpeedOffset = data[0x13];
-        this._7Dx1F_JackCount = data[0x1f];
+        this._7Dx04_AirFuelRatio = ecuResponse7dData[4] / 10;
+        this._7Dx06_LambdaVoltage = ecuResponse7dData[6] * 5;
+        this._7Dx07_LambdaFrequency = ecuResponse7dData[7];
+        this._7Dx08_LambdaDutycycle = ecuResponse7dData[8];
+        this._7Dx09_LambdaStatus = ecuResponse7dData[9];
+        this._7Dx0A_ClosedLoop = ecuResponse7dData[0x0a] > 0;
+        this._7Dx0B_LongTermFuelTrim = ecuResponse7dData[0x0b] - 128;
+        this._7Dx0C_ShortTermFuelTrim = ecuResponse7dData[0x0c] - 100;
+        this._7Dx0D_CarbonCanisterPurgeValve = ecuResponse7dData[0x0d];
+        this._7Dx0F_IdleBasePosition = ecuResponse7dData[0x0f];
+        this._7Dx12_IgnitionAdvanceOffset = ecuResponse7dData[0x12] - 48;
+        this._7Dx13_IdleSpeedOffset = ecuResponse7dData[0x13];
+        this._7Dx1F_JackCount = ecuResponse7dData[0x1f];
         this._7D_RawData = arrayAsHexString(ecuResponse.response);
     }
 }

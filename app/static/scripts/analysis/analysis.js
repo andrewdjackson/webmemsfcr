@@ -1,5 +1,12 @@
 import {OperationalStatus} from "./operational-status.js";
 
+export class Fault {
+    index;
+    metric;
+    text;
+    fault_type;
+}
+
 export class Analysis {
     constructor(dataframeLog) {
         this.dataframeLog = dataframeLog;
@@ -30,4 +37,3 @@ export class Analysis {
         }
     }
 }
-

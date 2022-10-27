@@ -1,1 +1,70 @@
-<p class="alert alert-warning">Engine operating temperature was not achieved in this run. There maybe faults that have not been detected that only appear once the engine is warm.</p>
+<div class="card mt-3">
+	<div class="card-body">
+		{% if not isActiveFault('at_operating_temp', faults) %}
+			<p class="alert alert-warning">Engine operating temperature was not achieved in this run. There maybe faults that have not been detected that only appear once the engine is warm.</p>
+		{% endif %}
+
+		{% if faultCount(faults) == 0 %}
+			<div class="card">
+				<div class="card-body">
+					No faults found
+				</div>
+			</div>
+		{% else %}
+			<div class="card mt-3">
+				<div class="card-header alert alert-danger">{{ faultCount(faults) | safe }}&nbsp;&nbsp;Faults Detected</div>
+				<div class="card-body">
+					{% for fault in faults %}
+						{% if fault["type"] == "alert" and fault["index"] != None  %}
+							<p>{{ fault["text"] | safe }}</p>
+						{% endif %}
+					{% endfor %}
+				</div>
+			</div>
+		{% endif %}
+
+		{% for fault in faults %}
+			{% if fault["index"] is not none %}
+				{% if fault["type"] == "alert" %}
+					<div class="card mt-3">
+						<div class="card-header alert alert-danger">{{ fault["text"] | safe }}</div>
+						<div class="card-body">
+							{% if fault["metric"] == "battery_fault" %}
+								{% include 'faults/analysis-battery-low-fault.jinja2' %}
+							{% elif fault["metric"] == "coil_fault" %}
+								{% include 'faults/analysis-coil-fault.jinja2' %}
+							{% elif fault["metric"] == "coolant_temperature_fault" %}
+								{% include 'faults/analysis-coolant-temperature-fault.jinja2' %}
+							{% elif fault["metric"] == "idle_hot_fault" %}
+								{% include 'faults/analysis-idle-fault.jinja2' %}
+							{% elif fault["metric"] == "iac_fault" %}
+								{% include 'faults/analysis-iac-fault.jinja2' %}
+							{% elif fault["metric"] == "iac_jack_fault" %}
+								{% include 'faults/analysis-iac-jack-fault.jinja2' %}
+							{% elif fault["metric"] == "idle_fault" %}
+								{% include 'faults/analysis-idle-fault.jinja2' %}
+							{% elif fault["metric"] == "idle_speed_fault" %}
+								{% include 'faults/analysis-idle-speed-fault.jinja2' %}
+							{% elif fault["metric"] == "inlet_air_temp_sensor_fault" %}
+								{% include 'faults/analysis-inlet-air-temp-sensor-fault.jinja2' %}
+							{% elif fault["metric"] == "map_fault" %}
+								{% include 'faults/analysis-map-fault.jinja2' %}
+							{% elif fault["metric"] == "o2_system_fault" %}
+								{% include 'faults/analysis-o2-system-fault.jinja2' %}
+							{% elif fault["metric"] == "thermostat_fault" %}
+								{% include 'faults/analysis-thermostat-fault.jinja2' %}
+							{% elif fault["metric"] == "throttle_pot_circuit_fault" %}
+								{% include 'faults/analysis-throttle-pot-circuit-fault.jinja2' %}
+							{% elif fault["metric"] == "vacuum_fault" %}
+								{% include 'faults/analysis-vacuum-fault.jinja2' %}
+							{% elif fault["metric"] == "crankshaft_position_sensor_fault" %}
+								{% include 'faults/analysis-crankshaft-fault.jinja2' %}
+							{% endif %}
+						</div>
+					</div>
+				{% endif %}
+			{% endif %}
+		{% endfor %}
+	</div>
+</div>
+

@@ -1,0 +1,114 @@
+{
+  "rows": [
+    {
+      "cols": [
+        {
+          "id": "_80x01_EngineRPM",
+          "name": "Engine RPM",
+          "graph": true
+        },
+        {
+          "id": "_80x09_ThrottlePotSensor",
+          "name": "Throttle Position (V)",
+          "graph": true
+        },
+        {
+          "id": "_80x0A_IdleSwitch",
+          "name": "Idle Switch",
+          "graph": false
+        },
+        {
+          "id": "_80x12_IACPosition",
+          "name": "IAC Position (Steps)",
+          "graph": false
+        }
+      ]
+    },
+    {
+      "cols" : [
+        {
+          "id": "_80x03_CoolantTemp",
+          "name": "Coolant Temp (°C)",
+          "graph": true
+        },
+        {
+          "id": "_80x05_IntakeAirTemp",
+          "name": "Intake Air Temp (°C)",
+          "graph": true
+        },
+        {
+          "id": "_80x08_BatteryVoltage",
+          "name": "Battery (V)",
+          "graph": false
+        },
+        {
+          "id": "_80x16_IgnitionAdvance",
+          "name": "Ignition Advance (°)",
+          "graph": false
+        }
+      ]
+    },
+    {
+      "cols" : [
+        {
+          "id": "_80x07_ManifoldAbsolutePressure",
+          "name": "MAP (kPa)",
+          "graph": true
+        },
+        {
+          "id": "_7Dx06_LambdaVoltage",
+          "name": "Lambda Voltage (mV)",
+          "graph": true
+        },
+        {
+          "id": "_7Dx0A_ClosedLoop",
+          "name": "Closed Loop Active",
+          "graph": false
+        },
+        {
+          "id": "_7Dx09_LambdaStatus",
+          "name": "O2 System Active",
+          "graph": false
+        }
+      ]
+    },
+    {
+      "cols" : [
+        {
+          "id": "_7Dx0C_ShortTermFuelTrim",
+          "name": "Short Term Fuel Trim",
+          "graph": true
+        },
+        {
+          "id": "_7Dx0B_LongTermFuelTrim",
+          "name": "Long Term Fuel Trim",
+          "graph": true
+        }
+      ]
+    },
+    {
+      "cols" : [
+        {
+          "id": "CoolantTempSensorFault",
+          "name": "Coolant Sensor Fault",
+          "graph": false
+        },
+        {
+          "id": "IntakeAirTempSensorFault",
+          "name": "Intake Temperature Sensor Fault",
+          "graph": false
+        },
+        {
+          "id": "FuelPumpCircuitFault",
+          "name": "Fuel Pump Circuit Fault",
+          "graph": false
+        },
+        {
+          "id": "ThrottlePotCircuitFault",
+          "name": "Throttle Pot. Circuit Fault",
+          "graph": false
+        }
+      ]
+    }
+  ]
+}

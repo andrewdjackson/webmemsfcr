@@ -47,7 +47,7 @@ describe('send dataframe request commands at send rate', () => {
     })
 })
 
-function messageReceived(data) {
-    console.log(`subscriber received ${JSON.stringify(data)}`);
-    receivedData = data;
+function messageReceived(message) {
+    console.log(`subscriber received ${JSON.stringify(message)}`);
+    receivedData = message;
 }

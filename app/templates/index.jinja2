@@ -39,17 +39,8 @@
 					&nbsp;
 				</div>
 
-				<!-- analysis -->
-				<div id="analysis" class="tab-pane fade" aria-labelledby="analysis">
-					<div class="card mt-3">
-						<div class="card-body">
-							{% include 'analysis.jinja2' %}
-						</div>
-					</div>
-				</div>
-
 				<!-- ecu data -->
-				<div id="home" class="tab-pane fade show active" aria-labelledby="home">
+				<div id="home" class="tab-pane fade" aria-labelledby="home">
 					<div class="card mt-3">
 						<div class="card-body text-center">
 							{% include 'adjustments.jinja2' %}
@@ -64,7 +55,7 @@
 				</div>
 
 				<!-- charts -->
-				<div id="profile" class="tab-pane fade" aria-labelledby="profile">
+				<div id="profile" class="tab-pane fade show active" aria-labelledby="profile">
 					<div class="card mt-3">
 						<div class="card-body">
 							{% include 'charts.jinja2' %}
@@ -81,11 +72,15 @@
 					</div>
 				</div>
 
-				<!-- rosco -->
-				<div id="rosco" class="tab-pane fade" aria-labelledby="rosco">
+				<!-- analysis -->
+				<div id="analysis" class="tab-pane fade" aria-labelledby="analysis">
+				</div>
+
+				<!-- dashboard -->
+				<div id="dashboard" class="tab-pane fade" aria-labelledby="dashboard">
 					<div class="card mt-3">
 						<div class="card-body">
-							{% include 'rosco.jinja2' %}
+							{% include 'dashboard.jinja2' %}
 						</div>
 					</div>
 				</div>

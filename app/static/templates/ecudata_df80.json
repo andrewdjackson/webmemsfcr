@@ -50,7 +50,7 @@
     },
     {
       "id": "_80x09_ThrottlePotSensor",
-      "name": "80x09 Throttle Pot. (mV)"
+      "name": "80x09 Throttle Pot. (V)"
     },
     {
       "id": "_80x0A_IdleSwitch",

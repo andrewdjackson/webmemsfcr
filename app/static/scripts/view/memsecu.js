@@ -30,13 +30,14 @@ export async function initialise() {
         // causing serial errors.
         Chart.createCharts();
         Chart.createSparks();
-        View.showTab('nav-home-tab');
+
+        View.showTab('nav-dashboard-tab');
         //View.showTab('nav-analysis-tab');
 
         Controls.attachControlEventListeners();
         Adjustment.attachAdjustmentsEventListeners();
         Actuator.attachActuatorEventListeners();
-
+        View.attachTabEventListeners();
         View.setButtonsOnConnectionState();
         View.setButtonsOnEngineRunning();
     }

@@ -11,9 +11,6 @@
 				<tr>
 					<td>{{ item['name'] | safe }}</td>
 					<td class="ecudata_{{ item['id'] | safe }}">&nbsp;</td>
-					<!--
-					<td style="width: 30%"><div class="spark-container"><canvas id="{{ item['id'] | safe }}_ecuspark" title="{{ item['name'] | safe }}" class="ecuspark" height="30"></canvas></div></td>
-					-->
 				</tr>
 				{% endif %}
 			{% endfor %}
@@ -29,9 +26,6 @@
 					<tr>
 						<td>{{ item['name'] | safe }}</td>
 						<td class="ecudata_{{ item['id'] | safe }}">&nbsp;</td>
-						<!--
-						<td style="width: 30%"><div class="spark-container"><canvas id="{{ item['id'] | safe }}_ecuspark" title="{{ item['name'] | safe }}" class="ecuspark" height="30"></canvas></div></td>
-						-->
 					</tr>
 				{% endif %}
 			{% endfor %}

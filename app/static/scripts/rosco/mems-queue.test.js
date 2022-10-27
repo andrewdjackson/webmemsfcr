@@ -20,7 +20,7 @@ describe('add to queue', () => {
     })
 })
 
-function messageReceived(data) {
-    console.log(`subscriber received ${data}`);
-    receivedData = data;
+function messageReceived(message) {
+    console.log(`subscriber received ${message}`);
+    receivedData = message;
 }

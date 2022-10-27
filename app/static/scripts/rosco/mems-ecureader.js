@@ -183,11 +183,11 @@ export class ECUReader {
                     this._responseEventQueue.publish(ecuCommand.topic, ecuResponse);
                     return ecuResponse;
                 } else {
-                    return Promise.reject(`_sendAndReceive command response do not match ${JSON.stringify(ecuResponse)}`);
+                    return Promise.reject(new Error(`_sendAndReceive command response do not match ${JSON.stringify(ecuResponse)}`));
                 }
             })
-            .catch((error) => {
-                console.error(`_sendAndReceive exception ${error}`);
+            .catch((err) => {
+                console.error(`_sendAndReceive exception (${err})`);
             })
             .finally(() => {
                 this._unlockSendRecieve();
@@ -268,7 +268,7 @@ export class ECUReader {
         response[0] = ecuCommand.command;
 
         console.info(`received response ${response}`);
-        return Promise.resolve(response);
+        return response;
     }
 
     //

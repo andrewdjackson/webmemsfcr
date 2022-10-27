@@ -12,3 +12,10 @@ body {
     color: lightgray;
 }
 
+.fault {
+    background-color: darkred;
+}
+
+.nofault {
+    background-color: yellowgreen;
+}
