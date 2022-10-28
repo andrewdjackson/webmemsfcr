@@ -9,8 +9,9 @@
         },
         {
           "id": "_80x09_ThrottlePotSensor",
-          "name": "Throttle Position (V)",
-          "graph": true
+          "name": "Throttle Position",
+          "graph": true,
+          "unit": "V"
         },
         {
           "id": "EngineIdle",
@@ -20,8 +21,9 @@
         },
         {
           "id": "_80x12_IACPosition",
-          "name": "IAC Position (Steps)",
-          "graph": false
+          "name": "IAC Position",
+          "graph": false,
+          "unit": "Steps"
         }
       ]
     },
@@ -29,23 +31,27 @@
       "cols" : [
         {
           "id": "_80x03_CoolantTemp",
-          "name": "Coolant Temp (\u00b0C)",
-          "graph": true
+          "name": "Coolant Temp",
+          "graph": true,
+          "unit": "\u00b0C"
         },
         {
           "id": "_80x05_IntakeAirTemp",
-          "name": "Intake Air Temp (\u00b0C)",
-          "graph": true
+          "name": "Intake Air Temp",
+          "graph": true,
+          "unit": "\u00b0C"
         },
         {
           "id": "_80x08_BatteryVoltage",
-          "name": "Battery (V)",
-          "graph": false
+          "name": "Battery",
+          "graph": false,
+          "unit": "\u00b0C"
         },
         {
           "id": "_80x16_IgnitionAdvance",
-          "name": "Ignition Advance (\u00b0)",
-          "graph": false
+          "name": "Ignition Advance",
+          "graph": false,
+          "unit": "\u00b0"
         }
       ]
     },
@@ -53,13 +59,15 @@
       "cols" : [
         {
           "id": "_80x07_ManifoldAbsolutePressure",
-          "name": "MAP (kPa)",
-          "graph": true
+          "name": "MAP",
+          "graph": true,
+          "unit": "kPa"
         },
         {
           "id": "_7Dx06_LambdaVoltage",
-          "name": "Lambda Voltage (mV)",
-          "graph": true
+          "name": "Lambda Voltage",
+          "graph": true,
+          "unit": "mV"
         },
         {
           "id": "_7Dx0A_ClosedLoop",
@@ -80,12 +88,14 @@
         {
           "id": "_7Dx0C_ShortTermFuelTrim",
           "name": "Short Term Fuel Trim",
-          "graph": true
+          "graph": true,
+          "unit": "%"
         },
         {
           "id": "_7Dx0B_LongTermFuelTrim",
           "name": "Long Term Fuel Trim",
-          "graph": true
+          "graph": true,
+          "unit": "%"
         }
       ]
     },

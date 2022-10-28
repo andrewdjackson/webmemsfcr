@@ -21,7 +21,7 @@ export function dataframeReceived(ecuResponse) {
     updateDataframeMetrics(df);
 
     if (analysis.status.length > 0) {
-        updateStatuses(df, analysis.status.at(-1));
+        updateState(df, analysis.status.at(-1));
     }
 
     // update the charts
@@ -48,9 +48,15 @@ function updateMetric(metric, value) {
     }
 }
 
-function updateStatuses(df, status) {
+function updateState(df, status) {
     let updates = [];
-    updates.push({id:'EngineIdle', on:'Idle', off:'Throttle Active', state:status.isEngineIdle});
+
+    if (status.isEngineRunning) {
+        updates.push({id: 'EngineIdle', on: 'Idle', off: 'Throttle Active', state: status.isEngineIdle});
+    } else {
+        updates.push({id: 'EngineIdle', on: 'Running', off: 'Off', state: status.isEngineRunning});
+    }
+
     updates.push({id:'CoolantTempSensorFault', on:'Fault', off:'No Faults', state:status.isCoolantSensorFaulty});
     updates.push({id:'IntakeAirTempSensorFault', on:'Fault', off:'No Faults', state:status.isAirIntakeSensorFaulty});
     updates.push({id:'FuelPumpCircuitFault', on:'Fault', off:'No Faults', state:status.isFuelPumpCircuitFaulty});

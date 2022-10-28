@@ -10,8 +10,8 @@ export class DataframeLog {
     }
 
     initialise() {
-        this.dataframe80 = [];
-        this.dataframe7d = [];
+        this._dataframe80 = [];
+        this._dataframe7d = [];
         this._dataframes = [];
     }
 
@@ -31,7 +31,7 @@ export class DataframeLog {
     // as such with a MEMS 1.3, only the array for 0x80 dataframes will contain data
     //
     get isMemsVersion13() {
-        return ((this.dataframe80.length > 1) && (this.dataframe7d.length === 0));
+        return ((this._dataframe80.length > 1) && (this._dataframe7d.length === 0));
     }
     //
     // add the dataframe to the log
@@ -42,11 +42,11 @@ export class DataframeLog {
     addDataframe(dataframe) {
         if (dataframe !== undefined) {
             if (dataframe instanceof Dataframe80) {
-                this.dataframe80.push(dataframe);
+                this._dataframe80.push(dataframe);
             }
 
             if (dataframe instanceof Dataframe7d) {
-                this.dataframe7d.push(dataframe);
+                this._dataframe7d.push(dataframe);
             }
 
             this._createDataframe();
@@ -64,16 +64,19 @@ export class DataframeLog {
         let dataframe;
 
         if (this.isMemsVersion13) {
-            dataframe = new Dataframe(this.dataframe80.at(-1));
+            dataframe = new Dataframe(this._dataframe80.at(-1));
             console.debug(`MEMS 1.3 dataframe added to the log ${JSON.stringify(dataframe)}`);
         } else {
-            if (this.dataframe80.length === this.dataframe7d.length) {
-                dataframe = new Dataframe(this.dataframe80.at(-1), this.dataframe7d.at(-1));
+            if (this._dataframe80.length === this._dataframe7d.length) {
+                dataframe = new Dataframe(this._dataframe80.at(-1), this._dataframe7d.at(-1));
                 console.debug(`MEMS 1.6+ dataframe added to the log ${JSON.stringify(dataframe)}`);
             }
         }
         if (dataframe !== undefined) {
             this._addDataframe(dataframe);
+            // remove the individual dataframes as these are no longer needed
+            this._dataframe80.pop();
+            this._dataframe7d.pop();
             return true;
         }
 
@@ -90,6 +93,7 @@ export class DataframeLog {
             this._dataframes.push(dataframe);
         }
     }
+
 
     _convertToCSV(items) {
         const replacer = (key, value) => value === null ? '' : value; // specify how you want to handle null values here
