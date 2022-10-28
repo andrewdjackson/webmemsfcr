@@ -110,28 +110,28 @@
           "name": "Coolant Sensor Fault",
           "graph": false,
           "default": "-",
-          "unit": ""
+          "unit": " "
         },
         {
           "id": "IntakeAirTempSensorFault",
           "name": "Intake Temperature Sensor Fault",
           "graph": false,
           "default": "-",
-          "unit": ""
+          "unit": " "
         },
         {
           "id": "FuelPumpCircuitFault",
           "name": "Fuel Pump Circuit Fault",
           "graph": false,
           "default": "-",
-          "unit": ""
+          "unit": " "
         },
         {
           "id": "ThrottlePotCircuitFault",
           "name": "Throttle Pot. Circuit Fault",
           "graph": false,
           "default": "-",
-          "unit": ""
+          "unit": " "
         }
       ]
     }

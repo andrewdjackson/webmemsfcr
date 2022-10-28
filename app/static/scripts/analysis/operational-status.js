@@ -33,6 +33,10 @@ export class OperationalStatus {
         this._faults._7Dx0F_IdleBasePosition = this.isEngineIdleFaulty || this.isIdleSpeedFaulty;
         this._faults._7Dx13_IdleSpeedOffset = this.isIACFaulty;
         this._faults._7Dx1F_JackCount = this.isJackCountHigh;
+        this._faults.CoolantTempSensorFault = this.isCoolantSensorFaulty;
+        this._faults.IntakeAirTempSensorFault = this.isAirIntakeSensorFaulty;
+        this._faults.FuelPumpCircuitFault = this.isFuelPumpCircuitFaulty;
+        this._faults.ThrottlePotCircuitFault = this.isThrottlePotCircuitFaulty;
 
         console.info(`faults found ${JSON.stringify(this._faults)}`);
 
