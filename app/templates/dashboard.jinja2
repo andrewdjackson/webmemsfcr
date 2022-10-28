@@ -12,9 +12,11 @@
 				<div class="col">
 					<div class="fs-1 ecudata_{{ col['id'] | safe }}">{{ col['default'] | safe }}&nbsp;</div>
 				</div>
-				<div class="col text-sm-start align-bottom">
+				{% if col["unit"] != "" %}
+				<div class="col col-4">
 					{{ col["unit"] | safe }}
 				</div>
+				{% endif %}
 			</div>
 			{% if col["graph"] == true %}
 				<div class="row">

@@ -20,8 +20,14 @@ export function dataframeReceived(ecuResponse) {
     // update the values in the UI
     updateDataframeMetrics(df);
 
+    // update dashboard items that are a status rather than a value
     if (analysis.status.length > 0) {
         updateState(df, analysis.status.at(-1));
+    }
+
+    // colour faulty metrics red
+    if (analysis.faults.length > 0) {
+        colouriseFaults(analysis.faults.at(-1));
     }
 
     // update the charts
@@ -31,7 +37,7 @@ export function dataframeReceived(ecuResponse) {
 //
 // update the table in the UI that displays the ECU values
 //
-function updateDataframeMetrics(df, status) {
+function updateDataframeMetrics(df) {
     Object.entries(df).forEach((entry) => {
         const [key, value] = entry;
         const metric = `${Identifier.ecuDataMetric}_${key}`;
@@ -80,14 +86,23 @@ function refreshStatus(entry) {
     }
 }
 
-function updateStatus(update) {
-    let elements = document.querySelectorAll(`.${Identifier.ecuDataMetric}_EngineIdle`);
-    const engineIdle = status.isEngineIdle;
+function colouriseFaults(faults) {
+    Object.entries(faults).forEach((fault) => {
+        const [key, value] = fault;
+        const metric = `${Identifier.ecuDataMetric}_${key}`;
+        colouriseMetric(metric, value);
+    });
+}
+
+function colouriseMetric(id, faulty) {
+    let elements = document.querySelectorAll(`.${id}`);
     for (let i = 0; i < elements.length; i++) {
-        if (engineIdle) {
-            elements[i].innerHTML = "Engine Idle";
+        elements[i].classList.remove("fault");
+        elements[i].classList.remove("nofault");
+        if (faulty) {
+            elements[i].classList.add("fault");
         } else {
-            elements[i].innerHTML = "Throttle Active";
+            elements[i].classList.add("nofault");
         }
     }
 }

@@ -72,7 +72,6 @@ async function updateAnalysisCharts() {
     }
 }
 
-
 //
 // enable buttons when data has been logged and the ecu has been disconnected
 //
