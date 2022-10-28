@@ -10,7 +10,7 @@
 			</div>
 			<div class="row">
 				<div class="col">
-					<div class="fs-1 ecudata_{{ col['id'] | safe }}">&nbsp;</div>
+					<div class="fs-1 ecudata_{{ col['id'] | safe }}">{{ col['default'] | safe }}&nbsp;</div>
 				</div>
 			</div>
 			{% if col["graph"] == true %}

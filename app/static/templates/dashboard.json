@@ -13,9 +13,10 @@
           "graph": true
         },
         {
-          "id": "_80x0A_IdleSwitch",
-          "name": "Idle Switch",
-          "graph": false
+          "id": "EngineIdle",
+          "name": "Engine Status",
+          "graph": false,
+          "default": "Off"
         },
         {
           "id": "_80x12_IACPosition",
@@ -62,13 +63,15 @@
         },
         {
           "id": "_7Dx0A_ClosedLoop",
-          "name": "Closed Loop Active",
-          "graph": false
+          "name": "Loop Status",
+          "graph": false,
+          "default": "-"
         },
         {
           "id": "_7Dx09_LambdaStatus",
           "name": "O2 System Active",
-          "graph": false
+          "graph": false,
+          "default": "Inactive"
         }
       ]
     },
@@ -91,22 +94,26 @@
         {
           "id": "CoolantTempSensorFault",
           "name": "Coolant Sensor Fault",
-          "graph": false
+          "graph": false,
+          "default": "-"
         },
         {
           "id": "IntakeAirTempSensorFault",
           "name": "Intake Temperature Sensor Fault",
-          "graph": false
+          "graph": false,
+          "default": "-"
         },
         {
           "id": "FuelPumpCircuitFault",
           "name": "Fuel Pump Circuit Fault",
-          "graph": false
+          "graph": false,
+          "default": "-"
         },
         {
           "id": "ThrottlePotCircuitFault",
           "name": "Throttle Pot. Circuit Fault",
-          "graph": false
+          "graph": false,
+          "default": "-"
         }
       ]
     }

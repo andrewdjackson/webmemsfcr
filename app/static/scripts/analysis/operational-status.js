@@ -190,6 +190,26 @@ export class OperationalStatus {
         }
     }
 
+    get isCoolantSensorFaulty() {
+        return this._dataframe.CoolantTempSensorFault;
+    }
+
+    get isAirIntakeSensorFaulty() {
+        return this._dataframe.IntakeAirTempSensorFault;
+    }
+
+    get isFuelPumpCircuitFaulty() {
+        return this._dataframe.FuelPumpCircuitFault;
+    }
+
+    get isThrottlePotCircuitFaulty() {
+        return this._dataframe.ThrottlePotCircuitFault;
+    }
+
+    get isO2SystemActive() {
+        return (this._dataframe._7Dx09_LambdaStatus === 1);
+    }
+
     //
     // idle speed deviation indicates how far away it is from idle target
     // idle base position indicates the target for IAC position

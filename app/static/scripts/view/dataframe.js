@@ -20,6 +20,10 @@ export function dataframeReceived(ecuResponse) {
     // update the values in the UI
     updateDataframeMetrics(df);
 
+    if (analysis.status.length > 0) {
+        updateStatuses(df, analysis.status.at(-1));
+    }
+
     // update the charts
     Chart.updateCharts(df, faults.at(-1));
 }
@@ -27,7 +31,7 @@ export function dataframeReceived(ecuResponse) {
 //
 // update the table in the UI that displays the ECU values
 //
-function updateDataframeMetrics(df) {
+function updateDataframeMetrics(df, status) {
     Object.entries(df).forEach((entry) => {
         const [key, value] = entry;
         const metric = `${Identifier.ecuDataMetric}_${key}`;
@@ -40,6 +44,44 @@ function updateMetric(metric, value) {
     for (let i = 0; i < elements.length; i++) {
         if (elements[i] !== undefined) {
             elements[i].innerHTML = `${value}`;
+        }
+    }
+}
+
+function updateStatuses(df, status) {
+    let updates = [];
+    updates.push({id:'EngineIdle', on:'Idle', off:'Throttle Active', state:status.isEngineIdle});
+    updates.push({id:'CoolantTempSensorFault', on:'Fault', off:'No Faults', state:status.isCoolantSensorFaulty});
+    updates.push({id:'IntakeAirTempSensorFault', on:'Fault', off:'No Faults', state:status.isAirIntakeSensorFaulty});
+    updates.push({id:'FuelPumpCircuitFault', on:'Fault', off:'No Faults', state:status.isFuelPumpCircuitFaulty});
+    updates.push({id:'ThrottlePotCircuitFault', on:'Fault', off:'No Faults', state:status.isThrottlePotCircuitFaulty});
+    updates.push({id:'_7Dx0A_ClosedLoop', on:'Closed', off:'Open', state:status.isLoopClosed});
+    updates.push({id:'_7Dx09_LambdaStatus', on:'Active', off:'Inactive', state:status.isO2SystemActive});
+
+    updates.forEach((entry) => {
+        refreshStatus(entry);
+    });
+}
+
+function refreshStatus(entry) {
+    let elements = document.querySelectorAll(`.${Identifier.ecuDataMetric}_${entry.id}`);
+    for (let i = 0; i < elements.length; i++) {
+        if (entry.state) {
+            elements[i].innerHTML = entry.on;
+        } else {
+            elements[i].innerHTML = entry.off;
+        }
+    }
+}
+
+function updateStatus(update) {
+    let elements = document.querySelectorAll(`.${Identifier.ecuDataMetric}_EngineIdle`);
+    const engineIdle = status.isEngineIdle;
+    for (let i = 0; i < elements.length; i++) {
+        if (engineIdle) {
+            elements[i].innerHTML = "Engine Idle";
+        } else {
+            elements[i].innerHTML = "Throttle Active";
         }
     }
 }
