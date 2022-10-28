@@ -1,7 +1,7 @@
 <div class="card mt-3">
 	<div class="card-body">
 		{% if not isActiveFault('at_operating_temp', faults) %}
-			<p class="alert alert-warning">Engine operating temperature was not achieved in this run. There maybe faults that have not been detected that only appear once the engine is warm.</p>
+			<p class="alert alert-warning">Engine operating temperature has not yet been achieved in this run. There maybe faults that have not been detected that only appear once the engine is warm.</p>
 		{% endif %}
 
 		{% if faultCount(faults) == 0 %}
