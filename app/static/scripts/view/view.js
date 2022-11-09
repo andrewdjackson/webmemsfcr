@@ -83,7 +83,7 @@ export function attachTabEventListeners(){
 export function setButtonsWhenDataHasBeenLogged() {
     let control = document.querySelectorAll(`.${Identifier.hasLoggedDataClass}`);
     for (let i = 0; i < control.length; i++) {
-        control[i].disabled = !(dataframeLog.hasLoggedData && !ecu.isConnected);
+        control[i].disabled = !(dataframeLog.hasLoggedData);
     }
 }
 
