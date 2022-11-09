@@ -1,0 +1,21 @@
+<div class="card mt-3">
+	<div class="card-header">Guide to the Oxygen Monitoring System</div>
+	<div class="card-body">
+		<div>
+			<p>
+				The oxygen monitoring system (O2 System) is critical to the fuel mixture determined by the ECU. The system relies on a working Lambda Sensor (O2 Sensor).<br>
+				When the ignition is switched on, the ECU Lambda relay is energised to enable the Lambda Sensor heater. A failure in the lambda heater or the circuit will delay the start of the lambda oscillating and a failure in the O2 System.<br>
+				After approximately 90 seconds the Lambda Sensor should start rapidly oscillating between 100mv and 900mV.
+				The ECU expects this behaviour, <strong>if the lambda voltage is a static or oscillations are slow, the ECU will determine a failure in the O2 System.</strong>
+				If the lambda is working correctly, the ECU will enter Closed Loop mode where it uses the lambda readings to adjust the fueling accordingly.
+			</p>
+			<h4>A Working O2 System</h4>
+			<ul>
+				<li>Lambda Voltage oscillates rapidly between 100mV and 900mV after 90s of start</li>
+				<li>O2 System  Status is Active (O2 Lambda Status = 1) after 90s of start</li>
+				<li>Loop is Closed (Closed Loop = 1)</li>
+				<li>Lambda Heater relay is working, this can be tested</li>
+			</ul>
+		</div>
+	</div>
+</div>

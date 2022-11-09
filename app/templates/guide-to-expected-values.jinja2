@@ -1,0 +1,37 @@
+<div class="card mt-3">
+	<div class="card-header">What are the Expected Values?</div>
+	<div class="card-body">
+		<div>
+			<p>
+				The ECU will react to conditions based on the values it reads from the sensors fitted to the engine. The following details the behaviour and expected values.
+			</p>
+			<h4>Ignition is ON, Engine not Running</h4>
+			<ul>
+				<li>Engine RPM 0</li>
+				<li>MAP 100kPa (this is atmospheric pressure, e.g. no vacuum)</li>
+				<li>Air Intake Temperature at general air temperature e.g 20C</li>
+				<li>Lambda Voltage 435mV, not oscillating</li>
+				<li>O2 System (Lambda Status) is Inactive (0)</li>
+				<li>Loop is Open (Closed Loop = 0)</li>
+			</ul>
+			<h4>Ignition is ON, Engine COLD : Running and Idle</h4>
+			<ul>
+				<li>Engine RPM 1200 and actively decreasing to 850 as the engine warms</li>
+				<li>MAP 40kPa or less (lower is better), higher than 40kPa indicates a possible vacuum fault, 0kPA is a sensor fault</li>
+				<li>Coolant Temperature increasing a degree every 10-15 seconds until the thermostat temperature is reached (88C). A static 60C indicates a possible fault</li>
+				<li>Air Intake Temperature at general air temperature e.g 20C</li>
+				<li>Lambda Voltage will rise and then gradually reduce, then start rapidly oscillating between 100mV and 900mV after 90 seconds</li>
+				<li>O2 System (Lambda Status) is Active (1) after 90 seconds. If the lambda fails to oscillate then this value will change 0 and the ECU will enter limp home mode</li>
+			</ul>
+			<h4>Ignition is ON, Engine WARM : Running and Idle</h4>
+			<ul>
+				<li>Engine RPM 850 +/- 10 </li>
+				<li>MAP 40kPa or less (lower is better)</li>
+				<li>Coolant Temperature > 80C. Whilst the thermostat is 88C, the ECU determines a coolant temperature > 80C as operating temperature.</li>
+				<li>Air Intake Temperature at general air temperature e.g 20C</li>
+				<li>Lambda Voltage is oscillating</li>
+				<li>O2 System (Lambda Status) is Active (1)</li>
+			</ul>
+		</div>
+	</div>
+</div>
