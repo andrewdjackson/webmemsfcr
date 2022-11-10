@@ -1,4 +1,4 @@
-{% set excludes = ['Time', '7d ECU Response', '80 ECU Response', '80x04 Ambient (°C)', '80x06 Fuel °C', '80x0b Air Con. Switch'] %}
+{% set excludes = ['_7Dx00_Time', '_7D_RawData', '_80_RawData', '_80x04_AmbientTemp', '_80x06_FuelTemp', '_80x0B_AirconSwitch'] %}
 
 <div class="text-start" id="ecuid">ECU ID:</div>
 
@@ -7,7 +7,7 @@
 		<table class="table table-striped table-sm">
 			<tbody id="df80table">
 			{% for item in data["ecudata_df80.json"]["ecudata"] %}
-				{% if item["name"] not in excludes %}
+				{% if item["id"] not in excludes %}
 				<tr>
 					<td>{{ item['name'] | safe }}</td>
 					<td class="ecudata_{{ item['id'] | safe }}">&nbsp;</td>
@@ -22,7 +22,7 @@
 		<table class="table table-striped table-sm">
 			<tbody id="df7dtable">
 			{% for item in data["ecudata_df7d.json"]["ecudata"] %}
-				{% if item["name"] not in excludes %}
+				{% if item["id"] not in excludes %}
 					<tr>
 						<td>{{ item['name'] | safe }}</td>
 						<td class="ecudata_{{ item['id'] | safe }}">&nbsp;</td>

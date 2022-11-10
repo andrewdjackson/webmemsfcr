@@ -1,0 +1,81 @@
+<div class="card p-3 mt-2">
+	<div class="row my-2">
+		<div class="col-2">
+			<img src="static/images/spi-idle-stop-screw.jpg" style="width:100%;" class="rounded" alt="emssion control systems">
+		</div>
+		<div class="col">
+			<h5>Stepper Motor / Idle Air Control (IAC) Steps</h5>
+			<p>
+				The stepper motor is used to control the idle speed during normal idle and during engine warm-up by adjusting the throttle.
+				The ECU will also use the stepper motor to adjust the idle when additional electrical load such as headlights are switched on as this can cause the engine speed to drop.
+				The ECU drives the stepper motor via a cam, to a push rod (both are in the stepper housing lid) which acts directly on to what is called the Throttle Spindle Stop.
+				This small round flat disc is attached, via the Idle Stop Screw, to the throttle body linkage (see pic) and therefore the throttle disc and air supply/flow into the engine.
+				If you watch the push rod carefully when the engine is warming up, you will be able to see it moving in and out a bit.
+				<strong>Never adjust this screw without using a diagnostic tool and follow <a href="https://memsfcr.co.uk/setting-the-idle-speed-stepper-motor/" target="_blank">this guide</a></strong>
+			</p>
+			<p>
+				It is important to understand that the ECU cannot read the position of the stepper motor. When you turn off the engine, you should hear an audible clicking, this is the ECU driving the stepper fully closed.
+				It drives it for 180 steps and a few more to make sure its closed, in doing this it knows where it is, zero steps, and can then count the steps open.
+				After it has driven the stepper full closed and before the ECU switches off, it then opens the stepper to a point determined by the engine temp, ready for the next start.
+				The IAC Position reported by the ECU is based on this learnt position and reports the number of steps it has applied to the stepper motor.
+			</p>
+		</div>
+	</div>
+
+	<!--
+	<div class="row my-2">
+		<div class="col-2">
+			<img src="static/images/spi-placeholder.jpg" style="width:100%;" class="rounded" alt="emssion control systems">
+		</div>
+		<div class="col">
+			<h5>Carbon Filter Solenoid Valve (CFSV)</h5>
+			<p>
+			</p>
+		</div>
+	</div>
+
+	<div class="row my-2">
+		<div class="col-2">
+			<img src="static/images/spi-placeholder.jpg" style="width:100%;" class="rounded" alt="emssion control systems">
+		</div>
+		<div class="col">
+			<h5>Throttle Lost Motion Gap</h5>
+			<p>
+			</p>
+		</div>
+	</div>
+
+	<div class="row my-2">
+		<div class="col-2">
+			<img src="static/images/spi-placeholder.jpg" style="width:100%;" class="rounded" alt="emssion control systems">
+		</div>
+		<div class="col">
+			<h5>Manifold Heater</h5>
+			<p>
+			</p>
+		</div>
+	</div>
+
+	<div class="row my-2">
+		<div class="col-2">
+			<img src="static/images/spi-placeholder.jpg" style="width:100%;" class="rounded" alt="emssion control systems">
+		</div>
+		<div class="col">
+			<h5>Fuel Pump Relay</h5>
+			<p>
+			</p>
+		</div>
+	</div>
+
+	<div class="row my-2">
+		<div class="col-2">
+			<img src="static/images/spi-placeholder.jpg" style="width:100%;" class="rounded" alt="emssion control systems">
+		</div>
+		<div class="col">
+			<h5>O2 Heater Relay</h5>
+			<p>
+			</p>
+		</div>
+	</div>
+-->
+</div>

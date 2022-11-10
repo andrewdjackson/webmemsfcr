@@ -2,7 +2,7 @@
   "adjustments":
   [
     {"id": "adjust_idle_speed_offset", "name":  "Idle Speed Offset"},
-    {"id": "adjust_idle_iacv", "name":  "Idle Air Control Valve"},
+    {"id": "adjust_idle_iacv", "name":  "(IAC) Stepper Motor Steps"},
     {"id": "adjust_idle_hot", "name":  "Idle (Hot) Decay"},
     {"id": "adjust_stft", "name":  "STFT"},
     {"id": "adjust_ltft", "name":  "LTFT"},
