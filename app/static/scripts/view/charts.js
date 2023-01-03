@@ -4,7 +4,7 @@ import * as Identifier from "./identifiers.js";
 import {charts} from "./memsecu.js";
 
 const sparkLength = 120;
-const chartLength = 240;
+const chartLength = 120;
 const skipped = (ctx, value) => ctx.p0.skip || ctx.p0.parsed.y === 0 ? value : undefined;
 const faulty = (ctx, value) => ctx.p0.parsed.y > 0 ? value : undefined;
 
@@ -165,7 +165,7 @@ function createChart(ctx, id, title) {
 
 function createSpark(ctx, id) {
     return new Chart(ctx, {
-        //id: id,
+        id: id,
         type: 'line',
         data: {
             labels: Array.apply(null, Array(sparkLength)).map(function() { return '' }),
@@ -263,9 +263,9 @@ export function addData(chart, label, data, fault) {
 
     if (fault === true) {
         // draw faulty line at same datapoint
-        if (isNewFault(chart)) {
-            addAnnotation(chart, chart.data.datasets[0].data.length - 1, data)
-        }
+        //if (isNewFault(chart)) {
+        //    addAnnotation(chart, chart.data.datasets[0].data.length - 1, data)
+        //}
         chart.data.datasets[1].data.push(data)
     } else {
         // if the previous data value in the fault line has a value then push a NaN to give a clean cutoff in the fill
