@@ -4,7 +4,7 @@ import * as Identifier from "./identifiers.js";
 import {charts} from "./memsecu.js";
 
 const sparkLength = 120;
-const chartLength = 120;
+const chartLength = 240;
 const skipped = (ctx, value) => ctx.p0.skip || ctx.p0.parsed.y === 0 ? value : undefined;
 const faulty = (ctx, value) => ctx.p0.parsed.y > 0 ? value : undefined;
 
