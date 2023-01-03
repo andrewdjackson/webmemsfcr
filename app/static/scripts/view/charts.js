@@ -1,5 +1,4 @@
-import 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js';
-import "../thirdparty/chartjs-plugin-annotation.min.js";
+import "../thirdparty/chart.umd.js";
 import * as Identifier from "./identifiers.js";
 import {charts} from "./memsecu.js";
 
