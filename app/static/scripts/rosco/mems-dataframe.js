@@ -106,7 +106,10 @@ export class Dataframe7d {
     _7Dx12_IgnitionAdvanceOffset;
     _7Dx13_IdleSpeedOffset;
     _7Dx1F_JackCount;
+    //LambdaHeaterRelayFault;
+    //CrankshaftSyncFault;
     _7D_RawData;
+
 
     constructor() {
         this._7Dx00_Time = getDateTimeString();
@@ -125,6 +128,8 @@ export class Dataframe7d {
         this._7Dx12_IgnitionAdvanceOffset = 0;
         this._7Dx13_IdleSpeedOffset = 0;
         this._7Dx1F_JackCount = 0;
+        //this.LambdaHeaterRelayFault = false;
+        //this.CrankshaftSyncFault = false;
         this._7D_RawData = "";
     }
 
@@ -149,6 +154,8 @@ export class Dataframe7d {
         this._7Dx13_IdleSpeedOffset = ecuResponse7dData[0x13];
         this._7Dx1F_JackCount = ecuResponse7dData[0x1f];
         this._7D_RawData = arrayAsHexString(ecuResponse.response);
+        //this.LambdaHeaterRelayFault = ((ecuResponse7dData[0x05] >> 3) & 1) > 0;
+        //this.CrankshaftSyncFault = ((ecuResponse7dData[0x05] >> 4) & 1) > 0;
     }
 }
 
@@ -197,6 +204,8 @@ export class Dataframe {
     _7Dx12_IgnitionAdvanceOffset;
     _7Dx13_IdleSpeedOffset;
     _7Dx1F_JackCount;
+    //LambdaHeaterRelayFault;
+    //CrankshaftSyncFault;
     _7D_RawData;
 
     constructor(dataframe80, dataframe7d) {
@@ -253,7 +262,8 @@ export function getDateTimeString(unixtime) {
         date = new Date(unixtime);
     }
 
-    let today = `${date.getFullYear()}-${String(date.getMonth()).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+    let month = date.getMonth() + 1;
+    let today = `${date.getFullYear()}-${String(month).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
     let time  = `${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}:${String(date.getSeconds()).padStart(2,'0')}.${String(date.getMilliseconds()).padStart(3, '0')}`;
     return `${today} ${time}`;
 }

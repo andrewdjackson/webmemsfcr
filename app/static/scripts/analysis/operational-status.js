@@ -1,5 +1,4 @@
 import * as Constant from "./analysis-constants.js"
-import {defaultIdleThrottlePot} from "./analysis-constants.js";
 
 const SAMPLE_SIZE = 30;
 const CURRENT_DATAFRAME = -1;
