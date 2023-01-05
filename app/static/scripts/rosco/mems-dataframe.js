@@ -58,7 +58,7 @@ export class Dataframe80 {
     updateValuesFromEcuResponse(ecuResponse) {
         let ecuResponse80Data = ecuResponse.response.slice(1);
 
-        this._80x00_Time = getDateTimeString(ecuResponse.command.id);
+        this._80x00_Time = getDateTimeString();
         this._80x01_EngineRPM = (ecuResponse80Data[1] << 8) + ecuResponse80Data[2];
         this._80x03_CoolantTemp = ecuResponse80Data[3] - 55;
         this._80x04_AmbientTemp = ecuResponse80Data[4] - 55;
@@ -136,7 +136,7 @@ export class Dataframe7d {
     updateValuesFromEcuResponse(ecuResponse) {
         let ecuResponse7dData = ecuResponse.response.slice(1);
 
-        this._7Dx00_Time = getDateTimeString(ecuResponse.command.id);
+        this._7Dx00_Time = getDateTimeString();
         this._7Dx01_IgnitionSwitch = ecuResponse7dData[1] > 0;
         this._7Dx02_ThrottleAngle = ecuResponse7dData[2] * 0.6;
         this._7Dx02_ThrottleAngle = roundDecimalPlaces(this._7Dx02_ThrottleAngle)
@@ -204,8 +204,6 @@ export class Dataframe {
     _7Dx12_IgnitionAdvanceOffset;
     _7Dx13_IdleSpeedOffset;
     _7Dx1F_JackCount;
-    //LambdaHeaterRelayFault;
-    //CrankshaftSyncFault;
     _7D_RawData;
 
     constructor(dataframe80, dataframe7d) {

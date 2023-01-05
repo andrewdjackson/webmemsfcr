@@ -1,4 +1,5 @@
 import * as Command from "./mems-commands.js";
+import {ECUCommand} from "./mems-commands.js";
 
 // rate at which commands will be sent to the ECU
 // MEMS 1.6 dataframe request / response takes 150ms
@@ -8,6 +9,8 @@ const MAX_ECU_SERIAL_RW_INTERVAL = 200;
 const STANDARD_DATAFRAME_REQUEST_INTERVAL = MAX_ECU_SERIAL_RW_INTERVAL * 2;
 // rate at which connection keep-alive heartbeats will be requested
 const STANDARD_HEARTBEAT_REQUEST_INTERVAL = 2000;
+// maximum commands in the queue
+const MAX_QUEUE_LENGTH = 20;
 
 export class ECUResponse {
     constructor(command, response) {
@@ -24,6 +27,7 @@ export class ECUReader {
         this._isDataframeRequestLoopRunning = false;
         this._waitingForResponse = false;
         this._sentCount = 0;
+        this._messageId = 0;
         this._ecuId = "";
 
         // queues
@@ -142,7 +146,14 @@ export class ECUReader {
     _sendNextCommandFromQueue() {
         if (this._commandQueue.length > 0) {
             if (this._waitingForResponse) {
-                console.error(`serial behind the queue, ${this._commandQueue.length} requests waiting`);
+                console.warn(`waiting for serial response, adding command to the queue (${this._commandQueue.length} waiting)`);
+
+                // on machines with slower processors the queue can grow faster than
+                // it can process the serial communications. reduce the queue to include unique commands only
+                if (this._commandQueue.length > MAX_QUEUE_LENGTH) {
+                    console.warn(`queue too long (${this._commandQueue.length}), clearing duplicates`);
+                    this._commandQueue = this._clearBacklog();
+                }
             } else {
                 // get command from the head of the queue and set the message id
                 let ecuCommand = this._commandQueue.shift();
@@ -158,6 +169,33 @@ export class ECUReader {
                     })
             }
         }
+    }
+
+    //
+    // removes duplicate commands from the queue
+    //
+    _clearBacklog() {
+        // remove any duplicate requests
+        return this._dedupArrayByProperty(this._commandQueue, "command");
+    }
+    _dedupArrayByProperty(arr, prop) {
+        let dedupedArray = Array.from(
+            arr
+                .reduce(
+                    (acc, item) => (
+                        item && item[prop] && acc.set(item[prop], item), acc
+                    ), // using map (preserves ordering)
+                    new Map()
+                )
+                .values()
+        )
+
+        dedupedArray.sort(this._sortByMessageId);
+        return dedupedArray;
+    }
+
+    _sortByMessageId(a, b) {
+        return a.id - b.id;
     }
 
     //
@@ -205,14 +243,15 @@ export class ECUReader {
     _queueDataframeCommand() {
         if (!this.isPaused) {
             // queue a request for the dataframes
-            this._dataframeCommands.forEach(ecuCommand => {
-                console.debug(`queuing dataframe request ${JSON.stringify(ecuCommand)}`);
-                this.addCommandToSendQueue(ecuCommand);
+            this._dataframeCommands.forEach(async ecuCommand => {
+                let cmd = new ECUCommand(0, ecuCommand.topic, ecuCommand.command, ecuCommand.responseSize);
+                this.addCommandToSendQueue(cmd);
+                console.debug(`queued dataframe request ${JSON.stringify(cmd)}`);
             });
         } else {
             console.debug(`queuing heartbeat`)
             // queue a heartbeat command
-            //this.addCommandToSendQueue(Command.MEMS_Heartbeat);
+            this.addCommandToSendQueue(Command.MEMS_Heartbeat);
         }
     }
 
@@ -252,7 +291,6 @@ export class ECUReader {
             newLength = this._commandQueue.push(ecuCommand);
         }
 
-
         return newLength > currentSize;
     }
 
@@ -282,7 +320,9 @@ export class ECUReader {
     // every message has a unique id which is the timestamp of the message creation time
     //
     getMessageId() {
-        return Date.now();
+        this._messageId++;
+        console.debug(`generating request id ${this._messageId}`);
+        return this._messageId;
     }
 
     //
@@ -357,6 +397,6 @@ export class ECUReader {
     // asynchronously "sleep" for a period of time
     //
     _sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
+        return new Promise((resolve) => setTimeout(resolve, ms));
     }
 }

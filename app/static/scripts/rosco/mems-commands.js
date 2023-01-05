@@ -1,6 +1,10 @@
 import {EventTopic} from "./mems-queue.js";
 
 export class ECUCommand {
+    id;
+    topic;
+    command;
+    responseSize;
     constructor(id, topic, command, responseSize) {
         this.id = id;
         this.topic = topic;
