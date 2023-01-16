@@ -1,3 +1,5 @@
+import * as Command from "./mems-commands.js";
+
 const SERIAL_TIMEOUT = 2000;
 
 export class MemsSerialInterface {
@@ -187,12 +189,26 @@ export class MemsSerialInterface {
                 try {
                     while (count < n) {
                         const {value, done} = await this._reader.read();
-
                         if (done) {
                             console.error(`serial reading cancelled`);
                             break;
                         }
-                        rxData[count++] = value[0];
+                        if (value) {
+                            let chunk = value;
+
+                            // ensure we read all the data if we get multiple bytes
+                            for (let i = 0; i < chunk.length; i++) {
+                                rxData[count++] = chunk[i];
+                            }
+                        }
+                        if (count === 2 && (rxData[0] === Command.MEMS_Dataframe80.command || rxData[0] === Command.MEMS_Dataframe7d.command)) {
+                            // read the size of the remaining bytes from the dataframe response
+                            let size = rxData[1] + 1;
+                            if (size !== n) {
+                                console.warn(`expecting ${n} bytes, ecu response contains ${size}`);
+                                n = size;
+                            }
+                        }
                     }
                 } catch (error) {
                     console.error(`error ${error}`);

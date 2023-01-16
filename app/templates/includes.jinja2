@@ -3,16 +3,27 @@
 <!-- Bootstrap 5 -->
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<script src="/static/scripts/thirdparty/popper.min.js"></script>
 <script src="/static/scripts/thirdparty/bootstrap.bundle.min.js"></script>
 <link href="/static/scripts/thirdparty/bootstrap.min.css" rel="stylesheet">
 <script async src="/static/scripts/thirdparty/es-module-shims.js"></script>
 <script type="importmap">
 	{
 		"imports": {
-			"@popperjs/core": "/static/scripts/thirdparty/popper.js",
+			"@popperjs/core": "/static/scripts/thirdparty/popper.min.js",
 			"bootstrap": "/static/scripts/thirdparty/bootstrap.esm.min.js"
 		}
 	}
+</script>
+
+<script>
+	 // enable bootstrap tooltips
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
+	 // enable bootstrap popovers
+    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+    const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 </script>
 
 <!-- general -->
