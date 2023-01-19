@@ -190,7 +190,7 @@ export class MemsSerialInterface {
                     while (count < n) {
                         const {value, done} = await this._reader.read();
                         if (done) {
-                            console.error(`serial reading cancelled`);
+                            console.warn(`serial reading cancelled`);
                             break;
                         }
                         if (value) {
