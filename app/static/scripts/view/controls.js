@@ -67,9 +67,15 @@ function downloadLog() {
 
 function showConnectErrorDialog() {
     document.getElementById(Identifier.messageModalTitleId).textContent = "Unable to Connect to ECU"
-    document.getElementById(Identifier.messageModalTextId).innerHTML = "<p>Web MemsFCR was unable to connect to the ECU</p><ol><li>Check Diagnostic Cable is connected correctly and ignition is On.</li><li>Check that you selected the  correct Serial Port.</li></ol>"
+    document.getElementById(Identifier.messageModalTextId).innerHTML = "<p>Web MemsFCR was unable to connect to the ECU</p><ol><li>Check Diagnostic Cable is connected correctly and ignition is On.</li><li>Check that you have selected the  correct Serial Port.</li><li>If the connection fails again, reload this page</li></ol>"
 
-    let modal = new bootstrap.Modal(document.getElementById(Identifier.messageModalId));
+    let modalDialog = document.getElementById(Identifier.messageModalId);
+    modalDialog.addEventListener('hidden.bs.modal', (event) => {
+        console.warn('reloading browser');
+        document.location.reload();
+    });
+
+    let modal = new bootstrap.Modal(modalDialog);
     modal.show();
 }
 

@@ -78,20 +78,7 @@ export class MemsEcu16 extends ECUReader {
             // when the line is initialised for the first time, a x00 byte can be returned
             // read again until we receive the expected response
             if (response[0] !== Command.MEMS_InitA.command) {
-                for (let retries=0; retries < INITIALISATION_MAX_RETRIES; retries++) {
-                    // wait for the ecu to respond
-                    await this._sleep(100);
-
-                    //  flush, read 1 byte
-                    response = await this._serial._read(1);
-                    if (response[0] !== Command.MEMS_InitA.command) {
-                        console.warn(`initialisation fault, retrying (attempt ${retries+1})`);
-                    } else {
-                        // finally received the correct response
-                        initialised = true;
-                        break;
-                    }
-                }
+                console.warn(`unexpected response from ecu`);
             } else {
                 // response successful
                 initialised = true;
