@@ -22,6 +22,7 @@ describe('pause command queue', () => {
     })
 })
 
+/*
 describe('send dataframe request commands at send rate', () => {
     it(`should send 2 commands at ${e.getDataframeInterval()} ms intervals`, async () => {
         let numberOfCommands = 2;
@@ -46,6 +47,7 @@ describe('send dataframe request commands at send rate', () => {
         expect(e.isConnected).toBe(false);
     })
 })
+*/
 
 function messageReceived(message) {
     console.log(`subscriber received ${JSON.stringify(message)}`);

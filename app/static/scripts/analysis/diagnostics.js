@@ -1,5 +1,0 @@
-export class Diagnostics {
-
-    constructor() {
-    }
-}

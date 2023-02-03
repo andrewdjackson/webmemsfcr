@@ -1,18 +1,13 @@
 import {OperationalStatus} from "./operational-status.js";
 
-export class Fault {
-    index;
-    metric;
-    text;
-    fault_type;
-}
-
 export class Analysis {
     constructor(dataframeLog) {
-        this.dataframeLog = dataframeLog;
-        this.dataframes = dataframeLog.dataframes;
+        this._dataframeLog = dataframeLog;
         this._status = [];
-        this._faults = [];
+    }
+
+    get dataframes() {
+        return this._dataframeLog.dataframes;
     }
 
     get status() {
@@ -20,7 +15,7 @@ export class Analysis {
     }
 
     get faults() {
-        return this._faults;
+        return this._status.faults;
     }
 
     //
@@ -28,11 +23,8 @@ export class Analysis {
     // easy references to the current complete dataframe and the first one logged are updated
     //
     analyse() {
-        if (this.dataframeLog.hasLoggedData) {
+        if (this._dataframeLog.hasLoggedData) {
             const opStatus = new OperationalStatus(this.dataframes);
-            const opFaults = opStatus.faults;
-
-            this._faults.push(opFaults);
             this._status.push(opStatus);
         }
     }

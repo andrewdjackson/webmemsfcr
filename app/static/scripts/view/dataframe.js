@@ -11,7 +11,6 @@ export function dataframeReceived(ecuResponse) {
     dataframeLog.addDataframe(df);
     // analyse for faults and operation status
     analysis.analyse();
-    const faults = analysis.faults;
 
     // set buttons based on state
     View.setButtonsWhenDataHasBeenLogged();
@@ -21,17 +20,14 @@ export function dataframeReceived(ecuResponse) {
     updateDataframeMetrics(df);
 
     // update dashboard items that are a status rather than a value
+    // colour faulty metrics red
     if (analysis.status.length > 0) {
         updateState(df, analysis.status.at(-1));
-    }
-
-    // colour faulty metrics red
-    if (analysis.faults.length > 0) {
-        colouriseFaults(analysis.faults.at(-1));
+        colouriseFaults(analysis.status.at(-1).faults);
     }
 
     // update the charts
-    Chart.updateCharts(df, faults.at(-1));
+    Chart.updateCharts(df, analysis.status.at(-1).faults);
 }
 
 //
