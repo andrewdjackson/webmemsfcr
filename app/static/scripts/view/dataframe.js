@@ -11,6 +11,7 @@ export function dataframeReceived(ecuResponse) {
     dataframeLog.addDataframe(df);
     // analyse for faults and operation status
     analysis.analyse();
+    //let faults = analysis.faults;
 
     // set buttons based on state
     View.setButtonsWhenDataHasBeenLogged();
@@ -19,15 +20,18 @@ export function dataframeReceived(ecuResponse) {
     // update the values in the UI
     updateDataframeMetrics(df);
 
+    const currentStatus = analysis.status.at(-1);
+    const currentFaults = currentStatus.operationalFaults;
+
     // update dashboard items that are a status rather than a value
     // colour faulty metrics red
     if (analysis.status.length > 0) {
-        updateState(df, analysis.status.at(-1));
-        colouriseFaults(analysis.status.at(-1).faults);
+        updateState(df, currentStatus);
+        colouriseFaults(currentFaults);
     }
 
     // update the charts
-    Chart.updateCharts(df, analysis.status.at(-1).faults);
+    Chart.updateCharts(df, currentFaults);
 }
 
 //
@@ -83,11 +87,13 @@ function refreshStatus(entry) {
 }
 
 function colouriseFaults(faults) {
-    Object.entries(faults).forEach((fault) => {
-        const [key, value] = fault;
-        const metric = `${Identifier.ecuDataMetric}_${key}`;
-        colouriseMetric(metric, value);
-    });
+    if (faults !== undefined) {
+        Object.entries(faults).forEach((fault) => {
+            const [key, value] = fault;
+            const metric = `${Identifier.ecuDataMetric}_${key}`;
+            colouriseMetric(metric, value);
+        });
+    }
 }
 
 function colouriseMetric(id, faulty) {

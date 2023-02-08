@@ -221,11 +221,11 @@ export class ECUReader {
                     this._responseEventQueue.publish(ecuCommand.topic, ecuResponse);
                     return ecuResponse;
                 } else {
-                    return Promise.reject(new Error(`_sendAndReceive command response do not match ${JSON.stringify(ecuResponse)}`));
+                    reject(new Error(`_sendAndReceive command response do not match ${JSON.stringify(ecuResponse)}`));
                 }
             })
             .catch((err) => {
-                console.error(`_sendAndReceive exception (${err})`);
+                console.warn(`_sendAndReceive exception (${err})`);
             })
             .finally(() => {
                 this._unlockSendRecieve();

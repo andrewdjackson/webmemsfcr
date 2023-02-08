@@ -108,7 +108,7 @@ describe('Faults', () => {
 
         status = new OperationalStatus(dataframeLog.dataframes);
         expect(status.isHotIdleFaulty).toBeTruthy();
-        expect(status.faults._80x10_IdleHot).toBeTruthy();
+        expect(status.operationalFaults._80x10_IdleHot).toBeTruthy();
     })
 })
 

@@ -1,13 +1,13 @@
 export const StatusFault = "alert";
 export const StatusInfo = "info";
 export class Fault {
-    metric;
+    id;
     title;
     count;
     level;
 
-    constructor(metric, title, level) {
-        this.metric = metric;
+    constructor(id, title, level) {
+        this.id = id;
         this.title = title;
         this.level = level
     }

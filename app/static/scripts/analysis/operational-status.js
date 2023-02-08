@@ -9,6 +9,7 @@ export class OperationalStatus {
         this._dataframes = dataframes;
         this._dataframe = dataframes.at(CURRENT_DATAFRAME);
         this._faults = {};
+        this._initialiseFaults();
     }
 
     get dataframes() {
@@ -19,7 +20,7 @@ export class OperationalStatus {
         return this._dataframe;
     }
 
-    get faults() {
+    get operationalFaults() {
         this._faults._80x03_CoolantTemp = this.isThermostatFaulty;
         this._faults._80x07_ManifoldAbsolutePressure = this.isMAPHigh;
         this._faults._80x08_BatteryVoltage  = this.isBatteryVoltageLow;
@@ -285,5 +286,24 @@ export class OperationalStatus {
         let degreesToWarm = Constant.engineOperatingTemp - this._dataframe._80x03_CoolantTemp;
         let secondsToWarm = degreesToWarm * Constant.secondsPerDegree;
         return new Date(currentTime.getTime() + secondsToWarm);
+    }
+
+    _initialiseFaults() {
+        this._faults._80x03_CoolantTemp = false;
+        this._faults._80x07_ManifoldAbsolutePressure = false;
+        this._faults._80x08_BatteryVoltage  = false;
+        this._faults._80x10_IdleHot = false;
+        this._faults._80x12_IACPosition = false;
+        this._faults._80x17_CoilTime = false;
+        this._faults._80x19_CrankshaftPositionSensor = false;
+        this._faults._7Dx06_LambdaVoltage = false;
+        this._faults._7Dx09_LambdaStatus = false;
+        this._faults._7Dx0F_IdleBasePosition = false;
+        this._faults._7Dx13_IdleSpeedOffset = false;
+        this._faults._7Dx1F_JackCount = false;
+        this._faults.CoolantTempSensorFault = false;
+        this._faults.IntakeAirTempSensorFault = false;
+        this._faults.FuelPumpCircuitFault = false;
+        this._faults.ThrottlePotCircuitFault = false;
     }
 }

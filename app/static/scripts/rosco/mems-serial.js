@@ -84,7 +84,7 @@ export class MemsSerialInterface {
         if (this._isConnected) {
             await this._write(command);
             return Promise.any([
-                this._read(expectedResponseSize),
+                this._read(expectedResponseSize, command),
                 new Promise(resolve => setTimeout(resolve, SERIAL_TIMEOUT, 'serial read timeout'))
             ]).then((response) => {
                 return response;
@@ -179,7 +179,7 @@ export class MemsSerialInterface {
     // read the bytes from the serial port
     // n specifies the number of bytes to read
     //
-    async _read(n) {
+    async _read(n, expectedCommand) {
         let rxData = Array(n).fill(0);
         let count = 0;
 
@@ -200,6 +200,10 @@ export class MemsSerialInterface {
                             for (let i = 0; i < chunk.length; i++) {
                                 rxData[count++] = chunk[i];
                             }
+                        }
+                        if (count === 1 && rxData[0] !== expectedCommand) {
+                            console.error(`expecting first byte to match command, discarding byte`);
+                            count--;
                         }
                         if (count === 2 && (rxData[0] === Command.MEMS_Dataframe80.command || rxData[0] === Command.MEMS_Dataframe7d.command)) {
                             // read the size of the remaining bytes from the dataframe response
@@ -222,6 +226,17 @@ export class MemsSerialInterface {
         }
 
         return rxData;
+    }
+
+    async _readWithTimeout() {
+        const readPromise = this._reader.read();
+        const waitPromise = new Promise((resolve) => setTimeout(resolve, 500, {value:0, done:true}));
+
+        await Promise.any([readPromise, waitPromise]
+        ).then((result) => {
+            console.debug(`flushed serial port`);
+            return result;
+        });
     }
 
     //

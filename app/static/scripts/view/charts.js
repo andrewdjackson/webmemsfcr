@@ -32,7 +32,7 @@ export function createSparks() {
     }
 }
 
-export function updateCharts(df, faults) {
+export function updateCharts(df, chartFaults) {
     console.debug(`start chart at ${new Date().getTime()}`);
     let time = df[Identifier.ecuDataTimeMetric80];
     if (time === undefined) {
@@ -41,7 +41,7 @@ export function updateCharts(df, faults) {
 
     Object.entries(df).forEach((entry) => {
         const [id, value] = entry;
-        const fault = _hasFault(id, faults);
+        const fault = _hasFault(id, chartFaults);
         _updateCharts(id,time,value,fault);
     });
     console.debug(`finish chart at ${new Date().getTime()}`);
