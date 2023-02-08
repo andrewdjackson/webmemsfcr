@@ -1,0 +1,70 @@
+<div class="card p-3 m-3 fs-6">
+	<p>
+		These controls allow you to make adjustments to key parameters. If you need to adjust these parameters, it's indicative of an issue elsewhere.
+	</p>
+	<p>
+		<strong>Only modify these parameters if you know what you're doing!</strong>
+	</p>
+</div>
+
+<div class="btn-group" role="group">
+	<button id="adjust_idle_speed_offset_increase" name="adjust_idle_speed_offset" value="decrease" class="btn btn-outline-secondary adjustment ecu-enabled-connected">- </button>
+	<button id="adjust_idle_speed_offset" class="btn btn-outline-dark" disabled>Idle Speed Offset</button>
+	<button id="adjust_idle_speed_offset_decrease" name="adjust_idle_speed_offset" value="increase" class="btn btn-outline-secondary adjustment ecu-enabled-connected">+ </button>
+</div>
+
+<div class="btn-group" role="group">
+	<button id="adjust_idle_iacv_increase" name="adjust_idle_iacv" value="decrease" class="btn btn-outline-secondary adjustment ecu-enabled-connected">- </button>
+	<button id="adjust_idle_iacv" class="btn btn-outline-dark" disabled>(IAC) Stepper Motor Steps</button>
+	<button id="adjust_idle_iacv_decrease" name="adjust_idle_iacv" value="increase" class="btn btn-outline-secondary adjustment ecu-enabled-connected">+ </button>
+</div>
+
+<div class="btn-group" role="group">
+	<button id="adjust_idle_hot_increase" name="adjust_idle_hot" value="decrease" class="btn btn-outline-secondary adjustment ecu-enabled-connected">- </button>
+	<button id="adjust_idle_hot" class="btn btn-outline-dark" disabled>Idle (Hot) Decay</button>
+	<button id="adjust_idle_hot_decrease" name="adjust_idle_hot" value="increase" class="btn btn-outline-secondary adjustment ecu-enabled-connected">+ </button>
+</div>
+
+<div class="btn-group" role="group">
+	<button id="adjust_stft_increase" name="adjust_stft" value="decrease" class="btn btn-outline-secondary adjustment ecu-enabled-connected">- </button>
+	<button id="adjust_stft" class="btn btn-outline-dark" disabled>STFT</button>
+	<button id="adjust_stft_decrease" name="adjust_stft" value="increase" class="btn btn-outline-secondary adjustment ecu-enabled-connected">+ </button>
+</div>
+
+<div class="btn-group" role="group">
+	<button id="adjust_ltft_increase" name="adjust_ltft" value="decrease" class="btn btn-outline-secondary adjustment ecu-enabled-connected">- </button>
+	<button id="adjust_ltft" class="btn btn-outline-dark" disabled>LTFT</button>
+	<button id="adjust_ltft_decrease" name="adjust_ltft" value="increase" class="btn btn-outline-secondary adjustment ecu-enabled-connected">+ </button>
+</div>
+
+<div class="btn-group" role="group">
+	<button id="adjust_ignition_advance_increase" name="adjust_ignition_advance" value="decrease" class="btn btn-outline-secondary adjustment ecu-enabled-connected">- </button>
+	<button id="adjust_ignition_advance" class="btn btn-outline-dark" disabled>Ignition Advance</button>
+	<button id="adjust_ignition_advance_decrease" name="adjust_ignition_advance" value="increase" class="btn btn-outline-secondary adjustment ecu-enabled-connected">+ </button>
+</div>
+
+<div class="card p-3 m-3 text-start">
+	<div class="row">
+		<div class="col">
+			<div class="row">
+				<div class="col col-sm-2">
+					<button id="clearFaultsButton" class="btn btn-danger ecu-control ecu-enabled-connected" disabled>Clear Faults</button>
+				</div>
+				<div class="col">
+					Clears the faults raised by the ECU.<br> This will not clear any faults diagnosed by MemsFCR, you'll need a book and some spanners for that.
+				</div>
+			</div>
+		</div>
+
+		<div class="col">
+			<div class="row">
+				<div class="col col-sm-2">
+					<button id="resetECUButton" class="btn btn-danger ecu-control ecu-enabled-connected" disabled>Reset ECU</button>
+				</div>
+				<div class="col">
+					Resets all adjustments and computed values like fuel trim and jack count.<br> This is useful if you have made major changes to a number of key sensors.
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

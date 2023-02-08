@@ -17,7 +17,8 @@ app = Flask(__name__)
 app.secret_key = b'webmemsfcr'
 #csrf = CSRFProtect(app)
 
-template_data_folder = os.path.join(basedir, 'static/template_data')
+template_data_folder = os.path.join(basedir, 'static/templates/data')
+static_template_folder = os.path.join(basedir, 'static/templates')
 
 @app.errorhandler(CSRFError)
 def csrf_error(e):
@@ -96,6 +97,15 @@ def faultCount():
         return count
 
     return dict(faultCount=_faultCount)
+
+@app.context_processor
+def template():
+    def _include_file(file):
+        filepath = os.path.join(static_template_folder, file)
+        with open(f'{filepath}') as f:
+            return f.read()
+
+    return dict(template=_include_file)
 
 if __name__ == '__main__':
     app.run(debug=True)

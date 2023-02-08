@@ -30,35 +30,35 @@
 						<div class="card-header alert alert-danger">{{ fault["text"] | safe }}</div>
 						<div class="card-body">
 							{% if fault["metric"] == "battery_fault" %}
-								{% include './faults/analysis-battery-low-fault.jinja2' %}
+								{{ template('faults/analysis-battery-low-fault.html') }}
 							{% elif fault["metric"] == "coil_fault" %}
-								{% include './faults/analysis-coil-fault.jinja2' %}
+								{{ template('faults/analysis-coil-fault.html') }}
 							{% elif fault["metric"] == "coolant_temperature_fault" %}
-								{% include './faults/analysis-coolant-temperature-fault.jinja2' %}
+								{{ template('faults/analysis-coolant-temperature-fault.html') }}
 							{% elif fault["metric"] == "idle_hot_fault" %}
-								{% include './faults/analysis-idle-fault.jinja2' %}
+								{{ template('faults/analysis-idle-fault.html') }}
 							{% elif fault["metric"] == "iac_fault" %}
-								{% include './faults/analysis-iac-fault.jinja2' %}
+								{{ template('faults/analysis-iac-fault.html') }}
 							{% elif fault["metric"] == "iac_jack_fault" %}
-								{% include './faults/analysis-iac-jack-fault.jinja2' %}
+								{{ template('faults/analysis-iac-jack-fault.html') }}
 							{% elif fault["metric"] == "idle_fault" %}
-								{% include './faults/analysis-idle-fault.jinja2' %}
+								{{ template('faults/analysis-idle-fault.html') }}
 							{% elif fault["metric"] == "idle_speed_fault" %}
-								{% include './faults/analysis-idle-speed-fault.jinja2' %}
+								{{ template('faults/analysis-idle-speed-fault.html') }}
 							{% elif fault["metric"] == "inlet_air_temp_sensor_fault" %}
-								{% include './faults/analysis-inlet-air-temp-sensor-fault.jinja2' %}
+								{{ template('faults/analysis-inlet-air-temp-sensor-fault.html') }}
 							{% elif fault["metric"] == "map_fault" %}
-								{% include './faults/analysis-map-fault.jinja2' %}
+								{{ template('faults/analysis-map-fault.html') }}
 							{% elif fault["metric"] == "o2_system_fault" %}
-								{% include './faults/analysis-o2-system-fault.jinja2' %}
+								{{ template('faults/analysis-o2-system-fault.html') }}
 							{% elif fault["metric"] == "thermostat_fault" %}
-								{% include './faults/analysis-thermostat-fault.jinja2' %}
+								{{ template('faults/analysis-thermostat-fault.html') }}
 							{% elif fault["metric"] == "throttle_pot_circuit_fault" %}
-								{% include './faults/analysis-throttle-pot-circuit-fault.jinja2' %}
+								{{ template('faults/analysis-throttle-pot-circuit-fault.html') }}
 							{% elif fault["metric"] == "vacuum_fault" %}
-								{% include './faults/analysis-vacuum-fault.jinja2' %}
+								{{ template('faults/analysis-vacuum-fault.html') }}
 							{% elif fault["metric"] == "crankshaft_position_sensor_fault" %}
-								{% include './faults/analysis-crankshaft-fault.jinja2' %}
+								{{ template('faults/analysis-crankshaft-fault.html') }}
 							{% endif %}
 						</div>
 					</div>

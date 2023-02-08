@@ -10,7 +10,8 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 	<title>Web MemsFCR</title>
 
-	{% include 'includes.jinja2' %}
+
+	{{ template('includes.html')  }}
 
 	<script type="module">
 		 //
@@ -24,11 +25,11 @@
 <body>
 <div class="page-wrapper toggled">
 	<header>
-		{% include 'header.jinja2' %}
+		{{ template('header.html') }}
 	</header>
 
-	{% include 'toast.jinja2' %}
-	{% include 'messages.jinja2' %}
+	{{ template('toast.html') }}
+	{{ template('messages.html') }}
 
 	<main class="page-content">
 		<div class="container-fluid">
@@ -43,13 +44,13 @@
 				<div id="home" class="tab-pane fade" aria-labelledby="home">
 					<div class="card mt-3">
 						<div class="card-body text-center">
-							{% include 'adjustments.jinja2' %}
+							{{ template('adjustments.html') }}
 						</div>
 					</div>
 
 					<div class="card mt-3">
 						<div class="card-body text-center">
-							{% include 'ecudata.jinja2' %}
+							{{ template('ecudata.html') }}
 						</div>
 					</div>
 				</div>
@@ -58,7 +59,7 @@
 				<div id="profile" class="tab-pane fade show active" aria-labelledby="profile">
 					<div class="card mt-3">
 						<div class="card-body">
-							{% include 'charts.jinja2' %}
+							{{ template('charts.html') }}
 						</div>
 					</div>
 				</div>
@@ -67,7 +68,7 @@
 				<div id="test" class="tab-pane fade" aria-labelledby="test">
 					<div class="card mt-3">
 						<div class="card-body">
-							{% include 'actuators.jinja2' %}
+							{{ template('actuators.html') }}
 						</div>
 					</div>
 				</div>
@@ -80,7 +81,7 @@
 				<div id="dashboard" class="tab-pane fade" aria-labelledby="dashboard">
 					<div class="card mt-3">
 						<div class="card-body">
-							{% include 'dashboard.jinja2' %}
+							{{ template('dashboard.html') }}
 						</div>
 					</div>
 				</div>
@@ -95,7 +96,7 @@
 	</main>
 
 	<footer class="page-footer font-small pt-4">
-		{% include 'footer.jinja2' %}
+		{{ template('footer.html') }}
 	</footer>
 
 </div>
