@@ -57,7 +57,7 @@ def load_template_data():
 
     for file in files:
         filepath = os.path.join(template_data_folder, file)
-        with open(f'{filepath}') as f:
+        with open(f'{filepath}','r', encoding="utf-8") as f:
              data[file] = json.load(f)
 
     return data
