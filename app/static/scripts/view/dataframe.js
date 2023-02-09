@@ -9,9 +9,9 @@ export function dataframeReceived(ecuResponse) {
 
     // add the dataframe to the log
     dataframeLog.addDataframe(df);
+
     // analyse for faults and operation status
     analysis.analyse();
-    //let faults = analysis.faults;
 
     // set buttons based on state
     View.setButtonsWhenDataHasBeenLogged();

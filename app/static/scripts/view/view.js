@@ -2,6 +2,7 @@ import * as Identifier from "./identifiers.js";
 import * as Chart from "./charts.js";
 import {analysis, dataframeLog, ecu, charts} from "./memsecu.js";
 import {findChart} from "./charts.js";
+import * as Analysis from "./analysis.js";
 
 export function showToast(message) {
     let alertText = window.document.getElementById(Identifier.alertToastTextId);
@@ -24,8 +25,9 @@ export function updateECUID(ecuId) {
 //
 // call analysis endpoint for rendering of the templates in python
 //
-
 export async function displayAnalysis() {
+    Analysis.updateFaultReport();
+
     let dataframes = [];
 
     // strip out everything except the raw data

@@ -8,7 +8,7 @@ export class OperationalStatus {
     constructor(dataframes) {
         this._dataframes = dataframes;
         this._dataframe = dataframes.at(CURRENT_DATAFRAME);
-        this._faults = {};
+        this._operationalFaults = {};
         this._initialiseFaults();
     }
 
@@ -21,26 +21,27 @@ export class OperationalStatus {
     }
 
     get operationalFaults() {
-        this._faults._80x03_CoolantTemp = this.isThermostatFaulty;
-        this._faults._80x07_ManifoldAbsolutePressure = this.isMAPHigh;
-        this._faults._80x08_BatteryVoltage  = this.isBatteryVoltageLow;
-        this._faults._80x10_IdleHot = this.isHotIdleFaulty;
-        this._faults._80x12_IACPosition = this.isIACFaulty;
-        this._faults._80x17_CoilTime = this.isCoilFaulty;
-        this._faults._80x19_CrankshaftPositionSensor = this.isCrankshaftSensorFaulty;
-        this._faults._7Dx06_LambdaVoltage = this.isLambdaOutOfRange || this.isLambdaFaulty;
-        this._faults._7Dx09_LambdaStatus = this.isO2SystemFaulty;
-        this._faults._7Dx0F_IdleBasePosition = this.isEngineIdleFaulty || this.isIdleSpeedFaulty;
-        this._faults._7Dx13_IdleSpeedOffset = this.isIACFaulty;
-        this._faults._7Dx1F_JackCount = this.isJackCountHigh;
-        this._faults.CoolantTempSensorFault = this.isCoolantSensorFaulty;
-        this._faults.IntakeAirTempSensorFault = this.isAirIntakeSensorFaulty;
-        this._faults.FuelPumpCircuitFault = this.isFuelPumpCircuitFaulty;
-        this._faults.ThrottlePotCircuitFault = this.isThrottlePotCircuitFaulty;
+        this._operationalFaults._80x03_CoolantTemp = this.isThermostatFaulty;
+        this._operationalFaults._80x07_ManifoldAbsolutePressure = this.isMAPHigh;
+        this._operationalFaults._80x08_BatteryVoltage  = this.isBatteryVoltageLow;
+        this._operationalFaults._80x10_IdleHot = this.isHotIdleFaulty;
+        this._operationalFaults._80x12_IACPosition = this.isIACFaulty;
+        this._operationalFaults._80x17_CoilTime = this.isCoilFaulty;
+        this._operationalFaults._80x19_CrankshaftPositionSensor = this.isCrankshaftSensorFaulty;
+        this._operationalFaults._7Dx06_LambdaVoltage = this.isLambdaOutOfRange || this.isLambdaFaulty;
+        this._operationalFaults._7Dx09_LambdaStatus = this.isO2SystemFaulty;
+        this._operationalFaults._7Dx0F_IdleBasePosition = this.isEngineIdleFaulty || this.isIdleSpeedFaulty;
+        this._operationalFaults._7Dx13_IdleSpeedOffset = this.isIACFaulty;
+        this._operationalFaults._7Dx1F_JackCount = this.isJackCountHigh;
+        this._operationalFaults.CoolantTempSensorFault = this.isCoolantSensorFaulty;
+        this._operationalFaults.IntakeAirTempSensorFault = this.isAirIntakeSensorFaulty;
+        this._operationalFaults.FuelPumpCircuitFault = this.isFuelPumpCircuitFaulty;
+        this._operationalFaults.ThrottlePotCircuitFault = this.isThrottlePotCircuitFaulty;
+        this._operationalFaults.ThermostatFaulty = this.isThermostatFaulty;
 
-        console.info(`faults found ${JSON.stringify(this._faults)}`);
+        //console.info(`operational faults found ${JSON.stringify(this._operationalFaults)}`);
 
-        return this._faults;
+        return this._operationalFaults;
     }
 
     get isEngineRunning() {
@@ -289,21 +290,22 @@ export class OperationalStatus {
     }
 
     _initialiseFaults() {
-        this._faults._80x03_CoolantTemp = false;
-        this._faults._80x07_ManifoldAbsolutePressure = false;
-        this._faults._80x08_BatteryVoltage  = false;
-        this._faults._80x10_IdleHot = false;
-        this._faults._80x12_IACPosition = false;
-        this._faults._80x17_CoilTime = false;
-        this._faults._80x19_CrankshaftPositionSensor = false;
-        this._faults._7Dx06_LambdaVoltage = false;
-        this._faults._7Dx09_LambdaStatus = false;
-        this._faults._7Dx0F_IdleBasePosition = false;
-        this._faults._7Dx13_IdleSpeedOffset = false;
-        this._faults._7Dx1F_JackCount = false;
-        this._faults.CoolantTempSensorFault = false;
-        this._faults.IntakeAirTempSensorFault = false;
-        this._faults.FuelPumpCircuitFault = false;
-        this._faults.ThrottlePotCircuitFault = false;
+        this._operationalFaults._80x03_CoolantTemp = false;
+        this._operationalFaults._80x07_ManifoldAbsolutePressure = false;
+        this._operationalFaults._80x08_BatteryVoltage = false;
+        this._operationalFaults._80x10_IdleHot = false;
+        this._operationalFaults._80x12_IACPosition = false;
+        this._operationalFaults._80x17_CoilTime = false;
+        this._operationalFaults._80x19_CrankshaftPositionSensor = false;
+        this._operationalFaults._7Dx06_LambdaVoltage = false;
+        this._operationalFaults._7Dx09_LambdaStatus = false;
+        this._operationalFaults._7Dx0F_IdleBasePosition = false;
+        this._operationalFaults._7Dx13_IdleSpeedOffset = false;
+        this._operationalFaults._7Dx1F_JackCount = false;
+        this._operationalFaults.CoolantTempSensorFault = false;
+        this._operationalFaults.IntakeAirTempSensorFault = false;
+        this._operationalFaults.FuelPumpCircuitFault = false;
+        this._operationalFaults.ThrottlePotCircuitFault = false;
+        this._operationalFaults.ThermostatFaulty = false;
     }
 }
