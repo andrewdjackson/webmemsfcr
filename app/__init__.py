@@ -102,7 +102,7 @@ def faultCount():
 def template():
     def _include_file(file):
         filepath = os.path.join(static_template_folder, file)
-        with open(f'{filepath}') as f:
+        with open(f'{filepath}', 'r', encoding="utf-8") as f:
             return f.read()
 
     return dict(template=_include_file)
