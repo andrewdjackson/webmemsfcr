@@ -1,9 +1,8 @@
 import {OperationalStatus} from "./operational-status.js";
 import * as Faults from "./analysis-faults.js";
-import {AtOperatingTemp} from "./analysis-faults.js";
 
 const CURRENT_DATAFRAME = -1;
-const PREVIOUS_DATAFRAME = -2;
+const MIN_FAULTS = 10; // the minimum number of faults events before a fault is raised
 
 export class Analysis {
     constructor(dataframeLog) {
@@ -24,6 +23,10 @@ export class Analysis {
         this._analyseFaultLog();
 
         return this._faultLog;
+    }
+
+    get hasData() {
+        return this._dataframeLog.hasLoggedData;
     }
 
     //
@@ -49,20 +52,22 @@ export class Analysis {
             this._addFault("_80x08_BatteryVoltage", Faults.BatteryFault);
             this._addFault("_80x17_CoilTime", Faults.CoilFault);
             this._addFault("_80x03_CoolantTemp", Faults.CoolantFault);
-            this._addFault("_80x10_IdleHot", Faults.IdleFault);
+            this._addFault("_80x10_IdleHot", Faults.IdleHotFault);
             this._addFault("_80x12_IACPosition", Faults.IACFault);
             this._addFault("_7Dx1F_JackCount", Faults.JackFault);
-            this._addFault("_7Dx0F_IdleBasePosition", Faults.IdleSpeedFault);
+            //this._addFault("_7Dx0F_IdleBasePosition", Faults.IdleFault); needs more investigation
             this._addFault("IntakeAirTempSensorFault", Faults.AirTempFault);
             this._addFault("_80x07_ManifoldAbsolutePressure", Faults.MapFault);
-            this._addFault("_80x07_ManifoldAbsolutePressure", Faults.VacuumFault);
             this._addFault("_7Dx06_LambdaVoltage", Faults.O2Fault);
             this._addFault("_7Dx09_LambdaStatus", Faults.O2Fault);
             this._addFault("ThermostatFaulty", Faults.ThermostatFault);
             this._addFault("ThrottlePotCircuitFault", Faults.ThrottleFault);
+            this._addFault("FuelPumpFault", Faults.FuelPumpFault);
+            this._addFault("IACFault", Faults.ThrottleFault);
          }
 
         this._faultLog = this._dedupArrayByProperty(this._faultLog, "id");
+        this._faultLog = this._removeFaultsBelowMinimum();
     }
 
     _addFault(metric, faultTemplate) {
@@ -80,6 +85,13 @@ export class Analysis {
             fault.count = 1;
             this._faultLog.push(fault);
         }
+    }
+
+    _isAboveMinimum(fault) {
+        return fault.count >= MIN_FAULTS;
+    }
+    _removeFaultsBelowMinimum() {
+        return this._faultLog.filter(this._isAboveMinimum);
     }
 
     _dedupArrayByProperty(arr, prop) {

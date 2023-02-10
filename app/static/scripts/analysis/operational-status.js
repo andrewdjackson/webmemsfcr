@@ -38,6 +38,7 @@ export class OperationalStatus {
         this._operationalFaults.FuelPumpCircuitFault = this.isFuelPumpCircuitFaulty;
         this._operationalFaults.ThrottlePotCircuitFault = this.isThrottlePotCircuitFaulty;
         this._operationalFaults.ThermostatFaulty = this.isThermostatFaulty;
+        this._operationalFaults.IdleFault = this.isEngineIdleFaulty;
 
         //console.info(`operational faults found ${JSON.stringify(this._operationalFaults)}`);
 
@@ -85,6 +86,10 @@ export class OperationalStatus {
         return this._dataframe._7Dx0A_ClosedLoop;
     }
 
+    //
+    // throttle is active if the throttle is > 14 degrees or engine rpm is > 1300
+    // this method is used in the python based analysis, but it not currently used as part of the js implementation
+    //
     get isThrottleActive() {
         return ((this._dataframe._80x09_ThrottlePotSensor > Constant.defaultIdleThrottlePot) || (this._dataframe._80x01_EngineRPM > Constant.highestIdleRPM));
     }

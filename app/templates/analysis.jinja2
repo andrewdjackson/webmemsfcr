@@ -30,7 +30,7 @@
 						<div class="card-header alert alert-danger">{{ fault["text"] | safe }}</div>
 						<div class="card-body">
 							{% if fault["metric"] == "battery_fault" %}
-								{{ template('faults/analysis-battery-low-fault.html') }}
+								{{ template('faults/analysis-battery-fault.html') }}
 							{% elif fault["metric"] == "coil_fault" %}
 								{{ template('faults/analysis-coil-fault.html') }}
 							{% elif fault["metric"] == "coolant_temperature_fault" %}

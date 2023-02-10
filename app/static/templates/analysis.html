@@ -1,66 +1,104 @@
 <div class="card mt-3">
 	<div class="card-body">
-		<p class="alert alert-warning analysis-at_operation_temp">Engine operating temperature has not yet been achieved in this run. There maybe faults that have not been detected that only appear once the engine is warm.</p>
+		<p class="analysis-no_faults alert alert-success">No faults found</p>
 
-		<div class="card analysis-no_faults">
+		<p class="alert alert-warning analysis-engine_cold">Engine operating temperature has not yet been achieved in this run. There maybe faults that have not been detected that only appear once the engine is warm.</p>
+
+		<div class="card d-none mt-3 analysis-has_faults">
+			<div class="card-header alert alert-danger">Faults Detected</div>
 			<div class="card-body">
-				No faults found
+				<p class="d-none analysis-battery_fault analysis-title">Battery Voltage Low</p>
+				<p class="d-none analysis-coil_fault analysis-title">Coil Timing High</p>
+				<p class="d-none analysis-coolant_temperature_fault analysis-title">Coolant Sensor Fault</p>
+				<p class="d-none analysis-idle_fault analysis-title">Idle Fault when Cold</p>
+				<p class="d-none analysis-idle_hot_fault analysis-title">Idle Fault when Hot</p>
+				<p class="d-none analysis-iac_fault analysis-title">Stepper Motor Control (IACV) Fault</p>
+				<p class="d-none analysis-idle_speed_fault analysis-title">Idle Speed Control Fault</p>
+				<p class="d-none analysis-inlet_air_temp_sensor_fault analysis-title">Inlet Air Temperature Sensor Fault</p>
+				<p class="d-none analysis-map_fault analysis-title">MAP Reading Too High</p>
+				<p class="d-none analysis-vacuum_fault analysis-title">Possible Vacuum Leak</p>
+				<p class="d-none analysis-o2_system_fault analysis-title">O2 System Fault</p>
+				<p class="d-none analysis-thermostat_fault analysis-title">Possible Thermostat Fault</p>
+				<p class="d-none analysis-throttle_pot_circuit_fault analysis-title">Throttle Potentiometer Circuit Fault</p>
+				<p class="d-none analysis-crankshaft_position_sensor_fault analysis-title">Possible Crankshaft Position Sensor Fault</p>
+				<p class="d-none analysis-iac_jack_fault analysis-title">ECU Reaching IAC Stepper Motor Limits (Jack Count High)</p>
 			</div>
 		</div>
 
-		<div class="card mt-3">
-			<div class="card-header alert alert-danger analysis-faults">Faults Detected</div>
-			<div class="card-body">
-				{% for fault in faults %}
-				{% if fault["type"] == "alert" and fault["index"] != None  %}
-				<p>{{ fault["text"] | safe }}</p>
-				{% endif %}
-				{% endfor %}
-			</div>
+		<div class="card mt-3 d-none analysis-battery_fault">
+			<div class="card-header alert alert-danger analysis-battery_fault analysis-title"></div>
+			<div class="card-body analysis-battery_fault analysis-content"></div>
 		</div>
-		{% endif %}
 
-		{% for fault in faults %}
-		{% if fault["index"] is not none %}
-		{% if fault["type"] == "alert" %}
-		<div class="card mt-3">
-			<div class="card-header alert alert-danger">{{ fault["text"] | safe }}</div>
-			<div class="card-body">
-				{% if fault["metric"] == "battery_fault" %}
-				{{ template('faults/analysis-battery-low-fault.html') }}
-				{% elif fault["metric"] == "coil_fault" %}
-				{{ template('faults/analysis-coil-fault.html') }}
-				{% elif fault["metric"] == "coolant_temperature_fault" %}
-				{{ template('faults/analysis-coolant-temperature-fault.html') }}
-				{% elif fault["metric"] == "idle_hot_fault" %}
-				{{ template('faults/analysis-idle-fault.html') }}
-				{% elif fault["metric"] == "iac_fault" %}
-				{{ template('faults/analysis-iac-fault.html') }}
-				{% elif fault["metric"] == "iac_jack_fault" %}
-				{{ template('faults/analysis-iac-jack-fault.html') }}
-				{% elif fault["metric"] == "idle_fault" %}
-				{{ template('faults/analysis-idle-fault.html') }}
-				{% elif fault["metric"] == "idle_speed_fault" %}
-				{{ template('faults/analysis-idle-speed-fault.html') }}
-				{% elif fault["metric"] == "inlet_air_temp_sensor_fault" %}
-				{{ template('faults/analysis-inlet-air-temp-sensor-fault.html') }}
-				{% elif fault["metric"] == "map_fault" %}
-				{{ template('faults/analysis-map-fault.html') }}
-				{% elif fault["metric"] == "o2_system_fault" %}
-				{{ template('faults/analysis-o2-system-fault.html') }}
-				{% elif fault["metric"] == "thermostat_fault" %}
-				{{ template('faults/analysis-thermostat-fault.html') }}
-				{% elif fault["metric"] == "throttle_pot_circuit_fault" %}
-				{{ template('faults/analysis-throttle-pot-circuit-fault.html') }}
-				{% elif fault["metric"] == "vacuum_fault" %}
-				{{ template('faults/analysis-vacuum-fault.html') }}
-				{% elif fault["metric"] == "crankshaft_position_sensor_fault" %}
-				{{ template('faults/analysis-crankshaft-fault.html') }}
-				{% endif %}
-			</div>
+		<div class="card mt-3 d-none analysis-coil_fault">
+			<div class="card-header alert alert-danger analysis-coil_fault analysis-title"></div>
+			<div class="card-body analysis-coil_fault analysis-content"></div>
 		</div>
-		{% endif %}
-		{% endif %}
-		{% endfor %}
+
+		<div class="card mt-3 d-none analysis-coolant_temperature_fault">
+			<div class="card-header alert alert-danger analysis-coolant_temperature_fault analysis-title"></div>
+			<div class="card-body analysis-coolant_temperature_fault analysis-content"></div>
+		</div>
+
+		<div class="card mt-3 d-none analysis-idle_hot_fault">
+			<div class="card-header alert alert-danger analysis-idle_hot_fault analysis-title"></div>
+			<div class="card-body analysis-idle_hot_fault analysis-content"></div>
+		</div>
+
+		<div class="card mt-3 d-none analysis-idle_fault">
+			<div class="card-header alert alert-danger analysis-idle_fault analysis-title"></div>
+			<div class="card-body analysis-idle_fault analysis-content"></div>
+		</div>
+
+		<div class="card mt-3 d-none analysis-iac_fault">
+			<div class="card-header alert alert-danger analysis-iac_fault analysis-title"></div>
+			<div class="card-body analysis-iac_fault analysis-content"></div>
+		</div>
+
+		<div class="card mt-3 d-none analysis-idle_speed_fault">
+			<div class="card-header alert alert-danger analysis-idle_speed_fault analysis-title"></div>
+			<div class="card-body analysis-idle_speed_fault analysis-content"></div>
+		</div>
+
+		<div class="card mt-3 d-none analysis-inlet_air_temp_sensor_fault">
+			<div class="card-header alert alert-danger analysis-inlet_air_temp_sensor_fault analysis-title"></div>
+			<div class="card-body analysis-inlet_air_temp_sensor_fault analysis-content"></div>
+		</div>
+
+		<div class="card mt-3 d-none analysis-map_fault">
+			<div class="card-header alert alert-danger analysis-map_fault analysis-title"></div>
+			<div class="card-body analysis-map_fault analysis-content"></div>
+		</div>
+
+		<div class="card mt-3 d-none analysis-vacuum_fault">
+			<div class="card-header alert alert-danger analysis-vacuum_fault analysis-title"></div>
+			<div class="card-body analysis-vacuum_fault analysis-content"></div>
+		</div>
+
+		<div class="card mt-3 d-none analysis-o2_system_fault">
+			<div class="card-header alert alert-danger analysis-o2_system_fault analysis-title"></div>
+			<div class="card-body analysis-o2_system_fault analysis-content"></div>
+		</div>
+
+		<div class="card mt-3 d-none analysis-thermostat_fault">
+			<div class="card-header alert alert-danger analysis-thermostat_fault analysis-title"></div>
+			<div class="card-body analysis-thermostat_fault analysis-content"></div>
+		</div>
+
+		<div class="card mt-3 d-none analysis-throttle_pot_circuit_fault">
+			<div class="card-header alert alert-danger analysis-throttle_pot_circuit_fault analysis-title"></div>
+			<div class="card-body analysis-throttle_pot_circuit_fault analysis-content"></div>
+		</div>
+
+		<div class="card mt-3 d-none analysis-crankshaft_position_sensor_fault">
+			<div class="card-header alert alert-danger analysis-crankshaft_position_sensor_fault analysis-title"></div>
+			<div class="card-body analysis-crankshaft_position_sensor_fault analysis-content"></div>
+		</div>
+
+		<div class="card mt-3 d-none analysis-iac_jack_fault">
+			<div class="card-header alert alert-danger analysis-iac_jack_fault analysis-title"></div>
+			<div class="card-body analysis-iac_jack_fault analysis-content"></div>
+		</div>
+
 	</div>
 </div>
