@@ -2,7 +2,7 @@ import * as Identifier from "./identifiers.js";
 import * as Command from "../rosco/mems-commands.js";
 import * as View from "./view.js";
 import * as Dataframe from "./dataframe.js";
-import {ecu, sendCommand, dataframeLog} from "./memsecu.js";
+import {ecu, sendCommand, dataframeLog} from "./init.js";
 
 export function attachControlEventListeners() {
     document.getElementById("connectButton").addEventListener('click', connect);
@@ -70,7 +70,7 @@ function showConnectErrorDialog() {
     document.getElementById(Identifier.messageModalTextId).innerHTML = "<p>Web MemsFCR was unable to connect to the ECU</p><ol><li>Check Diagnostic Cable is connected correctly and ignition is On.</li><li>Check that you have selected the  correct Serial Port.</li><li>If the connection fails again, reload this page</li></ol>"
 
     let modalDialog = document.getElementById(Identifier.messageModalId);
-    modalDialog.addEventListener('hidden.bs.modal', (event) => {
+    modalDialog.addEventListener('hidden.bs.modal', () => {
         console.warn('reloading browser');
         document.location.reload();
     });

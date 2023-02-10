@@ -1,6 +1,5 @@
 import * as Identifier from "./identifiers.js";
-import {analysis, dataframeLog, ecu, charts} from "./memsecu.js";
-import * as AnalysisReport from "./analysis-report.js";
+import {analysisReport, dataframeLog, ecu} from "./init.js";
 
 export function showToast(message) {
     let alertText = window.document.getElementById(Identifier.alertToastTextId);
@@ -21,10 +20,11 @@ export function updateECUID(ecuId) {
 }
 
 //
-// call analysis endpoint for rendering of the templates in python
+// update the analysis report, this is a potentially expensive operation
+// so the report is only created when the user navigates to the report
 //
 export async function displayAnalysis() {
-    AnalysisReport.updateFaultReport();
+    analysisReport.updateReport();
 }
 
 //

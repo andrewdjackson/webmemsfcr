@@ -1,6 +1,6 @@
 import "../thirdparty/chart.umd.js";
 import * as Identifier from "./identifiers.js";
-import {charts} from "./memsecu.js";
+import {charts} from "./init.js";
 
 const sparkLength = 120;
 const chartLength = 120;

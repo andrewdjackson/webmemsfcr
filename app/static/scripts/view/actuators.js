@@ -1,6 +1,6 @@
 import * as Identifier from "./identifiers.js";
 import * as View from "./view.js";
-import {sendCommand} from "./memsecu.js";
+import {sendCommand} from "./init.js";
 import * as Command from "../rosco/mems-commands.js";
 
 export function attachActuatorEventListeners() {

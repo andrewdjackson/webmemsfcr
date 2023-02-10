@@ -1,8 +1,8 @@
 import * as View from "./view.js";
 import * as Chart from "./charts.js";
 import * as Identifier from "./identifiers.js";
-import {dataframeLog, ecu, analysis} from "./memsecu.js";
-import * as AnalysisReport from "./analysis-report.js";
+import {dataframeLog, ecu, analysis, analysisReport} from "./init.js";
+
 export function dataframeReceived(ecuResponse) {
     console.info(`dataframe received ${JSON.stringify(ecuResponse)}`);
     let df = ecu.generateDataframeFromECUResponse(ecuResponse);
@@ -12,7 +12,7 @@ export function dataframeReceived(ecuResponse) {
 
     // analyse for faults and operation status
     analysis.analyse();
-    AnalysisReport.updateFaultPill();
+    analysisReport.updateFaultPill();
 
     // set buttons based on state
     View.setButtonsWhenDataHasBeenLogged();
