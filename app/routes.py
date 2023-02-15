@@ -44,7 +44,7 @@ def favicon():
 def render_index():
     data = load_template_data()
     if len(data) > 0:
-        return render_template('index.jinja2', data=data)
+        return render_template('index-local.jinja2', data=data)
     else:
         return render_template('error.html')
 
