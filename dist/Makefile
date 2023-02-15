@@ -26,11 +26,7 @@ build_darwin:
 sign_app_local:
 	# sign with the app
 	codesign --force  --deep --verify --verbose=4 -s $(DEVID) --timestamp --options runtime "$(DARWINDISTPATH)/$(APPNAME).app/Contents/MacOS/$(EXECUTABLE)" "$(DARWINDISTPATH)/$(APPNAME).app"
-	# build and sign installer PKG
-	#productbuild --component $(DARWINDISTPATH)/$(APPNAME).app /Applications --sign $(LOCAL_INSTID) --product $(DARWINDISTPATH)/$(APPNAME).app/Contents/Info.plist $(DARWINDISTPATH)/$(APPNAME).pkg
-	# sign the PKG with the entitlements
-	#codesign --force  --deep --verify --verbose=4 -s $(LOCAL_DISTID) --timestamp --entitlements "$(DARWINDISTPATH)/$(APPNAME).app/Contents/entitlements.plist" --options runtime "$(DARWINDISTPATH)/$(APPNAME).app/Contents/MacOS/$(EXECUTABLE)" "$(DARWINDISTPATH)/$(APPNAME).pkg"
-
+	#
 sign_app_store:
 	# sign with the app
 	codesign --force  --deep --verify --verbose=4 -s $(STORE_DISTID) --timestamp --entitlements "$(DARWINDISTPATH)/$(APPNAME).app/Contents/entitlements.plist" --options runtime "$(DARWINDISTPATH)/$(APPNAME).app/Contents/MacOS/$(EXECUTABLE)" "$(DARWINDISTPATH)/$(APPNAME).app"
@@ -38,7 +34,6 @@ sign_app_store:
 	productbuild --component $(DARWINDISTPATH)/$(APPNAME).app /Applications --sign $(STORE_INSTID) --product $(DARWINDISTPATH)/$(APPNAME).app/Contents/Info.plist $(DARWINDISTPATH)/$(APPNAME).pkg
 	# sign the PKG with the entitlements
 	codesign --force  --deep --verify --verbose=4 -s $(STORE_DISTID) --timestamp --entitlements "$(DARWINDISTPATH)/$(APPNAME).app/Contents/entitlements.plist" --options runtime "$(DARWINDISTPATH)/$(APPNAME).app/Contents/MacOS/$(EXECUTABLE)" "$(DARWINDISTPATH)/$(APPNAME).pkg"
-
 
 package_local_app:
 	rm -f $(DARWINDISTPATH)/$(APPNAME).dmg
