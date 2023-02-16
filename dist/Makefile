@@ -14,11 +14,12 @@ STORE_INSTID="3rd Party Mac Developer Installer: Andrew Jackson (MD9E767XF5)"
 
 .PHONY: clean
 
-package: add_static_files_to_package package_local_app notarize_local_package
 build: build_darwin
-local: build_darwin add_static_files_to_package sign_app_local package_local_app notarize_local_package
+build-package: build_darwin add_static_files_to_package package_local_app
+package: add_static_files_to_package package_local_app notarize_local_package
+all: build_darwin add_static_files_to_package sign_app_local package_local_app notarize_local_package
 sign: sign_app_local
-#store: build_darwin create_darwin_app sign_app_store notarize_store_package upload_app_to_store
+
 
 build_darwin:
 	/usr/local/bin/python3 -m nuitka --include-data-dir=../app/static=static --include-data-dir=../app/templates=templates --macos-disable-console --macos-create-app-bundle --standalone --macos-app-icon=../app/static/images/icon.icns ../app/memsfcr.py

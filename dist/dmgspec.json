@@ -3,7 +3,6 @@
     "icon": "MemsFCR-DMG-Icon.icns",
     "background": "MemsFCR-DMG-Background.png",
     "format": "ULFO",
-    "code-sign": { "signing-identity": "Developer ID Application: Andrew Jackson (MD9E767XF5)", "identifier": "com.github.andrewdjackson.memsfcr" },
     "window": {
         "size": { "width": 640, "height": 480 }
     },
