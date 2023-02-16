@@ -17,8 +17,8 @@ STORE_INSTID="3rd Party Mac Developer Installer: Andrew Jackson (MD9E767XF5)"
 build: build_darwin
 build-package: build_darwin package_local_app
 package: package_local_app notarize_local_package
-all: build_darwin sign_framework sign_app_local package_local_app notarize_local_package
-sign: sign_framework sign_app_local
+all: build_darwin sign_app_local package_local_app notarize_local_package
+sign: sign_app_local
 
 
 build_darwin:
@@ -35,7 +35,7 @@ add_static_files_to_package:
 
 sign_app_local:
 	# sign with the app
-	codesign --force  --deep --verify --verbose=4 -s $(DEVID) --timestamp --options runtime "$(DARWINDISTPATH)/$(APPNAME).app/Contents/MacOS/$(EXECUTABLE)" "$(DARWINDISTPATH)/$(APPNAME).app"
+	codesign --force  --deep --verify --verbose=4 -s $(DEVID) --entitlements "$(DARWINDISTPATH)/entitlements.plist" --timestamp --options runtime "$(DARWINDISTPATH)/$(APPNAME).app/Contents/MacOS/$(EXECUTABLE)" "$(DARWINDISTPATH)/$(APPNAME).app"
 
 sign_framework:
 	find "$(DARWINDISTPATH)/${APPNAME}.app" -iname '*.so' -or -iname '*.dylib' | \
