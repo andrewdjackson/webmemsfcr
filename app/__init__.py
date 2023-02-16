@@ -8,6 +8,7 @@ import json
 basedir = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(basedir)
 sys.path.append(basedir + "/app")
+sys.path.append(os.path.join(os.path.dirname(sys.argv[0]), "file"))
 
 from analysis import Analysis
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, session, flash, make_response, jsonify
