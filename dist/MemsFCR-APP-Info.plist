@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key>CFBundleName</key>
+        <string>memsfcr</string>
+        <key>CFBundleVersion</key>
+        <string>2.3.11</string>
+        <key>CFBundleShortVersionString</key>
+        <string>2.3.11</string>
+        <key>CFBundlePackageType</key>
+        <string>APPL</string>
+        <key>CFBundleExecutable</key>
+        <string>memsfcr</string>
+        <key>CFBundleIconFile</key>
+        <string>icon.icns</string>
+        <key>CFBundleIdentifier</key>
+        <string>com.github.andrewdjackson.memsfcr</string>
+        <key>CFBundleSupportedPlatforms</key>
+        <array>
+            <string>MacOSX</string>
+        </array>
+        <key>NSHighResolutionCapable</key>
+        <true/>
+        <key>NSPrincipleClass</key>
+        <string>NSApplication</string>
+        <key>LSUIElement</key>
+        <true/>
+        <key>LSApplicationCategoryType</key>
+        <string>public.app-category.utilities</string>
+    <key>NSHumanReadableCopyright</key>
+    <string>Created by Andrew Jackson
+    Copyright © 2021. All rights reserved.
+    </string>
+    <key>LSMinimumSystemVersion</key>
+    <string>10.9.0</string>
+    <key>LSHandlerContentTag</key>
+    <string>fcr</string>
+    <key>LSHandlerContentTagClass</key>
+    <string>public.filename-extension</string>
+    <key>LSHandlerRoleAll</key>
+    <string>org.category.program</string>
+</dict>
+</plist>

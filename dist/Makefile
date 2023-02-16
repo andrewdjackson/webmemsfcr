@@ -23,10 +23,13 @@ sign: sign_app_local
 build_darwin:
 	/usr/local/bin/python3 -m nuitka --include-data-dir=../app/static=static --include-data-dir=../app/templates=templates --macos-disable-console --macos-create-app-bundle --standalone --macos-app-icon=../app/static/images/icon.icns ../app/memsfcr.py
 	mv memsfcr.app $(APPNAME).app
+	cp -f MemsFCR-APP-Info.plist ./$(APPNAME).app/Contents/Info.plist
 
 add_static_files_to_package:
-	cp -f ./$(APPNAME).app/Contents/MacOS/static/ ./$(APPNAME).app/Contents/Resources/
-	cp -f ./$(APPNAME).app/Contents/MacOS/templates/ ./$(APPNAME).app/Contents/Resources/
+	mkdir "./$(APPNAME).app/Contents/Resources/static"
+	cp -fr ./$(APPNAME).app/Contents/MacOS/static/* ./$(APPNAME).app/Contents/Resources/static
+	mkdir "./$(APPNAME).app/Contents/Resources/templates"
+	cp -fr ./$(APPNAME).app/Contents/MacOS/templates/* ./$(APPNAME).app/Contents/Resources/templates
 
 sign_app_local:
 	# sign with the app
