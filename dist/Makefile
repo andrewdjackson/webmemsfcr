@@ -35,7 +35,8 @@ add_static_files_to_package:
 
 sign_app_local:
 	# sign with the app
-	codesign --force  --deep --verify --verbose=4 -s $(DEVID) --entitlements "$(DARWINDISTPATH)/entitlements.plist" --timestamp --options runtime "$(DARWINDISTPATH)/$(APPNAME).app/Contents/MacOS/$(EXECUTABLE)" "$(DARWINDISTPATH)/$(APPNAME).app"
+	#codesign --force  --deep --verify --verbose=4 -s $(DEVID) --entitlements "$(DARWINDISTPATH)/entitlements.plist" --timestamp --options runtime "$(DARWINDISTPATH)/$(APPNAME).app/Contents/MacOS/$(EXECUTABLE)" "$(DARWINDISTPATH)/$(APPNAME).app"
+	codesign -s $(DEVID) -v --deep --timestamp --entitlements "$(DARWINDISTPATH)/entitlements.plist" -o runtime "$(DARWINDISTPATH)/$(APPNAME).app"
 
 sign_framework:
 	find "$(DARWINDISTPATH)/${APPNAME}.app" -iname '*.so' -or -iname '*.dylib' | \
