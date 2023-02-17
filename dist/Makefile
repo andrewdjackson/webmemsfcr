@@ -14,19 +14,21 @@ STORE_INSTID="3rd Party Mac Developer Installer: Andrew Jackson (MD9E767XF5)"
 
 .PHONY: clean
 
-build-app: build_darwin
-build-sign: build_darwin sign_app_local
-build-package: build_darwin package_local_app
+build-app: build_nuitka
+build-sign: build_nuitka sign_app_local
+build-package: build_nuitka package_local_app
 package: package_local_app notarize_local_package
-all: build_darwin sign_app_local package_local_app notarize_local_package
+all: build_nuitka sign_app_local package_local_app notarize_local_package
 sign: sign_app_local
 
-
-build_darwin:
+build_nuitka:
 	/usr/local/bin/python3 -m nuitka --follow-imports --onefile --include-data-dir=../app/static=static --include-data-dir=../app/templates=templates --macos-disable-console --macos-create-app-bundle --standalone --macos-app-icon=MemsFCR-APP-Icon.png ../app/memsfcr.py
-	#/usr/local/bin/python3 setup-py2app.py py2app
 	mv memsfcr.app ./$(APPNAME).app
 	#cp -f MemsFCR-APP-Info.plist ./$(APPNAME).app/Contents/Info.plist
+
+build_py2app:
+	/usr/local/bin/python3 setup-py2app.py py2app
+	mv dist/memsfcr.app ./$(APPNAME).app
 
 add_static_files_to_package:
 	mkdir "./$(APPNAME).app/Contents/Resources/static"
