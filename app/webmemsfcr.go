@@ -1,30 +1,58 @@
 package main
 
 import (
-	"github.com/go-martini/martini"
-	"log"
-	"net/http"
+	"fmt"
+	"github.com/andrewdjackson/webmemsfcr/fcr"
+	"github.com/pkg/browser"
+	log "github.com/sirupsen/logrus"
+	"runtime"
+)
+
+var (
+	webServer *fcr.WebServer
 )
 
 func main() {
-	martini_server()
+	// create a channel to notify app to exit
+	exit := make(chan int)
+
+	log.Infof("MemsFCR server started")
+	webServer = fcr.NewWebServer()
+
+	// start the web server
+	StartWebServer()
+
+	// open the browser
+	OpenBrowser()
+
+	// wait for exit on the channel
+	for {
+		<-exit
+	}
 }
 
-func martini_server() {
-	server := martini.Classic()
-	//server.Use(martini.Static("./static"))
-	server.Use(martini.Static("./static", martini.StaticOptions{Fallback: "index.html", Prefix: "/static/"}))
+func StartWebServer() {
+	// run the web server as a concurrent process
+	go webServer.RunHTTPServer("8081")
 
-	//server.Use(martini.Static("./tenmplates"))
-	server.Use(martini.Static("./templates", martini.StaticOptions{Prefix: "/templates/"}))
-	//	server.Use(nocache.UpdateCacheHeaders())
-
-	//log.Fatal(http.ListenAndServe(":8081", nil))
-	server.RunOnAddr(":8081")
+	// display the web interface, wait for the HTTP Server to start
+	for {
+		if webServer.ServerRunning {
+			break
+		}
+	}
 }
 
-func go_server() {
-	http.Handle("/", http.FileServer(http.Dir("./static")))
-	http.Handle("/templates/", http.StripPrefix("/templates/", http.FileServer(http.Dir("./templates"))))
-	log.Fatal(http.ListenAndServe(":8081", nil))
+// OpenBrowser opens the browser
+func OpenBrowser() {
+	url := fmt.Sprintf("http://127.0.0.1:%d/index.html", webServer.HTTPPort)
+
+	var err error
+
+	log.Infof("opening browser (%s)", runtime.GOOS)
+	err = browser.OpenURL(url)
+
+	if err != nil {
+		log.Errorf("error opening browser (%s)", err)
+	}
 }
