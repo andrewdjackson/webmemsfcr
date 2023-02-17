@@ -23,9 +23,9 @@ sign: sign_app_local
 
 
 build_darwin:
-	#/usr/local/bin/python3 -m nuitka --include-data-dir=../app/static=static --include-data-dir=../app/templates=templates --macos-disable-console --macos-create-app-bundle --standalone --macos-app-icon=MemsFCR-APP-Icon.png ../app/memsfcr.py
-	/usr/local/bin/python3 setup.py py2app
-	mv dist/memsfcr.app ./$(APPNAME).app
+	/usr/local/bin/python3 -m nuitka --follow-imports --onefile --include-data-dir=../app/static=static --include-data-dir=../app/templates=templates --macos-disable-console --macos-create-app-bundle --standalone --macos-app-icon=MemsFCR-APP-Icon.png ../app/memsfcr.py
+	#/usr/local/bin/python3 setup-py2app.py py2app
+	mv memsfcr.app ./$(APPNAME).app
 	#cp -f MemsFCR-APP-Info.plist ./$(APPNAME).app/Contents/Info.plist
 
 add_static_files_to_package:
@@ -61,6 +61,7 @@ notarize_local_package:
 clean: ## Remove previous build
 	rm -fr $(DISTPATH)/$(APPNAME).app
 	rm -fr $(DISTPATH)/$(APPNAME).build
+	rm -fr $(DISTPATH)/$(APPNAME).onefile-build
 	rm -fr $(DISTPATH)/$(APPNAME).dist
 	rm -fr $(DISTPATH)/Resources
 	rm -f $(DISTPATH)/Info.plist
