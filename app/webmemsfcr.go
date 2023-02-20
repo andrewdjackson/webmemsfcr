@@ -16,7 +16,6 @@ func main() {
 	// create a channel to notify app to exit
 	exit := make(chan int)
 
-	log.Infof("MemsFCR server started")
 	webServer = fcr.NewWebServer()
 
 	// start the web server
@@ -33,7 +32,7 @@ func main() {
 
 func StartWebServer() {
 	// run the web server as a concurrent process
-	go webServer.RunHTTPServer("8081")
+	go webServer.RunHTTPServer("0")
 
 	// display the web interface, wait for the HTTP Server to start
 	for {
