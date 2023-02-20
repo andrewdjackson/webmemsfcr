@@ -38,6 +38,7 @@ create_darwin_app:
 	# copy the info and entitlement plists into the application structure
 	cp -f "$(DIST_PATH)/MemsFCR-APP-Info.plist" "$(DARWIN_DIST_PATH)/$(APPNAME).app/Contents/Info.plist"
 	cp -f "$(DIST_PATH)/MemsFCR-APP-entitlements.plist" "$(DARWIN_DIST_PATH)/$(APPNAME).app/Contents/entitlements.plist"
+	cp -f "$(RESOURCES_PATH)/../index.html" "$(DARWIN_DIST_PATH)/$(APPNAME).app/Contents/Resource/index.html"
 
 sign_app_local:
 	# sign with the app
