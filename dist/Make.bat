@@ -1,1 +1,0 @@
-python -m nuitka --include-data-dir=../app/static=static --include-data-dir=../app/templates=templates --disable-console --onefile --windows-icon-from-ico=../app/static/images/icon.png ../app/memsfcr.py
