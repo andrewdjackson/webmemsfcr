@@ -1,5 +1,5 @@
 EXECUTABLE=memsfcr
-APPNAME=MemsFCR
+APPNAME=WebMemsFCR
 
 APP_PATH=app
 DIST_PATH=dist
