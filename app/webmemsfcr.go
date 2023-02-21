@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/andrewdjackson/webmemsfcr/fcr"
 	"github.com/pkg/browser"
@@ -13,16 +14,25 @@ var (
 )
 
 func main() {
+	var port string
+	var headless bool
+
+	flag.StringVar(&port, "port", "0", "webserver port")
+	flag.BoolVar(&headless, "headless", false, "headless server mode")
+	flag.Parse()
+
 	// create a channel to notify app to exit
 	exit := make(chan int)
 
 	webServer = fcr.NewWebServer()
 
 	// start the web server
-	StartWebServer()
+	StartWebServer(port)
 
 	// open the browser
-	OpenBrowser()
+	if !headless {
+		OpenBrowser()
+	}
 
 	// wait for exit on the channel
 	for {
@@ -30,9 +40,9 @@ func main() {
 	}
 }
 
-func StartWebServer() {
+func StartWebServer(port string) {
 	// run the web server as a concurrent process
-	go webServer.RunHTTPServer("0")
+	go webServer.RunHTTPServer(port)
 
 	// display the web interface, wait for the HTTP Server to start
 	for {
