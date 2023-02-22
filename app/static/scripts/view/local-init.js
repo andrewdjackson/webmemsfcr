@@ -4,15 +4,19 @@
 // initialisation is executed
 //
 
-import {initialise} from "./init.js";
+import {initialise, setRunningLocal} from "./init.js";
+import {MemsLocalSerialInterface} from "../rosco/mems-local-serial.js";
 
 const templates = ['footer','dashboard','actuators','adjustments','ecudata','charts','analysis','guidance'];
 
 export async function local_initialise() {
+    setRunningLocal();
+
     // load the templates before initialising event handlers
     await loadTemplates();
 
-    initialise();
+    // initialise with the local serial interface
+    await initialise(new MemsLocalSerialInterface());
 }
 
 async function loadTemplates() {

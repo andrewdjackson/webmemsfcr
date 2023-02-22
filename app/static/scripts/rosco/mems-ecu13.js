@@ -10,8 +10,8 @@ import {MemsEcu16} from "./mems-ecu16.js";
 //
 
 export class MemsEcu13 extends MemsEcu16 {
-    constructor(responseEventQueue) {
-        super(responseEventQueue);
+    constructor(responseEventQueue, serialInterface) {
+        super(responseEventQueue, serialInterface);
         // override the dataframe commands to request 0x80 dataframes only
         this.setDataframeCommands([Command.MEMS_Dataframe80]);
     }

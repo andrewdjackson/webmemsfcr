@@ -7,7 +7,7 @@ export class MemsBrowserSerialInterface extends MemsSerialInterface {
 
         this._reader;
         this._writer;
-    };
+    }
 
     //
     // Check if the browser supports the Web Serial API

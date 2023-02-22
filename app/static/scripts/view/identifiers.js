@@ -10,7 +10,8 @@ export const alertToastTextId = "alert-toast-body";
 export const messageModalId = "modalMessage";
 export const messageModalTitleId = "modalMessageTitle";
 export const messageModalTextId = "modalMessageText";
-
+export const selectPortModalId = "modalSelectPort";
+export const selectPortModalList = "serialPortList";
 export const ecuId = "ecuid";
 
 export const enabledWhenEcuIsConnected = "ecu-enabled-connected";

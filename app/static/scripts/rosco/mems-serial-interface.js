@@ -4,7 +4,7 @@ export class MemsSerialInterface {
     constructor() {
         this._isConnected = false;
         this._port = undefined;
-    };
+    }
 
     //
     // check if the serial port is connected
@@ -32,7 +32,7 @@ export class MemsSerialInterface {
             await this._open()
                 .then((opened) => {
                     console.info(`connect: opened port ${opened}`);
-                    this._isConnected = opened;
+                    this._isConnected = true;
                 })
                 .catch(() => {
                     console.error(`connect: error opening port`);

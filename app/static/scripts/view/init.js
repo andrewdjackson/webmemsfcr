@@ -1,4 +1,5 @@
 import {EventQueue, EventTopic} from "../rosco/mems-queue.js";
+import {MemsBrowserSerialInterface} from "../rosco/mems-browser-serial.js";
 import {MemsEcu16} from "../rosco/mems-ecu16.js";
 import {DataframeLog} from "../rosco/mems-dataframe-log.js";
 import {Analysis} from "../analysis/analysis.js";
@@ -12,17 +13,24 @@ import * as Chart from "./charts.js";
 import * as View from "./view.js";
 
 export const responseEventQueue = new EventQueue();
-export const ecu = new MemsEcu16(responseEventQueue);
+export var ecu = undefined;
 export const dataframeLog = new DataframeLog();
 export const analysis = new Analysis(dataframeLog);
 export const analysisReport = new AnalysisReport(analysis);
 export var charts = [];
 export var initialised = false;
+export var isLocal = false;
 
-export async function initialise() {
+export async function initialise(serialInterface) {
     if (!initialised) {
         // prevent initialisation occurring more than once.
         initialised = true;
+
+        if (serialInterface === undefined) {
+            ecu = new MemsEcu16(responseEventQueue, new MemsBrowserSerialInterface());
+        } else {
+            ecu = new MemsEcu16(responseEventQueue, serialInterface);
+        }
 
         initialiseSubscribers();
 
@@ -41,6 +49,10 @@ export async function initialise() {
         View.setButtonsOnConnectionState();
         View.setButtonsOnEngineRunning();
     }
+}
+
+export function setRunningLocal() {
+    isLocal = true;
 }
 
 function initialiseSubscribers() {

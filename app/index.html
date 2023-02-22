@@ -109,7 +109,7 @@
 
 <!-- messages.html -->
 	<div class="modal fade" id="modalMessage" tabindex="-1" aria-labelledby="modalMessageTitle" aria-hidden="true">
-		<div class="modal-dialog modal-lg modal-dialog-centere">
+		<div class="modal-dialog modal-lg modal-dialog-center">
 			<div class="modal-content">
 				<div class="modal-header bg-danger text-white">
 					<h5 class="modal-title" id="modalMessageTitle"></h5>
@@ -125,6 +125,28 @@
 		</div>
 	</div>
 <!-- messages.html -->
+
+<!-- port selection -->
+	<div class="modal fade" id="modalSelectPort" tabindex="-1" aria-labelledby="modalSelectPortTitle" aria-hidden="true">
+		<div class="modal-dialog modal-lg modal-dialog-center">
+			<div class="modal-content">
+				<div class="modal-header bg-light text-black">
+					<h5 class="modal-title" id="modalSelectPortTitle">Select Serial Port</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="list-group" role="tablist" id="serialPortList"></div>
+					<div class="dropdown-menu" id="selectedPort" aria-labelledby="dropdownMenuButton">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button id="selectPortConnectButton" type="button" class="btn btn-success" data-bs-dismiss="modal">Connect</button>
+				</div>
+			</div>
+		</div>
+	</div>
+<!-- port selection -->
 
 	<main class="page-content">
 		<div class="container-fluid">

@@ -2,7 +2,8 @@ import * as Identifier from "./identifiers.js";
 import * as Command from "../rosco/mems-commands.js";
 import * as View from "./view.js";
 import * as Dataframe from "./dataframe.js";
-import {ecu, sendCommand, dataframeLog} from "./init.js";
+import * as LocalSerialPort from "./local-serialport.js";
+import {ecu, isLocal, sendCommand, dataframeLog} from "./init.js";
 
 export function attachControlEventListeners() {
     document.getElementById("connectButton").addEventListener('click', connect);
@@ -11,12 +12,24 @@ export function attachControlEventListeners() {
     document.getElementById("clearFaultsButton").addEventListener('click', clearFaults);
     document.getElementById("resetECUButton").addEventListener('click', reset);
     document.getElementById("downloadLogButton").addEventListener('click', downloadLog);
+
+    if (isLocal) {
+        document.getElementById("selectPortConnectButton").addEventListener('click', LocalSerialPort.connectLocalSerialPort);
+    }
 }
 
 function connect() {
     console.info(`connect`);
 
-    ecu.connect().then((connected) => {
+    if (isLocal) {
+        LocalSerialPort.showSelectSerialPortDialog();
+    } else {
+        connectToSerialPort();
+    }
+}
+
+export function connectToSerialPort(port) {
+    ecu.connect(port).then((connected) => {
         if (connected === true) {
             View.setButtonsOnConnectionState();
             View.updateECUID(ecu.ecuId);

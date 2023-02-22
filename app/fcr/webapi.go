@@ -9,12 +9,17 @@ import (
 )
 
 type ECUConnectionPort struct {
-	Port string `json:"port"`
+	Port string `json:"Port"`
+}
+
+type AvailablePorts struct {
+	Ports []string `json:"Ports"`
 }
 
 type ECUCommandResponse struct {
-	Command  string `json:"command"`
-	Response string `json:"response"`
+	Command      string `json:"Command"`
+	Response     string `json:"Response"`
+	ExpectedSize int    `json:"ExpectedSize"`
 }
 
 //
@@ -89,7 +94,9 @@ func (webserver *WebServer) apiECUGetAvailableSerialPorts(w http.ResponseWriter,
 
 	ports := webserver.getSerialPorts()
 
-	if err := json.NewEncoder(w).Encode(ports); err != nil {
+	availablePorts := AvailablePorts{Ports: ports}
+
+	if err := json.NewEncoder(w).Encode(&availablePorts); err != nil {
 		// return a error code
 		w.WriteHeader(http.StatusInternalServerError)
 		return

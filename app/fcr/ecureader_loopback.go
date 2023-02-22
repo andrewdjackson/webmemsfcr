@@ -42,13 +42,15 @@ func (r *LoopbackReader) Connect() (bool, error) {
 		return false, err
 	}
 
-	if err := r.initialiseMemsECU(); err != nil {
-		log.Errorf("error initialising ecu (%s) status : (%+v)", r.port, err)
-		// connect failure if we cannot initialise successfully
-		// disconnect from the ecu
-		_ = r.Disconnect()
-		return false, err
-	}
+	/*
+		if err := r.initialiseMemsECU(); err != nil {
+			log.Errorf("error initialising ecu (%s) status : (%+v)", r.port, err)
+			// connect failure if we cannot initialise successfully
+			// disconnect from the ecu
+			_ = r.Disconnect()
+			return false, err
+		}
+	*/
 
 	// connected, no errors
 	r.connected = true

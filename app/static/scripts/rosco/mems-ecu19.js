@@ -8,8 +8,8 @@ import {MemsEcu16} from "./mems-ecu16.js";
 //
 
 export class MemsEcu19 extends MemsEcu16 {
-    constructor(responseEventQueue) {
-        super(responseEventQueue);
+    constructor(responseEventQueue, serialInterface) {
+        super(responseEventQueue, serialInterface);
     }
 /*
     async waitUntil(timestampMs, pause) {

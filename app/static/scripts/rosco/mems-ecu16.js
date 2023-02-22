@@ -12,19 +12,19 @@ import * as Dataframe from "./mems-dataframe.js";
 const INITIALISATION_MAX_RETRIES = 10;
 
 export class MemsEcu16 extends ECUReader {
-    constructor(responseEventQueue) {
+    constructor(responseEventQueue, serialInterface) {
         super(responseEventQueue);
-        this._serial = new MemsBrowserSerialInterface();
+        this._serial = serialInterface;
     }
 
     //
     // connect the serial port
     //
-    async connect() {
+    async connect(port) {
         this._isConnected = false;
         this._paused = false;
 
-        return await this._serial.connect()
+        return await this._serial.connect(port)
             .then(async () => {
                 if (await this._initialise()) {
                     super.connected();
