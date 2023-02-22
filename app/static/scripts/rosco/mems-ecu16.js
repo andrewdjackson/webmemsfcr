@@ -1,4 +1,4 @@
-import {MemsSerialInterface} from "./mems-serial.js";
+import {MemsBrowserSerialInterface} from "./mems-browser-serial.js";
 import {ECUReader} from "./mems-ecureader.js";
 import * as Command from "./mems-commands.js";
 import * as Dataframe from "./mems-dataframe.js";
@@ -14,7 +14,7 @@ const INITIALISATION_MAX_RETRIES = 10;
 export class MemsEcu16 extends ECUReader {
     constructor(responseEventQueue) {
         super(responseEventQueue);
-        this._serial = new MemsSerialInterface();
+        this._serial = new MemsBrowserSerialInterface();
     }
 
     //

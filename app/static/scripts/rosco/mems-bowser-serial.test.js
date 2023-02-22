@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest'
-import {MemsSerialInterface} from "./mems-serial.js";
+import {MemsBrowserSerialInterface} from "./mems-browser-serial.js";
 
 class SerialReaderMock {
     getReader() {
@@ -65,7 +65,7 @@ window.navigator.serial = new NavigatorSerialMock();
 let serial;
 
 beforeAll(() => {
-    serial = new MemsSerialInterface();
+    serial = new MemsBrowserSerialInterface();
 })
 
 describe('check browser supports serial API ', () => {

@@ -1,11 +1,10 @@
 import * as Command from "./mems-commands.js";
+import {MemsSerialInterface} from "./mems-serial-interface.js";
 
-const SERIAL_TIMEOUT = 2000;
-
-export class MemsSerialInterface {
+export class MemsBrowserSerialInterface extends MemsSerialInterface {
     constructor() {
-        this._isConnected = false;
-        this._port = undefined;
+        super();
+
         this._reader;
         this._writer;
     };
@@ -18,40 +17,11 @@ export class MemsSerialInterface {
     }
 
     //
-    // check if the serial port is connected
-    //
-    get isConnected() {
-        return this._isConnected;
-    }
-
-    //
     // connect to the port selected by the user in the browser
     // once connected, open the port for read/write
     //
     async connect() {
-        await this._connectToPort()
-            .then((port) => {
-                this._port = port;
-                console.info(`connect: connected to port`);
-            })
-            .catch(() => {
-                console.error(`connect: error connecting to port`);
-                return error;
-            });
-
-        if (this._port !== undefined) {
-            await this._open()
-                .then((opened) => {
-                    console.info(`connect: opened port ${opened}`);
-                    this._isConnected = opened;
-                })
-                .catch(() => {
-                    console.error(`connect: error opening port`);
-                    this._isConnected = false;
-                });
-        }
-
-        return this._isConnected;
+        return super.connect();
     }
 
     //
@@ -59,19 +29,7 @@ export class MemsSerialInterface {
     // returns the status of the connection
     //
     async disconnect() {
-        if (this._isConnected) {
-            await this.close()
-                .then(() => {
-                    console.log(`disconnect: closed port`);
-                    this._isConnected = false;
-                })
-                .catch((error) => {
-                    console.error(`disconnect: error closing port ${error}`);
-                    reject();
-                });
-        }
-
-        return Promise.resolve(this._isConnected);
+        return super.disconnect();
     }
 
     //
@@ -79,22 +37,7 @@ export class MemsSerialInterface {
     // the command as a byte array and returns the response as a byte array
     //
     async sendAndReceiveFromSerial(command, expectedResponseSize) {
-        if (expectedResponseSize < 1) expectedResponseSize = 1;
-
-        if (this._isConnected) {
-            await this._write(command);
-            return Promise.any([
-                this._read(expectedResponseSize, command),
-                new Promise(resolve => setTimeout(resolve, SERIAL_TIMEOUT, 'serial read timeout'))
-            ]).then((response) => {
-                return response;
-            }).catch(((err) => {
-                console.error(`sendAndReceiveFromSerial exception ${err}`);
-                reject(err);
-            }))
-        }
-
-        return [];
+        return super.sendAndReceiveFromSerial(command, expectedResponseSize);
     }
 
     //
@@ -226,36 +169,5 @@ export class MemsSerialInterface {
         }
 
         return rxData;
-    }
-
-    async _readWithTimeout() {
-        const readPromise = this._reader.read();
-        const waitPromise = new Promise((resolve) => setTimeout(resolve, 500, {value:0, done:true}));
-
-        await Promise.any([readPromise, waitPromise]
-        ).then((result) => {
-            console.debug(`flushed serial port`);
-            return result;
-        });
-    }
-
-    //
-    // convert bytes into a hex string
-    //
-    _arrayAsHexString(data) {
-        let hex = "";
-
-        data.forEach(value => {
-            hex += value.toString(16).padStart(2, '0');
-        });
-
-        return hex;
-    }
-
-    //
-    // asynchronously "sleep" for a period of time
-    //
-    _sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms, 'sleep timeout'));
     }
 }
