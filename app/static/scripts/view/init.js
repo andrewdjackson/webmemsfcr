@@ -68,7 +68,10 @@ async function loadTemplates() {
         await fetch(templateUrls[i])
             .then((response) =>{
                 response.text().then((text) => {
-                    document.getElementById(`template-${templates[i]}`).innerHTML = text;
+                    let target = document.getElementById(`template-${templates[i]}`);
+                    if (target !== null) {
+                        target.innerHTML = text;
+                    }
                 });
             })
             .catch(function(err) {console.warn(`Failed to fetch template ${templateUrls[i]} (${err})`);
