@@ -76,7 +76,7 @@ func (webserver *WebServer) apiECUSendCommand(w http.ResponseWriter, r *http.Req
 		log.Errorf("%+v", err)
 	} else {
 		if command, err := hex.DecodeString(ecuCommandResponse.Command); err == nil {
-			if response, err := webserver.ecuReader.SendAndReceive(command); err == nil {
+			if response, err := webserver.ecuReader.SendAndReceive(command, ecuCommandResponse.ExpectedSize); err == nil {
 				ecuCommandResponse.Response = hex.EncodeToString(response)
 
 				if err := json.NewEncoder(w).Encode(ecuCommandResponse); err != nil {

@@ -42,30 +42,20 @@ func (r *LoopbackReader) Connect() (bool, error) {
 		return false, err
 	}
 
-	/*
-		if err := r.initialiseMemsECU(); err != nil {
-			log.Errorf("error initialising ecu (%s) status : (%+v)", r.port, err)
-			// connect failure if we cannot initialise successfully
-			// disconnect from the ecu
-			_ = r.Disconnect()
-			return false, err
-		}
-	*/
-
 	// connected, no errors
 	r.connected = true
 
 	return r.connected, nil
 }
 
-func (r *LoopbackReader) SendAndReceive(command []byte) ([]byte, error) {
+func (r *LoopbackReader) SendAndReceive(command []byte, expectedResponseSize int) ([]byte, error) {
 	var response []byte
 	var err error
 
 	if r.serialPort != nil {
 		if r.connected {
 			r.writeSerial(command)
-			response, err = r.readSerial(command)
+			response, err = r.readSerial(command, expectedResponseSize)
 		} else {
 			err = fmt.Errorf("ecu is not connected, unable to send %X", command)
 			log.Errorf("%s", err)
@@ -116,72 +106,13 @@ func (r *LoopbackReader) connectToSerialPort(port string) error {
 	return err
 }
 
-// initialises the connection to the ECU
-// The initialisation sequence is as follows:
-//
-// 1. Send command CA (MEMS_InitCommandA)
-// 2. Receive response CA
-// 3. Send command 75 (MEMS_InitCommandB)
-// 4. Receive response 75
-// 5. Send request ECU ID command D0 (MEMS_InitECUID)
-// 6. Receive response D0 XX XX XX XX
-func (r *LoopbackReader) initialiseMemsECU() error {
-	_ = r.serialPort.Flush()
-
-	log.Infof("initialising ecu")
-
-	r.writeSerial(MEMSInitCommandA)
-	if response, err := r.readSerial(MEMSInitCommandA); err != nil {
-		// abandon initialisation if error occurred
-		log.Errorf("mems initialisation failed command %X (%s)", MEMSInitCommandA, err)
-		return err
-	} else {
-		// if we get the command echoed back we can assume good connection and proceed.
-		// This is to work around the issue  in Windows where the serialPort always connects even if it's not available.
-		if len(response) == 0 {
-			err = fmt.Errorf("0 bytes received, serial serialPort read error, timeout? (%s)", err)
-			log.Errorf("%s", err)
-			return err
-		}
-
-		if response[0] == MEMSInitCommandA[0] {
-			r.writeSerial(MEMSInitCommandB)
-
-			if response, err = r.readSerial(MEMSInitCommandB); err != nil {
-				// abandon initialisation if error occurred
-				log.Errorf("mems initialisation failed command %X (%s)", MEMSInitCommandB, err)
-				return err
-			}
-
-			r.writeSerial(MEMSHeartbeat)
-			if response, err = r.readSerial(MEMSHeartbeat); err != nil {
-				// abandon initialisation if error occurred
-				log.Errorf("mems initialisation failed command %X (%s)", MEMSHeartbeat, err)
-				return err
-			}
-
-			r.writeSerial(MEMSInitECUID)
-			if response, err = r.readSerial(MEMSInitECUID); err != nil {
-				// abandon initialisation if error occurred
-				log.Errorf("mems initialisation failed command %X (%s)", MEMSInitECUID, err)
-				return err
-			} else {
-				log.Infof("mems initialisation ECU ID %X successful", response)
-			}
-		}
-	}
-
-	log.Infof("mems initialised")
-	return nil
-}
-
 // readSerial read from MEMS
 // read 1 byte at a time until we have all the expected bytes
-func (r *LoopbackReader) readSerial(command []byte) ([]byte, error) {
+func (r *LoopbackReader) readSerial(command []byte, expectedResponseSize int) ([]byte, error) {
 	var bytesRead int
 	var err error
 
-	size, err := getResponseSize(command)
+	size := expectedResponseSize
 
 	// serial read buffer
 	b := make([]byte, size)
