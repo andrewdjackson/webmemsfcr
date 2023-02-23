@@ -21,9 +21,12 @@ export class AnalysisReport {
     updateFaultPill() {
         if (this.analysis.hasData) {
             if (this.analysis.faults.length > 0) {
-                let elements = document.querySelectorAll(`.fault-count`);
-                this._updateElementsInnerHTML(elements, this.analysis.faults.length);
-                this._displayElement("fault-count");
+                const alerts = this.analysis.faults.filter(fault => fault.level !== "info");
+                if (alerts.length > 0) {
+                    let elements = document.querySelectorAll(`.fault-count`);
+                    this._updateElementsInnerHTML(elements, alerts.length);
+                    this._displayElement("fault-count");
+                }
             }
         }
     }

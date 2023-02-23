@@ -46,31 +46,35 @@ export class Analysis {
     _analyseFaultLog() {
         this._faultLog = [];
 
-        this._addEngineWarmToFaults();
-
         if (this._dataframeLog.hasLoggedData) {
-            this._addFault("_80x08_BatteryVoltage", Faults.BatteryFault);
-            this._addFault("_80x17_CoilTime", Faults.CoilFault);
-            this._addFault("_80x03_CoolantTemp", Faults.CoolantFault);
-            this._addFault("_80x10_IdleHot", Faults.IdleHotFault);
-            this._addFault("_80x12_IACPosition", Faults.IACFault);
-            this._addFault("_7Dx1F_JackCount", Faults.JackFault);
+            // iterate the operational status log and count the number of times the metric is
+            // discovered to be outside expected operating parameters
+
+            this._isFaulty("_80x08_BatteryVoltage", Faults.BatteryFault);
+            this._isFaulty("_80x17_CoilTime", Faults.CoilFault);
+            this._isFaulty("_80x03_CoolantTemp", Faults.CoolantFault);
+            this._isFaulty("_80x10_IdleHot", Faults.IdleHotFault);
+            this._isFaulty("_80x12_IACPosition", Faults.IACFault);
+            this._isFaulty("_7Dx1F_JackCount", Faults.JackFault);
             //this._addFault("_7Dx0F_IdleBasePosition", Faults.IdleFault); needs more investigation
-            this._addFault("IntakeAirTempSensorFault", Faults.AirTempFault);
-            this._addFault("_80x07_ManifoldAbsolutePressure", Faults.MapFault);
-            this._addFault("_7Dx06_LambdaVoltage", Faults.O2Fault);
-            this._addFault("_7Dx09_LambdaStatus", Faults.O2Fault);
-            this._addFault("ThermostatFaulty", Faults.ThermostatFault);
-            this._addFault("ThrottlePotCircuitFault", Faults.ThrottleFault);
-            this._addFault("FuelPumpFault", Faults.FuelPumpFault);
-            this._addFault("IACFault", Faults.ThrottleFault);
+            this._isFaulty("IntakeAirTempSensorFault", Faults.AirTempFault);
+            this._isFaulty("_80x07_ManifoldAbsolutePressure", Faults.MapFault);
+            this._isFaulty("_7Dx06_LambdaVoltage", Faults.O2Fault);
+            this._isFaulty("_7Dx09_LambdaStatus", Faults.O2Fault);
+            this._isFaulty("ThermostatFaulty", Faults.ThermostatFault);
+            this._isFaulty("ThrottlePotCircuitFault", Faults.ThrottleFault);
+            this._isFaulty("FuelPumpFault", Faults.FuelPumpFault);
+            this._isFaulty("IACFault", Faults.ThrottleFault);
          }
 
         this._faultLog = this._dedupArrayByProperty(this._faultLog, "id");
         this._faultLog = this._removeFaultsBelowMinimum();
+
+        // add operational stats after fault reconciliation
+        this._addEngineWarmToFaults();
     }
 
-    _addFault(metric, faultTemplate) {
+    _isFaulty(metric, faultTemplate) {
         let faultCount = this._countFaults(metric);
         if (faultCount > 0) {
             let fault = new Faults.Fault(faultTemplate.id, faultTemplate.title, faultTemplate.level);
@@ -80,10 +84,12 @@ export class Analysis {
     }
 
     _addEngineWarmToFaults() {
-        if (this._statusLog.at(CURRENT_DATAFRAME).isEngineWarm === true) {
-            let fault = new Faults.Fault(Faults.AtOperatingTemp.id, Faults.AtOperatingTemp.title, Faults.AtOperatingTemp.level);
-            fault.count = 1;
-            this._faultLog.push(fault);
+        if (this._statusLog.length > 0) {
+            if (this._statusLog.at(CURRENT_DATAFRAME).isEngineWarm === true) {
+                let fault = new Faults.Fault(Faults.AtOperatingTemp.id, Faults.AtOperatingTemp.title, Faults.AtOperatingTemp.level);
+                fault.count = 1;
+                this._faultLog.push(fault);
+            }
         }
     }
 
@@ -118,8 +124,10 @@ export class Analysis {
         let count = 0;
 
         this._statusLog.forEach((item) => {
-            if (item.operationalFaults[metric]) {
-                count++;
+            if (metric in item._operationalFaults) {
+                if (item._operationalFaults[metric]) {
+                    count++;
+                }
             }
         });
 
