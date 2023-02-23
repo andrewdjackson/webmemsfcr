@@ -4,7 +4,7 @@ export class MemsLocalSerialInterface extends MemsSerialInterface {
     constructor() {
         super();
 
-        this._baseUri = 'http://127.0.0.1:8081';
+        this._baseUri = window.location.href.split("/").slice(0, 3).join("/");
     }
 
     //
