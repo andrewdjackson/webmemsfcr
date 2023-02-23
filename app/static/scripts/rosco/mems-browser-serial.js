@@ -13,7 +13,8 @@ export class MemsBrowserSerialInterface extends MemsSerialInterface {
     // Check if the browser supports the Web Serial API
     //
     isWebSerialSupported() {
-        return ("serial" in window.navigator);
+        return true;
+        //return ("serial" in window.navigator);
     }
 
     //
