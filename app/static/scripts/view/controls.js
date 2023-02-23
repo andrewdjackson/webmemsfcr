@@ -55,8 +55,19 @@ function disconnect() {
 }
 
 function pause() {
-    console.info(`pause`);
+    console.info(`pause (${ecu.isPaused})`);
     Dataframe.pauseDataframe();
+
+    let pauseButton = document.getElementById("pauseButton");
+    if (ecu.isPaused) {
+        pauseButton.innerText = "Resume";
+        pauseButton.classList.remove("btn-warning");
+        pauseButton.classList.add("btn-info");
+    } else {
+        pauseButton.innerText = "Pause";
+        pauseButton.classList.remove("btn-info");
+        pauseButton.classList.add("btn-warning");
+    }
 }
 
 
