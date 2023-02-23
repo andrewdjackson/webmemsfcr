@@ -23,7 +23,7 @@ export class OperationalStatus {
     get operationalFaults() {
         this._operationalFaults._80x03_CoolantTemp = this.isThermostatFaulty;
         this._operationalFaults._80x07_ManifoldAbsolutePressure = this.isMAPHigh;
-        this._operationalFaults._80x08_BatteryVoltage  = this.isBatteryVoltageLow;
+        this._operationalFaults._80x08_BatteryVoltage = this.isBatteryVoltageLow;
         this._operationalFaults._80x10_IdleHot = this.isHotIdleFaulty;
         this._operationalFaults._80x12_IACPosition = this.isIACFaulty;
         this._operationalFaults._80x17_CoilTime = this.isCoilFaulty;
@@ -194,7 +194,7 @@ export class OperationalStatus {
         if (this.isEngineRunning) {
             const currentTime = new Date(this._dataframe._80x00_Time).getTime();
             const expectedTimeEngineWarm = this._getExpectedEngineWarmTime().getTime();
-            return (currentTime > expectedTimeEngineWarm) && (data._80x03_CoolantTemp < Constant.lowestEngineWarmTemperature);
+            return (currentTime > expectedTimeEngineWarm) && (this._dataframe._80x03_CoolantTemp < Constant.lowestEngineWarmTemperature);
         } else {
             return false
         }
