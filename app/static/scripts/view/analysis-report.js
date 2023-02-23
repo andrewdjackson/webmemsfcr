@@ -32,16 +32,20 @@ export class AnalysisReport {
     }
 
     _displayFaults() {
-        this._hideElement("analysis-no_faults");
-        this._displayElement("analysis-has_faults");
+        const alerts = this.analysis.faults.filter(fault => fault.level !== "info");
 
         this._displayAtOperatingTemperature();
 
-        this.analysis.faults.forEach((fault) => {
-            const faultId = `analysis-${fault.id}`;
-            this._displayElement(faultId);
-            this._loadFaultPage(fault);
-        });
+        if (alerts.length > 0) {
+            this._hideElement("analysis-no_faults");
+            this._displayElement("analysis-has_faults");
+
+            this.analysis.faults.forEach((fault) => {
+                const faultId = `analysis-${fault.id}`;
+                this._displayElement(faultId);
+                this._loadFaultPage(fault);
+            });
+        }
     }
     _displayNoFaults() {
         this._displayAtOperatingTemperature();

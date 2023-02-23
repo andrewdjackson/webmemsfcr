@@ -22,15 +22,18 @@ export function dataframeReceived(ecuResponse) {
     updateDataframeMetrics(df);
 
     const currentStatus = analysis.status.at(-1);
-    
+    let currentFaults = [];
+
     if (currentStatus !== undefined) {
-        const currentFaults = currentStatus._operationalFaults;
+        currentFaults = currentStatus.operationalFaults;
 
         // update dashboard items that are a status rather than a value
         // colour faulty metrics red
         if (analysis.status.length > 0) {
             updateState(df, currentStatus);
-            colouriseFaults(currentFaults);
+            if (currentFaults !== undefined) {
+                colouriseFaults(currentFaults);
+            }
         }
     }
 
