@@ -12,7 +12,7 @@ func (webserver *WebServer) getSerialPorts() []string {
 	var ports []string
 
 	if ports, err = serial.GetPortsList(); err != nil {
-		log.Error("error enumerating serial ports (%+v)", err)
+		log.Warnf("error enumerating serial ports (%s)", err)
 	}
 
 	portList := webserver.dedupPorts(ports)
