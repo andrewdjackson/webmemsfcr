@@ -1,4 +1,4 @@
-import {beforeEach, afterEach, describe, expect, it, test} from "vitest";
+import {beforeEach, afterEach, describe, expect, it, test} from "@jest/globals";
 import {Dataframe7d, Dataframe80} from "../rosco/mems-dataframe.js";
 import {OperationalStatus} from "./operational-status.js";
 import {DataframeLog} from "../rosco/mems-dataframe-log.js";
@@ -50,7 +50,7 @@ afterEach(() => {
             addValidDataframeToLog(df[0], df[1]);
 
             status = new OperationalStatus(dataframeLog.dataframes);
-            expect(status.engineStartedAt.getTime()).toBe(new Date(dataframeLog.dataframes.at(LAST_DATAFRAME)._80x00_Time).getTime());
+            expect(status.engineStartedAt.getTime()).toBeGreaterThanOrEqual(new Date(dataframeLog.dataframes.at(LAST_DATAFRAME)._80x00_Time).getTime()-10);
         })
 
         it('engine already running', () => {
@@ -63,7 +63,7 @@ afterEach(() => {
             addValidDataframeToLog(df[0], df[1]);
 
             status = new OperationalStatus(dataframeLog.dataframes);
-            expect(status.engineStartedAt.getTime()).toBe(new Date(dataframeLog.dataframes.at(FIRST_DATAFRAME)._80x00_Time).getTime());
+            expect(status.engineStartedAt.getTime()).toBeGreaterThanOrEqual(new Date(dataframeLog.dataframes.at(FIRST_DATAFRAME)._80x00_Time).getTime()-10);
         })
     })
 

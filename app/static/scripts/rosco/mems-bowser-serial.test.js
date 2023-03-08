@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll } from 'vitest'
+import { describe, it, expect, beforeAll } from "@jest/globals"
 import {MemsBrowserSerialInterface} from "./mems-browser-serial.js";
 
 class SerialReaderMock {

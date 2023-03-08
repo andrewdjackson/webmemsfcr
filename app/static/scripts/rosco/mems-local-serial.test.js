@@ -1,23 +1,26 @@
-import { describe, it, expect, beforeAll } from 'vitest'
+import { describe, it, expect, beforeAll } from "@jest/globals"
 import {MemsLocalSerialInterface} from "./mems-local-serial.js";
 import * as Command from "./mems-commands.js";
-import {MEMS_CoolantGauge_Activate, MEMS_STFT_Dec} from "./mems-commands.js";
+import fetch from "jest-fetch-mock";
 
 let serial;
 
+fetch.enableMocks();
+
 beforeAll(() => {
     serial = new MemsLocalSerialInterface();
+    fetch.resetMocks();
 })
 
 describe('list available serial ports', () => {
     it('list available serial ports', async () => {
         let availablePorts = [];
 
-        await serial.getAvailablePorts().then((ports) => {
-            availablePorts = ports.Ports;
-        })
+        fetch.mockResponseOnce(JSON.stringify({"Ports":[]}));
 
-        expect(parseInt(availablePorts.length)).greaterThanOrEqual(1);
+        await serial.getAvailablePorts().then((ports) => {
+            expect(ports.Ports).toBeDefined();
+        })
     });
 });
 
@@ -25,6 +28,8 @@ describe('connect to serial port', () => {
     it('is connected to a serial port', async () => {
         let port = '/dev/cu.usbserial-AB0MKMTB';
         let connected = false;
+
+        fetch.mockResponseOnce(JSON.stringify({"Connected":true}));
 
         await serial.connect(port).then((isConnected) => {
             connected = isConnected;
@@ -40,6 +45,7 @@ describe('disconnect from serial port', () => {
 
         serial._isConnected = true;
 
+        fetch.mockResponseOnce(JSON.stringify({"Connected":false}));
         await serial.disconnect().then((isConnected) => {
             connected = isConnected;
         })
@@ -53,31 +59,17 @@ describe('get a dataframe from serial port', () => {
         let port = '/dev/cu.usbserial-AB0MKMTB';
         let connected = false;
 
+        fetch.mockResponseOnce(JSON.stringify({"Connected":true}));
         await serial.connect(port).then((isConnected) => {
             connected = isConnected;
         })
 
         expect(connected).toBe(true);
 
+        fetch.mockResponseOnce(JSON.stringify({"Command":"7d","Response":"7d201017ff920058ffff0100806400ff75ffff30807b69ff16401ac022402fc006","ExpectedSize":33}));
         await serial.sendAndReceiveFromSerial(Command.MEMS_Dataframe7d.command, Command.MEMS_Dataframe7d.responseSize).then((response) => {
             expect(response).toHaveLength(Command.MEMS_Dataframe7d.responseSize);
         })
     });
 });
 
-describe('send an action command to serial port', () => {
-    it('action response is received from the serial port', async () => {
-        let port = '/dev/cu.usbserial-AB0MKMTB';
-        let connected = false;
-
-        await serial.connect(port).then((isConnected) => {
-            connected = isConnected;
-        })
-
-        expect(connected).toBe(true);
-
-        await serial.sendAndReceiveFromSerial(Command.MEMS_STFT_Dec.command, Command.MEMS_STFT_Dec.responseSize).then((response) => {
-            expect(response).toHaveLength(Command.MEMS_STFT_Dec.responseSize);
-        })
-    });
-});

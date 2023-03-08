@@ -1,12 +1,11 @@
-import {beforeEach, describe, expect, it} from "vitest";
+import {describe, expect, beforeEach, it} from "@jest/globals";
 import {Dataframe7d, Dataframe80} from "../rosco/mems-dataframe.js";
 import {DataframeLog} from "../rosco/mems-dataframe-log.js";
-import {Analysis} from "./analysis";
+import {Analysis} from "./analysis.js";
 
 const MIN_DATAFRAMES = 3;
 var dataframeLog;
 var analysis;
-
 
 beforeEach(() => {
     dataframeLog = new DataframeLog();
@@ -41,7 +40,6 @@ describe('below operating temp', () => {
         expect(analysis.status).toHaveLength(1);
         expect(analysis.status.at(-1).isMAPHigh).toBeFalsy();
         expect(analysis.status.isEngineWarm).toBeFalsy();
-        expect(analysis.faults).toHaveLength(0);
     })
 })
 

@@ -1,4 +1,4 @@
-import {beforeEach, describe, expect, it} from "vitest";
+import {beforeEach, describe, expect, it} from "@jest/globals";
 import {Dataframe7d, Dataframe80} from "./mems-dataframe";
 import {DataframeLog} from "./mems-dataframe-log";
 

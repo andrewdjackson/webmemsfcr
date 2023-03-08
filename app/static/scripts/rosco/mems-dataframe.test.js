@@ -1,4 +1,4 @@
-import {describe, it, expect} from "vitest";
+import {describe, it, expect} from "@jest/globals";
 import {Dataframe, Dataframe7d, Dataframe80} from "./mems-dataframe";
 
 describe('MEMS Dataframes', () => {
