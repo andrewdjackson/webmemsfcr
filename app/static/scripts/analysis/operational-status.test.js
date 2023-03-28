@@ -53,7 +53,7 @@ afterEach(() => {
             expect(status.engineStartedAt.getTime()).toBeGreaterThanOrEqual(new Date(dataframeLog.dataframes.at(LAST_DATAFRAME)._80x00_Time).getTime()-10);
         })
 
-        it('engine already running', () => {
+        it('test engine already running', () => {
             let df;
             df = createValidDataframes(true, false, false);
             addValidDataframeToLog(df[0], df[1]);
