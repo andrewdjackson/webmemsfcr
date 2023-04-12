@@ -1,5 +1,6 @@
 import * as Command from "./mems-commands.js";
 import {MemsSerialInterface} from "./mems-serial-interface.js";
+import {MEMS_KLineInitComplete, MEMS_KLineInitEcho, MEMS_KLineInitWakeup} from "./mems-commands.js";
 
 export class MemsBrowserSerialInterface extends MemsSerialInterface {
     constructor() {
@@ -14,6 +15,10 @@ export class MemsBrowserSerialInterface extends MemsSerialInterface {
     //
     isWebSerialSupported() {
         return ("serial" in window.navigator);
+    }
+
+    get serialPort() {
+        return this._port;
     }
 
     //
@@ -38,6 +43,10 @@ export class MemsBrowserSerialInterface extends MemsSerialInterface {
     //
     async sendAndReceiveFromSerial(command, expectedResponseSize) {
         return super.sendAndReceiveFromSerial(command, expectedResponseSize);
+    }
+
+    async receiveFromSerial(command, expectedResponseSize) {
+        return super.receiveFromSerial(command, expectedResponseSize);
     }
 
     //
@@ -169,5 +178,60 @@ export class MemsBrowserSerialInterface extends MemsSerialInterface {
         }
 
         return rxData;
+    }
+
+    async _waitUntil(timestampMs, pause) {
+        const start = performance.now();
+        while (performance.now() < timestampMs) {
+            await new Promise((resolve) => setTimeout(resolve, 1));
+            let delta = performance.now() - start;
+            if (delta < 10) {
+                while (performance.now() < timestampMs) {}
+                break;
+            }
+        }
+        return timestampMs + pause;
+    }
+    async _assertSignalAndWait(before, pause, brk) {
+        await this._port.setSignals({ break: brk });
+        return await this._waitUntil(before, pause);
+    }
+
+    //
+    // MEMS 1.9 baud manipulation to wake up and initialise the serial communications "K-Line"
+    //
+    async kLineInitialisation() {
+        // 5 baud wakeup
+        await this._kLineWakeup();
+
+        // read kline initialisation echo of 0x00 0x00 0x00
+        await this.receiveFromSerial(Command.MEMS_KLineInitWakeup.responseSize, Command.MEMS_KLineInitWakeup.command);
+
+        // receive echo response 0x55 0x76 0x83
+        await this.receiveFromSerial(Command.MEMS_KLineInitEcho.responseSize, Command.MEMS_KLineInitEcho.command);
+
+        // invert 0x83 and send 0x7C
+        await this._serial.sendAndReceiveFromSerial(Command.MEMS_KLineInitComplete.command, Command.MEMS_KLineInitComplete.responseSize);
+
+        // expect response 0x7C 0xE9
+        // TODO verify response
+
+        return true;
+    }
+
+    async _kLineWakeup() {
+        let ecuAddress = 0x16;
+        let pause = 200;
+
+        let before = await this._assertSignalAndWait(performance.now(), pause, false);
+        before = await this._assertSignalAndWait(before, pause, true);
+
+        for (let i = 0; i < 8; i++) {
+            let bit = (ecuAddress >> i) & 1;
+            before = await this._assertSignalAndWait(before, pause, !bit);
+        }
+
+        await this._assertSignalAndWait(before, pause, false);
+
     }
 }

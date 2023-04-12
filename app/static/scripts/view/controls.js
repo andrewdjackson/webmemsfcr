@@ -3,10 +3,11 @@ import * as Command from "../rosco/mems-commands.js";
 import * as View from "./view.js";
 import * as Dataframe from "./dataframe.js";
 import * as LocalSerialPort from "./local-serialport.js";
-import {ecu, isLocal, sendCommand, dataframeLog} from "./init.js";
+import {ecu, setECU, isLocal, sendCommand, dataframeLog, responseEventQueue} from "./init.js";
 
 export function attachControlEventListeners() {
     document.getElementById("connectButton").addEventListener('click', connect);
+    document.getElementById("versionButton").addEventListener('change', selectEcuVersion, false);
     document.getElementById("disconnectButton").addEventListener('click', disconnect);
     document.getElementById("pauseButton").addEventListener('click', pause);
     document.getElementById("clearFaultsButton").addEventListener('click', clearFaults);
@@ -103,6 +104,10 @@ function showConnectErrorDialog() {
     modal.show();
 }
 
+function selectEcuVersion(event) {
+    let ecuVersion = event.target.options[event.target.selectedIndex].value;
+    setECU(ecuVersion);
+}
 export function resetReceived(ecuResponse) {
     console.info(`adjustment received ${JSON.stringify(ecuResponse)}`);
 

@@ -17,6 +17,15 @@
 </script>
 
 <script>
+	let debug = false;
+
+	if (!debug) {
+		console.log = console.debug = console.info = function () {
+		};
+	}
+</script>
+
+<script>
 	 // enable bootstrap tooltips
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))

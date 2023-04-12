@@ -1,6 +1,7 @@
 import {EventQueue, EventTopic} from "../rosco/mems-queue.js";
 import {MemsBrowserSerialInterface} from "../rosco/mems-browser-serial.js";
 import {MemsEcu16} from "../rosco/mems-ecu16.js";
+import {MemsEcu19} from "../rosco/mems-ecu19.js";
 import {DataframeLog} from "../rosco/mems-dataframe-log.js";
 import {Analysis} from "../analysis/analysis.js";
 import {AnalysisReport} from "./analysis-report.js";
@@ -19,18 +20,16 @@ export const analysis = new Analysis(dataframeLog);
 export const analysisReport = new AnalysisReport(analysis);
 export var charts = [];
 export var initialised = false;
+export var memsSerialInterface = undefined;
 export var isLocal = false;
-
+export const MEMS16 = "1.6";
+export const MEMS19 = "1.9";
 export async function initialise(serialInterface) {
     if (!initialised) {
         // prevent initialisation occurring more than once.
         initialised = true;
 
-        if (serialInterface === undefined) {
-            ecu = new MemsEcu16(responseEventQueue, new MemsBrowserSerialInterface());
-        } else {
-            ecu = new MemsEcu16(responseEventQueue, serialInterface);
-        }
+        setECU(MEMS16, serialInterface);
 
         initialiseSubscribers();
 
@@ -53,6 +52,28 @@ export async function initialise(serialInterface) {
 
 export function setRunningLocal() {
     isLocal = true;
+}
+
+export function setECU(ecuVersion, serialInterface) {
+    // the serial interface to be used is set by the application being server based or running as a local app
+    // we will try to reuse the existing serial interface if one exists
+
+    if  (memsSerialInterface === undefined) {
+        // no existing serial interface
+        if (serialInterface === undefined) {
+            // serial interface not specified, create a browser serial interface
+            memsSerialInterface = new MemsBrowserSerialInterface();
+        } else {
+            // assign the specified serial interface
+            memsSerialInterface = serialInterface;
+        }
+    }
+
+    if (ecuVersion === MEMS19) {
+        ecu = new MemsEcu19(responseEventQueue, memsSerialInterface);
+    } else {
+        ecu = new MemsEcu16(responseEventQueue, memsSerialInterface);
+    }
 }
 
 function initialiseSubscribers() {

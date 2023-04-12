@@ -72,18 +72,35 @@ export class MemsSerialInterface {
 
         if (this._isConnected) {
             await this._write(command);
+            return await this.receiveFromSerial(command, expectedResponseSize);
+        }
+
+        return [];
+    }
+
+    async receiveFromSerial(command, expectedResponseSize) {
+        if (expectedResponseSize < 1) expectedResponseSize = 1;
+
+        if (this._isConnected) {
             return Promise.any([
                 this._read(expectedResponseSize, command),
                 new Promise(resolve => setTimeout(resolve, SERIAL_TIMEOUT, 'serial read timeout'))
             ]).then((response) => {
                 return response;
             }).catch(((err) => {
-                console.error(`sendAndReceiveFromSerial exception ${err}`);
+                console.error(`receiveFromSerial exception ${err}`);
                 reject(err);
             }))
         }
 
         return [];
+    }
+
+    //
+    // MEMS 1.9 baud manipulation to wake up and initialise the serial communications "K-Line"
+    //
+    async kLineInitialisation() {
+        // abstract function, to be implemented in concrete class
     }
 
     //

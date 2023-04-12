@@ -1,5 +1,5 @@
-import * as Command from "./mems-commands.js";
 import {MemsEcu16} from "./mems-ecu16.js";
+import * as Command from "./mems-commands.js";
 
 //
 // MEMS 1.9 ECU Reader
@@ -9,38 +9,26 @@ import {MemsEcu16} from "./mems-ecu16.js";
 
 export class MemsEcu19 extends MemsEcu16 {
     constructor(responseEventQueue, serialInterface) {
+        console.info("setting ECU to MEMS 1.9");
         super(responseEventQueue, serialInterface);
     }
-/*
-    async waitUntil(timestampMs, pause) {
-        const start = performance.now();
-        while (performance.now() < timestampMs) {
-            await new Promise((resolve) => setTimeout(resolve, 1));
-            let delta = performance.now() - start;
-            if (delta < 10) {
-                while (performance.now() < timestampMs) {}
-                break;
-            }
-        }
-        return timestampMs + pause;
-    }
-    async assertSignalAndWait(before, pause, brk) {
-        await this._serial.port.setSignals({ break: brk });
-        return await this.waitUntil(before, pause);
-    }
 
-    async slowInit(ecuAddress) {
-        let pause = 200;
-        this._serial.stage = 2;
-        let before = await this.assertSignalAndWait(performance.now(), pause, false);
-        before = await this.assertSignalAndWait(before, pause, true);
-        this._serial.stage += 0.3;
-        for (var i = 0; i < 8; i++) {
-            let bit = (ecuAddress >> i) & 1;
-            before = await this.assertSignalAndWait(before, pause, !bit);
+    //
+    // Override Mems 1.6 initialisation to provide slow init and wakeup required by the MEMS 1.9
+    //
+    async _initialise() {
+        let klineInitialised = false;
+
+        console.debug("performing MEMS 1.9 k-line initialisation");
+
+        klineInitialised = await this._serial.kLineInitialisation();
+
+        // continue with standard initialisation sequence
+        if (klineInitialised) {
+            return await super._initialise();
         }
-        this._serial.stage += 0.3;
-        await this.assertSignalAndWait(before, pause, false);
+
+        console.warn("kline wakeup and initialisation failed");
+        return false;
     }
-    */
 }

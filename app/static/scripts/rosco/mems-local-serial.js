@@ -75,6 +75,13 @@ export class MemsLocalSerialInterface extends MemsSerialInterface {
     }
 
     //
+    // Override receiveFromSerial, not implemented in local serial comms
+    //
+    async receiveFromSerial(command, expectedResponseSize){
+        return [];
+    }
+
+    //
     // Override _connectToPort to return the current port
     //
     async _connectToPort() {

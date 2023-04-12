@@ -1,4 +1,3 @@
-import {MemsBrowserSerialInterface} from "./mems-browser-serial.js";
 import {ECUReader} from "./mems-ecureader.js";
 import * as Command from "./mems-commands.js";
 import * as Dataframe from "./mems-dataframe.js";
@@ -67,10 +66,6 @@ export class MemsEcu16 extends ECUReader {
 
         if (this._serial.isConnected) {
             let response;
-
-            // send heartbeat to 'wake-up' serial port
-            // hack to fix what seems the first byte not getting a response to over the web serial api
-            //await this._serial.sendAndReceiveFromSerial(Command.MEMS_Heartbeat.command, Command.MEMS_Heartbeat.responseSize);
 
             // initialisation sequence
             response = await this._serial.sendAndReceiveFromSerial(Command.MEMS_InitA.command, Command.MEMS_InitA.responseSize);

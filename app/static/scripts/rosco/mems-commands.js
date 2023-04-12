@@ -13,6 +13,9 @@ export class ECUCommand {
     }
 }
 
+export const MEMS_KLineInitWakeup = new ECUCommand(0, EventTopic.Initialisation, 0x00, 3);
+export const MEMS_KLineInitComplete = new ECUCommand(0, EventTopic.Initialisation, 0x7C, 2);
+export const MEMS_KLineInitEcho = new ECUCommand(0, EventTopic.Initialisation, 0x55, 3);
 export const MEMS_InitA = new ECUCommand(0, EventTopic.Initialisation, 0xca, 1);
 export const MEMS_InitB = new ECUCommand(0, EventTopic.Initialisation, 0x75, 1);
 export const MEMS_ECUId = new ECUCommand(0, EventTopic.Initialisation, 0xd0, 5);

@@ -12,8 +12,16 @@
 				<button class="nav-link navbar-brand" id="nav-guide-tab" data-bs-toggle="tab" data-bs-target="#guide" type="button" role="tab" aria-controls="nav-guide" aria-selected="false">Guide</button>
 
 				<div class="row">
-					<div class="col ms-5">
-						<button id="connectButton" class="btn btn-success ecu-control ecu-enabled-disconnected">Connect</button>
+					<div class="col-6 ms-5">
+						<div class="input-group">
+							<button id="connectButton" class="btn btn-success ecu-control ecu-enabled-disconnected" type="button">Connect</button>
+							<select id="versionButton" class="form-select ecu-control ecu-enabled-disconnected" aria-label="Select ECU Version">
+								<option selected value="1.6">SPi&nbsp;(1991-1996)</option>
+								<option value="1.9">MPi&nbsp;(1996-2000)&nbsp;untested!</option>
+							</select>
+						</div>
+					</div>
+					<div class="col-2 text-nowrap">
 						<button id="disconnectButton" class="btn btn-danger ecu-control ecu-enabled-connected" disabled>Disconnect</button>
 						<button id="pauseButton" class="btn btn-warning ecu-control ecu-enabled-connected" disabled>Pause</button>
 						<button id="downloadLogButton" class="btn btn-secondary has-logged-data" disabled>Download Log</button>
