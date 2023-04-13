@@ -41,3 +41,13 @@ async function loadTemplates() {
             });
     }
 }
+
+async function removeUnsupportedMemsVersions() {
+    let selectElement = document.getElementById("versionButton");
+
+    for (let i = selectElement.length - 1; i >= 0; i--){
+        if (selectElement.options[i].value === '1.9') {
+            selectElement.removeChild(selectElement.options[i]);
+        }
+    }
+}

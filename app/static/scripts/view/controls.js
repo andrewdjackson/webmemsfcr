@@ -7,7 +7,6 @@ import {ecu, setECU, isLocal, sendCommand, dataframeLog, responseEventQueue} fro
 
 export function attachControlEventListeners() {
     document.getElementById("connectButton").addEventListener('click', connect);
-    document.getElementById("versionButton").addEventListener('change', selectEcuVersion, false);
     document.getElementById("disconnectButton").addEventListener('click', disconnect);
     document.getElementById("pauseButton").addEventListener('click', pause);
     document.getElementById("clearFaultsButton").addEventListener('click', clearFaults);
@@ -16,6 +15,8 @@ export function attachControlEventListeners() {
 
     if (isLocal) {
         document.getElementById("selectPortConnectButton").addEventListener('click', LocalSerialPort.connectLocalSerialPort);
+    } else {
+        document.getElementById("versionButton").addEventListener('change', selectEcuVersion, false);
     }
 }
 
