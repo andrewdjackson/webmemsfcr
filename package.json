@@ -6,12 +6,9 @@
     "test": "node --experimental-vm-modules node_modules/.bin/jest"
   },
   "devDependencies": {
-    "@stryker-mutator/core": "^6.4.1",
-    "@stryker-mutator/jest-runner": "^6.4.1",
     "happy-dom": "^6.0.4",
     "jest": "^29.5.0",
     "jest-environment-jsdom": "^29.5.0",
     "jest-fetch-mock": "^3.0.3",
-    "stryker-intellij-reporter": "^1.0.3"
   }
 }
