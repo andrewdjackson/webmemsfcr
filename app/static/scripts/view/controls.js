@@ -12,11 +12,10 @@ export function attachControlEventListeners() {
     document.getElementById("clearFaultsButton").addEventListener('click', clearFaults);
     document.getElementById("resetECUButton").addEventListener('click', reset);
     document.getElementById("downloadLogButton").addEventListener('click', downloadLog);
+    document.getElementById("versionButton").addEventListener('change', selectEcuVersion, false);
 
     if (isLocal) {
         document.getElementById("selectPortConnectButton").addEventListener('click', LocalSerialPort.connectLocalSerialPort);
-    } else {
-        document.getElementById("versionButton").addEventListener('change', selectEcuVersion, false);
     }
 }
 

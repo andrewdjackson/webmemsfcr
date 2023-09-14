@@ -10,6 +10,7 @@ type ECUStatus struct {
 }
 
 type ECUReader interface {
+	SetVersion(version string) error
 	Connect() (connected bool, err error)
 	SendAndReceive(command []byte, expectedResponseSize int) (response []byte, err error)
 	Disconnect() (err error)

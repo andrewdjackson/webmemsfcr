@@ -8,8 +8,9 @@ import (
 	"net/http"
 )
 
-type ECUConnectionPort struct {
-	Port string `json:"Port"`
+type ECUConnection struct {
+	Port        string `json:"Port"`
+	MEMSVersion string `json:"MemsVersion"`
 }
 
 type AvailablePorts struct {
@@ -30,11 +31,16 @@ func (webserver *WebServer) apiECUConnect(w http.ResponseWriter, r *http.Request
 	defer webserver.handleResponseBodyClose(r)
 
 	// read the serial port from the post body
-	var connection ECUConnectionPort
+	var connection ECUConnection
 	if err := json.NewDecoder(r.Body).Decode(&connection); err != nil {
 		log.Errorf("%+v", err)
 	} else {
 		webserver.ecuReader = NewECUReader(connection.Port)
+
+		if err := webserver.ecuReader.SetVersion(connection.MEMSVersion); err != nil {
+			connection.MEMSVersion = MEMS1_6
+		}
+
 		if connected, err := webserver.ecuReader.Connect(); err == nil {
 			webserver.ecuStatus.Connected = connected
 		}

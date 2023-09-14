@@ -117,6 +117,9 @@ Commands
 0xFF	Request current IAC position?
 */
 
+var MEMS1_6 = "1.6"
+var MEMS1_9 = "1.9"
+
 // MEMSHeartbeat command code for a communication heartbeat
 var MEMSHeartbeat = []byte{0xf4}
 

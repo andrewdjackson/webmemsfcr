@@ -8,17 +8,32 @@ import (
 )
 
 type MEMSReader struct {
-	connected  bool
-	port       string
-	serialPort sers.SerialPort
+	connected   bool
+	port        string
+	serialPort  sers.SerialPort
+	memsVersion string
 }
 
 func NewMEMSReader(connection string) *MEMSReader {
-	log.Infof("created mems ecu ecuReader")
-
 	r := &MEMSReader{}
+	r.memsVersion = MEMS1_6
 	r.port = fixPort(connection)
+
+	log.Infof("created mems ecu ecuReader (%+v)", r)
+
 	return r
+}
+
+func (r *MEMSReader) SetVersion(version string) error {
+	var err error
+
+	if version == MEMS1_6 || version == MEMS1_9 {
+		r.memsVersion = version
+	} else {
+		err = fmt.Errorf("unknown MEMS version %s", version)
+	}
+
+	return err
 }
 
 func (r *MEMSReader) Connect() (bool, error) {
@@ -34,6 +49,11 @@ func (r *MEMSReader) Connect() (bool, error) {
 
 	// connected, no errors
 	r.connected = true
+
+	if r.memsVersion == MEMS1_9 && r.connected {
+		// need to do an additional kline wake-up on connection	for MEMS 1.9
+		r.connected = r.mems19wakeup()
+	}
 
 	return r.connected, nil
 }

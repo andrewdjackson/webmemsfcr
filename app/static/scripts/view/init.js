@@ -60,6 +60,8 @@ export function setECU(ecuVersion, serialInterface) {
     // we will try to reuse the existing serial interface if one exists
     window.ecuVersion = ecuVersion;
 
+    console.log(`ecuVersion ${ecuVersion}`);
+
     if  (memsSerialInterface === undefined) {
         // no existing serial interface
         if (serialInterface === undefined) {

@@ -33,6 +33,10 @@ func NewLoopbackReader(connection string) *LoopbackReader {
 	return r
 }
 
+func (r *LoopbackReader) SetVersion(version string) error {
+	return nil
+}
+
 func (r *LoopbackReader) Connect() (bool, error) {
 	r.connected = false
 
