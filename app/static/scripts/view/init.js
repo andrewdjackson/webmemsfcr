@@ -15,6 +15,7 @@ import * as View from "./view.js";
 
 export const responseEventQueue = new EventQueue();
 export var ecu = undefined;
+export var ecuVersion = "1.6";
 export const dataframeLog = new DataframeLog();
 export const analysis = new Analysis(dataframeLog);
 export const analysisReport = new AnalysisReport(analysis);
@@ -57,6 +58,7 @@ export function setRunningLocal() {
 export function setECU(ecuVersion, serialInterface) {
     // the serial interface to be used is set by the application being server based or running as a local app
     // we will try to reuse the existing serial interface if one exists
+    window.ecuVersion = ecuVersion;
 
     if  (memsSerialInterface === undefined) {
         // no existing serial interface

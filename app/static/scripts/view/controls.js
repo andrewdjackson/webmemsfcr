@@ -3,7 +3,7 @@ import * as Command from "../rosco/mems-commands.js";
 import * as View from "./view.js";
 import * as Dataframe from "./dataframe.js";
 import * as LocalSerialPort from "./local-serialport.js";
-import {ecu, setECU, isLocal, sendCommand, dataframeLog, responseEventQueue} from "./init.js";
+import {ecu, ecuVersion, setECU, isLocal, sendCommand, dataframeLog, responseEventQueue} from "./init.js";
 
 export function attachControlEventListeners() {
     document.getElementById("connectButton").addEventListener('click', connect);
@@ -35,6 +35,8 @@ export function connectToSerialPort(port) {
         if (connected === true) {
             View.setButtonsOnConnectionState();
             View.updateECUID(ecu.ecuId);
+            // load a page into the hidden iframe for verion tracking
+            loadEcuVersionTracking();
         } else {
             showConnectErrorDialog();
         }
@@ -109,6 +111,21 @@ function selectEcuVersion(event) {
     let ecuVersion = event.target.options[event.target.selectedIndex].value;
     setECU(ecuVersion);
 }
+
+function loadEcuVersionTracking() {
+    let ecuTrackingPage = "ecuSPITracking";
+
+    if (ecuVersion === "1.9") {
+        ecuTrackingPage = "ecuMPITracking"
+    }
+
+    try {
+        document.getElementById('ecuVersionSelectedTracking').src = `/static/templates/${ecuTrackingPage}.html?version=${ecuVersion}`;
+    } catch (e) {
+        console.warn(`unable to load ecuVersion tracking page ${e}`);
+    }
+}
+
 export function resetReceived(ecuResponse) {
     console.info(`adjustment received ${JSON.stringify(ecuResponse)}`);
 
