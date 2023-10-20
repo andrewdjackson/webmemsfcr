@@ -1,11 +1,12 @@
 import { describe, it, expect, beforeAll } from "@jest/globals"
+import fetchMock from "jest-fetch-mock";
+
 import {MemsLocalSerialInterface} from "./mems-local-serial.js";
 import * as Command from "./mems-commands.js";
-import fetch from "jest-fetch-mock";
 
 let serial;
 
-fetch.enableMocks();
+fetchMock.enableMocks();
 
 beforeAll(() => {
     serial = new MemsLocalSerialInterface();

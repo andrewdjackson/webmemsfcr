@@ -27,7 +27,13 @@ export class MemsLocalSerialInterface extends MemsSerialInterface {
     async _open() {
         let body = {
             Port: this._port,
-            MEMSVersion: ecuVersion
+            MEMSVersion: "1.6"
+        }
+
+        try {
+            body.MEMSVersion = ecuVersion;
+        } catch {
+            // use default version
         }
 
         return await this._sendRequest('POST', `${this._baseUri}/connect`, body)
