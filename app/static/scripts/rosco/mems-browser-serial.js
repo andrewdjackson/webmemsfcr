@@ -1,13 +1,13 @@
-import * as Command from "./mems-commands.js";
+import * as Command from "./mems-1x/mems-commands.js";
 import {MemsSerialInterface} from "./mems-serial-interface.js";
-import {MEMS_KLineInitComplete, MEMS_KLineInitEcho, MEMS_KLineInitWakeup} from "./mems-commands.js";
+import {MEMS_KLineInitComplete, MEMS_KLineInitEcho, MEMS_KLineInitWakeup} from "./mems-1x/mems-commands.js";
 
 export class MemsBrowserSerialInterface extends MemsSerialInterface {
     constructor() {
         super();
 
-        this._reader;
-        this._writer;
+        this._reader = undefined; // serial reader
+        this._writer = undefined; // serial writer
     }
 
     //
@@ -75,7 +75,7 @@ export class MemsBrowserSerialInterface extends MemsSerialInterface {
     // open the port for read / write
     //
     async _open() {
-        return await this._port.open({baudRate: 9600, bufferSize: 1,})
+        await this._port.open({baudRate: 9600, bufferSize: 1,})
             .then(async () => {
                 return true;
             }).catch(() => {

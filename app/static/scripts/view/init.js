@@ -1,7 +1,7 @@
 import {EventQueue, EventTopic} from "../rosco/mems-queue.js";
 import {MemsBrowserSerialInterface} from "../rosco/mems-browser-serial.js";
-import {MemsEcu16} from "../rosco/mems-ecu16.js";
-import {MemsEcu19} from "../rosco/mems-ecu19.js";
+import {MemsEcu16} from "../rosco/mems-1x/mems-ecu16.js";
+import {MemsEcu19} from "../rosco/mems-1x/mems-ecu19.js";
 import {DataframeLog} from "../rosco/mems-dataframe-log.js";
 import {Analysis} from "../analysis/analysis.js";
 import {AnalysisReport} from "./analysis-report.js";

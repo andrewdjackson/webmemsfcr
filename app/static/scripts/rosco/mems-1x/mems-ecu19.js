@@ -1,5 +1,5 @@
 import {MemsEcu16} from "./mems-ecu16.js";
-import * as Command from "./mems-commands.js";
+import * as Command from "../../../../../app/static/scripts/rosco/mems-1x/mems-commands.js";
 
 //
 // MEMS 1.9 ECU Reader

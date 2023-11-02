@@ -1,6 +1,6 @@
-import {MemsEcu16} from "./mems-ecu16";
+import {MemsEcu16} from "../mems-1x/mems-ecu16.js";
 import * as Command from "./mems-ecu2j-commands.js";
-import {EventTopic} from "./mems-queue.js";
+import {EventTopic} from "../mems-queue.js";
 
 export class MemsEcu2J extends MemsEcu16 {
     constructor(responseEventQueue, serialInterface) {

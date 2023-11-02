@@ -1,6 +1,6 @@
-import {ECUReader} from "./mems-ecureader.js";
-import * as Command from "./mems-commands.js";
-import * as Dataframe from "./mems-dataframe.js";
+import {ECUReader} from "../mems-ecureader.js";
+import * as Command from "../../../../../app/static/scripts/rosco/mems-1x/mems-commands.js";
+import * as Dataframe from "../mems-dataframe.js";
 
 //
 // MEMS 1.6 ECU Reader

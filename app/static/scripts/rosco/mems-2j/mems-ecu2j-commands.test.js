@@ -2,7 +2,7 @@ import {describe, expect, beforeEach, it} from "@jest/globals";
 import fetchMock from "jest-fetch-mock";
 
 import * as Command from "./mems-ecu2j-commands.js";
-import {EventTopic} from "./mems-queue.js";
+import {EventTopic} from "../mems-queue.js";
 
 beforeEach(() => {
     window.ecuVersion = "2J";

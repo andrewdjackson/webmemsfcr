@@ -1,5 +1,5 @@
 import * as Identifier from "./identifiers.js";
-import * as Command from "../rosco/mems-commands.js";
+import * as Command from "../rosco/mems-1x/mems-commands.js";
 import * as View from "./view.js";
 import * as Dataframe from "./dataframe.js";
 import * as LocalSerialPort from "./local-serialport.js";

@@ -1,4 +1,4 @@
-import {EventTopic} from "./mems-queue.js";
+import {EventTopic} from "../mems-queue.js";
 
 export class ECUCommand {
     id;

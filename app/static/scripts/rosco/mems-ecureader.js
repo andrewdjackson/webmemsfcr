@@ -1,5 +1,5 @@
-import * as Command from "./mems-commands.js";
-import {ECUCommand} from "./mems-commands.js";
+import * as Command from "../../../../app/static/scripts/rosco/mems-1x/mems-commands.js";
+import {ECUCommand} from "../../../../app/static/scripts/rosco/mems-1x/mems-commands.js";
 
 // rate at which commands will be sent to the ECU
 // MEMS 1.6 dataframe request / response takes 150ms

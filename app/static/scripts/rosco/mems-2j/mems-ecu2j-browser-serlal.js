@@ -1,13 +1,8 @@
-import * as Command from "./mems-commands.js";
-import {MemsBrowserSerialInterface} from "./mems-browser-serial.js";
-import {MEMS_KLineInitComplete, MEMS_KLineInitEcho, MEMS_KLineInitWakeup} from "./mems-commands.js";
+import {MemsBrowserSerialInterface} from "../mems-browser-serial.js";
 
 export class MemsEcu2JBrowserSerialInterface extends MemsBrowserSerialInterface {
     constructor() {
         super();
-
-        this._reader;
-        this._writer;
     }
 
     //
@@ -15,7 +10,7 @@ export class MemsEcu2JBrowserSerialInterface extends MemsBrowserSerialInterface 
     // MEMS 2J ECU requires a 10400 baud rate
     //
     async _open() {
-        return await this._port.open({baudRate: 10400, bufferSize: 1,})
+        await this._port.open({baudRate: 10400, bufferSize: 1,})
             .then(async () => {
                 return true;
             }).catch(() => {

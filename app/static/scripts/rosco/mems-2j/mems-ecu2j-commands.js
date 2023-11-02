@@ -1,7 +1,6 @@
 // Description: MEMS 2J CAN commands
 
-import {EventTopic} from "./mems-queue.js";
-import {ECUCommand} from "./mems-commands.js";
+import {ECUCommand} from "../mems-1x/mems-commands.js";
 
 export class UDSRequest extends ECUCommand {
     constructor(id, topic, command, data, responseSize) {

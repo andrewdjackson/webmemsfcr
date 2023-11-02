@@ -1,7 +1,7 @@
 import {beforeEach, describe, expect, it} from "@jest/globals";
 import {ECUReader, ECUResponse} from "./mems-ecureader.js";
 import {EventQueue, EventTopic} from "./mems-queue.js";
-import * as Command from "./mems-commands.js";
+import * as Command from "./mems-1x/mems-commands.js";
 
 var q = new EventQueue();
 var e = new ECUReader(q);
