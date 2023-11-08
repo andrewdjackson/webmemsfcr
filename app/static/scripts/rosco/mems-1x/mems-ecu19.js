@@ -1,5 +1,4 @@
 import {MemsEcu16} from "./mems-ecu16.js";
-import * as Command from "../../../../../app/static/scripts/rosco/mems-1x/mems-commands.js";
 
 //
 // MEMS 1.9 ECU Reader
@@ -17,11 +16,9 @@ export class MemsEcu19 extends MemsEcu16 {
     // Override Mems 1.6 initialisation to provide slow init and wakeup required by the MEMS 1.9
     //
     async _initialise() {
-        let klineInitialised = false;
-
         console.debug("performing MEMS 1.9 k-line initialisation");
 
-        klineInitialised = await this._serial.kLineInitialisation();
+        let klineInitialised = await this._serial.kLineInitialisation();
 
         // continue with standard initialisation sequence
         if (klineInitialised) {

@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll } from "@jest/globals"
 import fetchMock from "jest-fetch-mock";
 
 import {MemsLocalSerialInterface} from "./mems-local-serial.js";
-import * as Command from "../../../../app/static/scripts/rosco/mems-1x/mems-commands.js";
+import * as Command from "./mems-1x/mems-commands.js";
 
 let serial;
 

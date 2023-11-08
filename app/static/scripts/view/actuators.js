@@ -1,7 +1,7 @@
 import * as Identifier from "./identifiers.js";
 import * as View from "./view.js";
 import {sendCommand} from "./init.js";
-import * as Command from "../../../../app/static/scripts/rosco/mems-1x/mems-commands.js";
+import * as Command from "../rosco/mems-1x/mems-commands.js";
 
 export function attachActuatorEventListeners() {
     let actuator = document.querySelectorAll(`.${Identifier.actuatorClass}`);
@@ -181,6 +181,8 @@ export function actuatorReceived(ecuResponse) {
         case Command.MEMS_RPMGauge_Deactivate.command:
             actuator = View.getButtonText(Identifier.actuatorRpmGauge);
             break;
+        default:
+            console.error(`unknown actuator command ${ecuResponse.response[0]}`);
     }
 
     if (activated) {

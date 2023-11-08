@@ -1,5 +1,5 @@
 import {ECUReader} from "../mems-ecureader.js";
-import * as Command from "../../../../../app/static/scripts/rosco/mems-1x/mems-commands.js";
+import * as Command from "./mems-commands.js";
 import * as Dataframe from "../mems-dataframe.js";
 
 //
@@ -7,8 +7,6 @@ import * as Dataframe from "../mems-dataframe.js";
 // This version of the ECU has a simple initialisation sequence and supports
 // 0x80 standard dataframe and 0x7D extended dataframe responses
 //
-
-const INITIALISATION_MAX_RETRIES = 10;
 
 export class MemsEcu16 extends ECUReader {
     constructor(responseEventQueue, serialInterface) {
