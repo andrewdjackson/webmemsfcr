@@ -5,10 +5,10 @@
     <module name="webmemsfcr" />
     <option name="target" value="$PROJECT_DIR$/app/__init__.py" />
     <option name="targetType" value="PATH" />
+    <option name="ENV_FILES" value="" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
-    <option name="SDK_HOME" value="/usr/local/bin/python3" />
-    <option name="SDK_NAME" value="Python 3.11" />
+    <option name="SDK_HOME" value="" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
     <option name="IS_MODULE_SDK" value="false" />
     <option name="ADD_CONTENT_ROOTS" value="true" />
