@@ -2,7 +2,7 @@ package fcr
 
 import (
 	log "github.com/sirupsen/logrus"
-	"go.bug.st/serial.v1"
+	"go.bug.st/serial"
 	"strings"
 )
 
