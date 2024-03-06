@@ -20,13 +20,16 @@ STORE_INSTID="3rd Party Mac Developer Installer: Andrew Jackson (MD9E767XF5)"
 .PHONY: clean
 
 # build go and create a macos app for arm64
-build-arm: build_go_arm64 create_darwin_app
+build-arm: build_macapp build_go_arm64 create_darwin_app
 # build go and create a macos app
-build: build_go create_darwin_app
+build: build_macapp build_go create_darwin_app
 # build go and create an unsigned  macos app and dmg package
-build-package: build_go create_darwin_app package_local_app
+build-package: build_macapp build_go create_darwin_app package_local_app
 # build go and create a signed macos app and dmg package, and notarize
-all: build_go create_darwin_app sign_app_local package_local_app notarize_local_package
+all: build_macapp build_go create_darwin_app sign_app_local package_local_app notarize_local_package
+
+build_macapp:
+	cd $(DIST_PATH) && env GOOS=darwin go build macapp.go
 
 build_go_arm64:
 	cd $(APP_PATH) && env GOOS=darwin GOARCH=arm64 CGO_CFLAGS="$(MIN_DEPLOYMENT_TARGET)" CGO_LDFLAGS="$(MIN_DEPLOYMENT_TARGET)" go build -v -o "../$(DARWIN_DIST_PATH)/$(EXECUTABLE)" -ldflags="-s -w"
