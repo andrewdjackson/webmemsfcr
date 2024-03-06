@@ -17,6 +17,8 @@
 //		-name "My App" \
 //		-dmg "My App template.dmg" \
 //		-o ~/Desktop
+//		-copyright "Copyright © 2021. All rights reserved." \
+//		-osversion "10.9.0"
 //
 // You may use this whole program or bits and pieces for whatever you want,
 // but it comes without warranty or support -- I have no idea what I'm doing,
@@ -58,6 +60,8 @@ var (
 	outputDir        string
 	bundleIdentifier string
 	templateDMG      string
+	copyright        string
+	minOSVersion     string
 )
 
 func init() {
@@ -68,6 +72,8 @@ func init() {
 	flag.StringVar(&outputDir, "o", ".", "The folder into which to output the artefacts")
 	flag.StringVar(&bundleIdentifier, "identifier", "com.example.unknown", "The bundle identifier (make it your own)")
 	flag.StringVar(&templateDMG, "dmg", "", "If set, will package the app in a DMG based on this template")
+	flag.StringVar(&copyright, "copyright", "Copyright © 2023. All rights reserved", "The application copyright string")
+	flag.StringVar(&minOSVersion, "osversion", "11.6.7", "The minimum version of OS supported")
 }
 
 func main() {
@@ -111,6 +117,8 @@ func makeAppBundle(appFilename string) error {
 	// write the Info.plist file into the bundle
 	infoPlist := strings.Replace(infoPlistTpl, "{{.AppName}}", binaryName, -1)
 	infoPlist = strings.Replace(infoPlist, "{{.BundleIdentifier}}", bundleIdentifier, -1)
+	infoPlist = strings.Replace(infoPlist, "{{.copyright}}", copyright, -1)
+	infoPlist = strings.Replace(infoPlist, "{{.minOSVersion}}", minOSVersion, -1)
 	infoPlistPath := filepath.Join(appFilename, "Contents", "Info.plist")
 	err := ioutil.WriteFile(infoPlistPath, []byte(infoPlist), 0644)
 	if err != nil {
@@ -412,16 +420,42 @@ const infoPlistTpl = `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CFBundleExecutable</key>
-	<string>{{.AppName}}</string>
-	<key>CFBundleIconFile</key>
-	<string>icon.icns</string>
-	<key>CFBundleIdentifier</key>
-	<string>{{.BundleIdentifier}}</string>
-	<key>NSHighResolutionCapable</key>
-	<true/>
-	<key>LSUIElement</key>
-	<true/>
+        <key>CFBundleName</key>
+        <string>{{.AppName}}</string>
+        <key>CFBundleVersion</key>
+        <string>2.3.11</string>
+        <key>CFBundleShortVersionString</key>
+        <string>2.3.11</string>
+        <key>CFBundlePackageType</key>
+        <string>APPL</string>
+        <key>CFBundleExecutable</key>
+        <string>{{.AppName}}</string>
+        <key>CFBundleIconFile</key>
+        <string>icon.icns</string>
+        <key>CFBundleIdentifier</key>
+        <string>{{.BundleIdentifier}}</string>
+        <key>CFBundleSupportedPlatforms</key>
+        <array>
+            <string>MacOSX</string>
+        </array>
+        <key>NSHighResolutionCapable</key>
+        <true/>
+        <key>NSPrincipleClass</key>
+        <string>NSApplication</string>
+        <key>LSUIElement</key>
+        <true/>
+        <key>LSApplicationCategoryType</key>
+        <string>public.app-category.utilities</string>
+    <key>NSHumanReadableCopyright</key>
+    <string>{{.copyright}}</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>{{.minOSVersion}}</string>
+    <key>LSHandlerContentTag</key>
+    <string>fcr</string>
+    <key>LSHandlerContentTagClass</key>
+    <string>public.filename-extension</string>
+    <key>LSHandlerRoleAll</key>
+    <string>org.category.program</string>
 </dict>
 </plist>
 `

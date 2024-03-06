@@ -1,4 +1,4 @@
-npm EXECUTABLE=memsfcr
+EXECUTABLE=memsfcr
 APPNAME=WebMemsFCR
 
 APP_PATH=app
@@ -8,7 +8,8 @@ RESOURCES_PATH=app/static
 DARWIN_APP_CONTENTS=$(DARWIN_DIST_PATH)/$(APPNAME).app/Contents
 
 EXEPATH=$(DARWIN_DIST_PATH)/$(EXECUTABLE)
-MIN_DEPLOYMENT_TARGET=-mmacosx-version-min=11.6.7
+MIN_OS_VERSION=11.6.7
+MIN_DEPLOYMENT_TARGET=-mmacosx-version-min=$(MIN_OS_VERSION)
 
 DEVID="Developer ID Application: Andrew Jackson (MD9E767XF5)"
 LOCAL_DISTID="Developer ID Application: Andrew Jackson (MD9E767XF5)"
@@ -37,7 +38,7 @@ create_darwin_app:
 	# copy the binary to the distribution folder
 	cp -f "$(DARWIN_DIST_PATH)/$(EXECUTABLE)" "$(RESOURCES_PATH)/$(EXECUTABLE)"
 	# create the MacOS app
-	$(DIST_PATH)/macapp --assets "$(RESOURCES_PATH)" -bin "$(EXECUTABLE)" -icon "$(DIST_PATH)/MemsFCR-APP-Icon.png" -identifier "com.github.andrewdjackson.memsfcr" -name "$(APPNAME)" -o "$(DARWIN_DIST_PATH)"
+	$(DIST_PATH)/macapp --assets "$(RESOURCES_PATH)" -bin "$(EXECUTABLE)" -icon "$(DIST_PATH)/MemsFCR-APP-Icon.png" -identifier "com.github.andrewdjackson.memsfcr" -name "$(APPNAME)" -o "$(DARWIN_DIST_PATH)" -osversion "$(MIN_OS_VERSION)" -copyright "Created by Andrew Jackson, Copyright © 2024. All rights reserved."
 
 	# tidy up
 	rm -f "$(RESOURCES_PATH)/$(EXECUTABLE)"
@@ -51,7 +52,7 @@ create_darwin_app:
 	mv "$(DARWIN_APP_CONTENTS)/Resources/favicon.ico" "$(DARWIN_APP_CONTENTS)/Resources/static/"
 
 	# copy the info and entitlement plists into the application structure
-	cp -f "$(DIST_PATH)/MemsFCR-APP-Info.plist" "$(DARWIN_APP_CONTENTS)/Info.plist"
+	# cp -f "$(DIST_PATH)/MemsFCR-APP-Info.plist" "$(DARWIN_APP_CONTENTS)/Info.plist"
 	cp -f "$(DIST_PATH)/MemsFCR-APP-entitlements.plist" "$(DARWIN_APP_CONTENTS)/entitlements.plist"
 	cp -f "$(RESOURCES_PATH)/../index.html" "$(DARWIN_APP_CONTENTS)/Resources/index.html"
 
