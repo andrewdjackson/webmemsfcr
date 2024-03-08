@@ -25,6 +25,7 @@ export var memsSerialInterface = undefined;
 export var isLocal = false;
 export const MEMS16 = "1.6";
 export const MEMS19 = "1.9";
+
 export async function initialise(serialInterface) {
     if (!initialised) {
         // prevent initialisation occurring more than once.
@@ -53,6 +54,31 @@ export async function initialise(serialInterface) {
 
 export function setRunningLocal() {
     isLocal = true;
+}
+
+export async function loadTemplates() {
+    const templateBaseUrl = '/static/templates';
+    const templates = ['footer','dashboard','actuators','adjustments','ecudata','charts','analysis','guidance'];
+    let templateUrls = []
+
+    for (let i=0; i < templates.length; i++) {
+        const url = `${templateBaseUrl}/${templates[i]}.html`;
+        templateUrls.push(url);
+    }
+
+    for (let i=0; i < templates.length; i++) {
+        await fetch(templateUrls[i])
+            .then((response) =>{
+                response.text().then((text) => {
+                    let target = document.getElementById(`template-${templates[i]}`);
+                    if (target !== null) {
+                        target.innerHTML = text;
+                    }
+                });
+            })
+            .catch(function(err) {console.warn(`Failed to fetch template ${templateUrls[i]} (${err})`);
+            });
+    }
 }
 
 export function setECU(ecuVersion, serialInterface) {

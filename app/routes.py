@@ -24,11 +24,11 @@ def csrf_error(e):
 #
 @app.errorhandler(404)
 def not_found(error):
-    return render_template('error.html'), 404
+    return render_template('../app/error.html'), 404
 
 @app.errorhandler(500)
 def not_found(error):
-    return render_template('error.html'), 500
+    return render_template('../app/error.html'), 500
 
 #
 # serve the favicon from the static path
@@ -46,7 +46,7 @@ def render_index():
     if len(data) > 0:
         return render_template('index-local.jinja2', data=data)
     else:
-        return render_template('error.html')
+        return render_template('../app/error.html')
 
 def load_template_data():
     data = {}

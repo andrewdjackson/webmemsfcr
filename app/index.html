@@ -43,26 +43,52 @@
 	<link href="/static/styles/elements.css" rel="stylesheet">
 	<!-- charts -->
 	<link href="/static/styles/charts.css" rel="stylesheet">
-<!-- includes.html -->
+    <!-- includes.html -->
+
+    <script type="text/javascript" charset="utf-8">
+        // the websocket is only used by the local server to determine
+        // whether the website is still active. when the site is closed
+        // the websocket gets closed and triggers the server to shutdown
+
+        let wsUrl = "ws://" + document.location.host + "/ws";
+        let conn = new WebSocket(wsUrl);
+
+        window.isLocalServer = true;
+
+        conn.onclose = function (evt) {
+            window.isLocalServer = false;
+            console.warn(`ws closed`);
+        };
+        conn.onmessage = function(evt) {
+            console.log(evt);
+        };
+    </script>
 
 	<script type="module">
 		//
 		// initialise the ecu and event queue
 		//
-		import {local_initialise} from "/static/scripts/view/local-init.js";
-		local_initialise();
-	</script>
 
-	<script type="text/javascript" charset="utf-8">
-		let wsUrl = "ws://" + document.location.host + "/ws";
-		let conn = new WebSocket(wsUrl);
-		conn.onclose = function (evt) {
-			console.warn(`ws closed`);
-		};
-		conn.onmessage = function(evt) {
-			console.log(evt);
-		};
+		//import {local_initialise} from "/static/scripts/view/local-init.js";
+        import {initialise, loadTemplates, setRunningLocal} from "./static/scripts/view/init.js";
+        import {MemsLocalSerialInterface} from "./static/scripts/rosco/mems-local-serial.js";
+        import {MemsBrowserSerialInterface} from "./static/scripts/rosco/mems-browser-serial.js";
 
+		//local_initialise();
+
+        // load the templates before initialising event handlers
+        await loadTemplates();
+
+        if (window.isLocalServer) {
+            console.info("running local server");
+            setRunningLocal();
+            // initialise with a local serial interface
+            await initialise(new MemsLocalSerialInterface());
+        } else {
+            console.info("running remote server, browser based serial comms");
+            // initialise with the browser serial interface
+            await initialise(new MemsBrowserSerialInterface());
+        }
 	</script>
 </head>
 
@@ -81,22 +107,25 @@
 					<button class="nav-link navbar-brand koeo-enabled" id="nav-test-tab" data-bs-toggle="tab" data-bs-target="#test" type="button" role="tab" aria-controls="nav-test" aria-selected="false">Test Components</button>
 					<button class="nav-link navbar-brand" id="nav-guide-tab" data-bs-toggle="tab" data-bs-target="#guide" type="button" role="tab" aria-controls="nav-guide" aria-selected="false">Guide</button>
 
-					<div class="row">
-						<div class="col-6 ms-5">
-							<div class="input-group">
-								<button id="connectButton" class="btn btn-success ecu-control ecu-enabled-disconnected" type="button">Connect</button>
-								<select id="versionButton" class="form-select ecu-control ecu-enabled-disconnected" aria-label="Select ECU Version">
-									<option selected value="1.6">SPi&nbsp;(1991-1996)</option>
-									<option value="1.9">MPi&nbsp;(1996-2000)&nbsp;untested!</option>
-								</select>
-							</div>
-						</div>
-						<div class="col-2 text-nowrap">
-							<button id="disconnectButton" class="btn btn-danger ecu-control ecu-enabled-connected" disabled>Disconnect</button>
-							<button id="pauseButton" class="btn btn-warning ecu-control ecu-enabled-connected" disabled>Pause</button>
-							<button id="downloadLogButton" class="btn btn-secondary has-logged-data" disabled>Download Log</button>
-						</div>
-					</div>
+                    <div class="row">
+                        <div class="col-1 ms-1"> <!-- "col-1 ms-5" when displaying drop down -->
+                            <div class="input-group d-none">
+                                <!--
+                                <button id="connectButton" class="btn btn-success ecu-control ecu-enabled-disconnected" type="button">Connect</button>
+                                -->
+                                <select id="versionButton" class="form-select ecu-control ecu-enabled-disconnected" aria-label="Select ECU Version">
+                                    <option selected value="1.6">SPi&nbsp;(1991-1996)</option>
+                                    <option value="1.9">MPi&nbsp;(1996-2000)&nbsp;untested!</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-2 text-nowrap">
+                            <button id="connectButton" class="btn btn-success ecu-control ecu-enabled-disconnected" type="button">Connect</button>
+                            <button id="disconnectButton" class="btn btn-danger ecu-control ecu-enabled-connected" disabled>Disconnect</button>
+                            <button id="pauseButton" class="btn btn-warning ecu-control ecu-enabled-connected" disabled>Pause</button>
+                            <button id="downloadLogButton" class="btn btn-secondary has-logged-data" disabled>Download Log</button>
+                        </div>
+                    </div>
 				</div>
 			</div>
 		</nav>
