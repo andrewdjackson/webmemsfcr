@@ -1,31 +1,80 @@
+/*
 export const timeFormat                         = "15:04:05.000"
-export const secondsPerDegree                   = 11
 export const secondsToLambdaOscillations        = 90
 export const minimumDatasetSize                 = 1
-export const defaultIdleThrottleAngle           = 15
-export const defaultIdleThrottlePot             = 0.9
-export const lowestBatteryVoltage               = 12.8
-export const highestIdleMAPValue                = 45
-export const highestIdleCoilTime                = 4
-export const highestIdleRPM                     = 1300
-export const lowestEngineWarmTemperature        = 78
-export const engineOperatingTemp                = 80
-export const engineNotRunningRPM                = 0
 export const expectedHighDTC5Value              = 255
 export const expectedLowDTCValue                = 0
-export const maximumEngineRPM                   = 6000
 export const maximumIdleBasePosition            = 250
-export const maximumAirIntakeTemperature        = 120
-export const maximumCoolantTemperature          = 120
-export const maximumIdleOffset                  = 50
-export const minimumIdleHot                     = 10
-export const maximumIdleHot                     = 55
-export const lowestIdleBasePosition             = 45
-export const highestIdleBasePosition            = 55
-export const invalidIACPosition                 = 0
-export const invalidCASPosition                 = 0
-export const lowestLambdaValue                  = 10
-export const highestLambdaValue                 = 900
-export const highestJackCount                   = 50
-export const lambdaOscillationStandardDeviation = 100
-export const highestIdleSpeedDeviation          = 100
+*/
+
+
+
+
+//
+// Engine Operating Constants
+//
+export const MAX_IDLE_RPM                       = 1300
+export const MAX_RPM                            = 6000
+export const ENGINE_NOT_RUNNING                 = 0
+export const MAX_IDLE_COIL_TIME                 = 4 // time in milliseconds
+export const INVALID_CRANKSHAFT_POSITION_SENSOR = 0
+
+// Engine Load and MAP Constants
+export const MAX_MAP_VALUE                      = 45
+
+// Stepper Motor and Idle Air Control Constants
+export const INVALID_IAC_POSITION               = 0
+export const MAX_JACK_COUNT                     = 50
+export const MAX_AIR_INTAKE_TEMPERATURE         = 120
+
+//
+// Idle Management Constants
+//
+export const DEFAULT_IDLE_THROTTLE_ANGLE        = 15
+export const DEFAULT_IDLE_THROTTLE_POT_VOLTAGE  = 0.9
+export const IDLE_SPEED_SAMPLE_SIZE             = 30
+export const MAX_IDLE_OFFSET                    = 50
+export const MIN_IDLE_HOT                       = 10
+export const MAX_IDLE_HOT                       = 55
+export const MIN_IDLE_BASE_POSITION             = 45
+export const MAX_IDLE_BASE_POSITION             = 55
+export const MAX_IDLE_SPEED_DEVIATION           = 100
+
+//
+// Battery Constants
+//
+export const MIN_BATTERY_VOLTAGE                = 12.8 // min voltage for a healthy battery
+export const MIN_BATTERY_CHARGING_VOLTAGE       = 13.2 // min voltage expected to determine battery is charging
+export const MIN_BATTERY_RECOVERY_VOLTAGE       = 0.3  // min amount the battery voltage is expected to rise after cranking
+export const MIN_BATTERY_RECOVERY_TIME          = 5    // time in seconds to allow for the battery to recover from cranking
+
+//
+// Coolant and Thermostat Constants
+//
+export const MAX_COOLANT_TEMPERATURE            = 120
+export const MIN_ENGINE_OPERATING_TEMPERATURE   = 78
+export const ECU_ENGINE_OPERATING_TEMPERATURE   = 80
+export const THERMOSTAT_OPEN_TEMPERATURE        = 86
+export const SECONDS_PER_DEGREE                 = 11
+export const THERMOSTAT_OPEN_DELAY              = SECONDS_PER_DEGREE * 3
+
+//
+// Lambda and O2 System Constants
+//
+export const LAMBDA_DEFAULT_VOLTAGE             = 435
+export const LAMBDA_OSCILLATION_MIN_STDDEV      = 100
+export const LAMBDA_WARMUP_TIME_IN_SECONDS      = 90
+export const MIN_LAMBDA_VOLTAGE                 = 10
+export const MAX_LAMBDA_VOLTAGE                 = 900
+
+//
+// Dataframe Array Location Pointers
+//
+export const FIRST_DATAFRAME                    = 0
+export const CURRENT_DATAFRAME                  = -1
+export const PREVIOUS_DATAFRAME                 = -2
+
+//
+// Faults
+//
+export const MIN_FAULTS                         = 10 // the minimum number of faults events before a fault is raised

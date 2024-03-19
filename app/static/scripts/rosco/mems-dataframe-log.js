@@ -69,7 +69,7 @@ export class DataframeLog {
         } else {
             if (this._dataframe80.length === this._dataframe7d.length) {
                 dataframe = new Dataframe(this._dataframe80.at(-1), this._dataframe7d.at(-1));
-                console.debug(`MEMS 1.6+ dataframe added to the log ${JSON.stringify(dataframe)}`);
+                // console.debug(`MEMS 1.6+ dataframe added to the log ${JSON.stringify(dataframe)}`);
             }
         }
         if (dataframe !== undefined) {
@@ -175,15 +175,15 @@ export class DataframeLog {
     }
 
     _isEngineRPMValid(data)  {
-        return (data._80x01_EngineRPM < Constant.maximumEngineRPM);
+        return (data._80x01_EngineRPM < Constant.MAX_RPM);
     }
 
     _isCoolantTempValid(data) {
-        return (data._80x03_CoolantTemp < Constant.maximumCoolantTemperature);
+        return (data._80x03_CoolantTemp < Constant.MAX_COOLANT_TEMPERATURE);
     }
 
     _isIntakeAirTempValid(data) {
-        return (data._80x05_IntakeAirTemp < Constant.maximumAirIntakeTemperature);
+        return (data._80x05_IntakeAirTemp < Constant.MAX_AIR_INTAKE_TEMPERATURE);
     }
 
     _isMAPValid(data) {

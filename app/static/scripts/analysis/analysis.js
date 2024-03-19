@@ -1,8 +1,6 @@
 import {OperationalStatus} from "./operational-status.js";
+import * as Constant from "./analysis-constants.js"
 import * as Faults from "./analysis-faults.js";
-
-const CURRENT_DATAFRAME = -1;
-const MIN_FAULTS = 10; // the minimum number of faults events before a fault is raised
 
 export class Analysis {
     constructor(dataframeLog) {
@@ -85,7 +83,7 @@ export class Analysis {
 
     _addEngineWarmToFaults() {
         if (this._statusLog.length > 0) {
-            if (this._statusLog.at(CURRENT_DATAFRAME).isEngineWarm === true) {
+            if (this._statusLog.at(Constant.CURRENT_DATAFRAME).isEngineWarm === true) {
                 let fault = new Faults.Fault(Faults.AtOperatingTemp.id, Faults.AtOperatingTemp.title, Faults.AtOperatingTemp.level);
                 fault.count = 1;
                 this._faultLog.push(fault);
@@ -94,7 +92,7 @@ export class Analysis {
     }
 
     _isAboveMinimum(fault) {
-        return fault.count >= MIN_FAULTS;
+        return fault.count >= Constant.MIN_FAULTS;
     }
     _removeFaultsBelowMinimum() {
         return this._faultLog.filter(this._isAboveMinimum);

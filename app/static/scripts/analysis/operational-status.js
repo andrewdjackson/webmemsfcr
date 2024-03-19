@@ -1,13 +1,11 @@
 import * as Constant from "./analysis-constants.js"
-
-const SAMPLE_SIZE = 30;
-const CURRENT_DATAFRAME = -1;
-const PREVIOUS_DATAFRAME = -2;
+import {Battery} from "./battery.js"
+import {Lambda} from "./lambda.js";
 
 export class OperationalStatus {
     constructor(dataframes) {
         this._dataframes = dataframes;
-        this._dataframe = dataframes.at(CURRENT_DATAFRAME);
+        this._dataframe = dataframes.at(Constant.CURRENT_DATAFRAME);
         this._operationalFaults = {};
         this._initialiseFaults();
     }
@@ -46,7 +44,7 @@ export class OperationalStatus {
     }
 
     get isEngineRunning() {
-        return (this._dataframe._80x01_EngineRPM > Constant.engineNotRunningRPM);
+        return (this._dataframe._80x01_EngineRPM > Constant.ENGINE_NOT_RUNNING);
     }
 
     //
@@ -58,7 +56,7 @@ export class OperationalStatus {
             return new(this._dataframes.at(0)._80x00_Time);
         } else {
             if (this._dataframes.length > 1) {
-                let previous = this._dataframes.at(PREVIOUS_DATAFRAME);
+                let previous = this._dataframes.at(Constant.PREVIOUS_DATAFRAME);
 
                 // set the engine start time if we're running now but off in the previous dataframe
                 if (this.isEngineRunning && !previous.isEngineRunning) {
@@ -71,7 +69,7 @@ export class OperationalStatus {
     }
 
     get isEngineWarm() {
-        return (this._dataframe._80x03_CoolantTemp >= Constant.lowestEngineWarmTemperature);
+        return (this._dataframe._80x03_CoolantTemp >= Constant.MIN_ENGINE_OPERATING_TEMPERATURE);
     }
 
     //
@@ -79,7 +77,7 @@ export class OperationalStatus {
     // later MEMS ECUs use the throttle pot to determine the idle position
     //
     get isEngineIdle() {
-        return ((this.isEngineRunning) && (this._dataframe._80x09_ThrottlePotSensor <= Constant.defaultIdleThrottlePot));
+        return ((this.isEngineRunning) && (this._dataframe._80x09_ThrottlePotSensor <= Constant.DEFAULT_IDLE_THROTTLE_POT_VOLTAGE));
     }
 
     get isLoopClosed() {
@@ -91,19 +89,23 @@ export class OperationalStatus {
     // this method is used in the python based analysis, but it not currently used as part of the js implementation
     //
     get isThrottleActive() {
-        return ((this._dataframe._80x09_ThrottlePotSensor > Constant.defaultIdleThrottlePot) || (this._dataframe._80x01_EngineRPM > Constant.highestIdleRPM));
+        return ((this._dataframe._80x09_ThrottlePotSensor > Constant.DEFAULT_IDLE_THROTTLE_POT_VOLTAGE) || (this._dataframe._80x01_EngineRPM > Constant.MAX_IDLE_RPM));
     }
 
     get isBatteryVoltageLow() {
-        return this._dataframe._80x08_BatteryVoltage < Constant.lowestBatteryVoltage;
+        const battery = new Battery(this._dataframes);
+        const lowBattery = battery.isLow();
+        const batteryNotCharging = !battery.isCharging();
+
+        return (lowBattery && batteryNotCharging);
     }
 
     //
     // battery must not be low as this will affect the coil timing
     //
     get isCoilFaulty() {
-        if (this.isEngineRunning) {
-            return (!this.isBatteryVoltageLow && (this._dataframe._80x17_CoilTime > Constant.highestIdleCoilTime));
+        if (this.isEngineIdle) {
+            return (!this.isBatteryVoltageLow && (this._dataframe._80x17_CoilTime > Constant.MAX_IDLE_COIL_TIME));
         } else {
             return false
         }
@@ -113,13 +115,16 @@ export class OperationalStatus {
     // MAP value should be less than 45kPa when the engine is at idle
     //
     get isMAPHigh() {
-        return this.isEngineIdle && (this._dataframe._80x07_ManifoldAbsolutePressure > Constant.highestIdleMAPValue);
+        return this.isEngineIdle && (this._dataframe._80x07_ManifoldAbsolutePressure > Constant.MAX_MAP_VALUE);
     }
 
     //
     // if the lambda status is 0 and the lambda is not oscillating then ecu is not using the o2 system
     //
     get isO2SystemFaulty() {
+        const lambda = new Lambda(this._dataframes);
+        return (!lambda.isOscillating() || lambda.isHeaterFaulty() || lambda.isOutOfRange());
+
         if (this.isEngineRunning) {
             if (this.engineStartedAt !== undefined) {
                 const currentTime = new Date(this._dataframe._80x00_Time).getTime();
@@ -145,10 +150,10 @@ export class OperationalStatus {
          if (this.isEngineIdle) {
             if (this.isEngineWarm) {
                 // fault if > 50 when engine is warm
-                return this._dataframe._7Dx0F_IdleBasePosition > Constant.highestIdleBasePosition;
+                return this._dataframe._7Dx0F_IdleBasePosition > Constant.MAX_IDLE_BASE_POSITION;
             } else {
                 // fault if < 50 when engine is cold
-                return this._dataframe._7Dx0F_IdleBasePosition < Constant.lowestIdleBasePosition;
+                return this._dataframe._7Dx0F_IdleBasePosition < Constant.MIN_IDLE_BASE_POSITION;
             }
         }
 
@@ -161,7 +166,7 @@ export class OperationalStatus {
     get isHotIdleFaulty() {
         if (this.isEngineIdle) {
             if (this.isEngineWarm) {
-                return ((this._dataframe._80x10_IdleHot < Constant.minimumIdleHot) || (this._dataframe._80x10_IdleHot > Constant.maximumIdleHot));
+                return ((this._dataframe._80x10_IdleHot < Constant.MIN_IDLE_HOT) || (this._dataframe._80x10_IdleHot > Constant.MAX_IDLE_HOT));
             }
         }
 
@@ -175,26 +180,26 @@ export class OperationalStatus {
     // IAC position invalid if the idle offset exceeds the max error, yet the IAC Position remains at 0
     //
     get isIACFaulty() {
-        return this.isEngineIdle && (this._dataframe._7Dx13_IdleSpeedOffset > Constant.maximumIdleOffset) && (this._dataframe._80x12_IACPosition === Constant.invalidIACPosition);
+        return this.isEngineIdle && (this._dataframe._7Dx13_IdleSpeedOffset > Constant.MAX_IDLE_OFFSET) && (this._dataframe._80x12_IACPosition === Constant.INVALID_IAC_POSITION);
     }
 
     get isLambdaOutOfRange() {
-        return this.isEngineRunning && (this._dataframe._7Dx06_LambdaVoltage < Constant.lowestLambdaValue || this._dataframe._7Dx06_LambdaVoltage > Constant.highestLambdaValue);
+        return this.isEngineRunning && (this._dataframe._7Dx06_LambdaVoltage < Constant.MIN_LAMBDA_VOLTAGE || this._dataframe._7Dx06_LambdaVoltage > Constant.MAX_LAMBDA_VOLTAGE);
     }
 
     get isJackCountHigh() {
-        return this._dataframe._7Dx1F_JackCount >= Constant.highestJackCount;
+        return this._dataframe._7Dx1F_JackCount >= Constant.MAX_JACK_COUNT;
     }
 
     get isCrankshaftSensorFaulty() {
-        return this._dataframe._80x19_CrankshaftPositionSensor === Constant.invalidCASPosition;
+        return this._dataframe._80x19_CrankshaftPositionSensor === Constant.INVALID_CRANKSHAFT_POSITION_SENSOR;
     }
 
     get isThermostatFaulty() {
         if (this.isEngineRunning) {
             const currentTime = new Date(this._dataframe._80x00_Time).getTime();
             const expectedTimeEngineWarm = this._getExpectedEngineWarmTime().getTime();
-            return (currentTime > expectedTimeEngineWarm) && (this._dataframe._80x03_CoolantTemp < Constant.lowestEngineWarmTemperature);
+            return (currentTime > expectedTimeEngineWarm) && (this._dataframe._80x03_CoolantTemp < Constant.MIN_ENGINE_OPERATING_TEMPERATURE);
         } else {
             return false
         }
@@ -229,13 +234,13 @@ export class OperationalStatus {
     get isIdleSpeedFaulty() {
         if (this.isEngineRunning) {
             let sum = 0;
-            let sample = this._dataframes.slice(-SAMPLE_SIZE);
+            let sample = this._dataframes.slice(-Constant.SAMPLE_SIZE);
 
             sample.forEach((item) => {
                 sum += item._7Dx0F_IdleBasePosition;
             });
             const mean = sum / sample.length;
-            return mean > Constant.highestIdleSpeedDeviation;
+            return mean > Constant.MAX_IDLE_SPEED_DEVIATION;
         }
 
         return false
@@ -277,7 +282,7 @@ export class OperationalStatus {
 
             stddev = Math.sqrt(stddev / (this._dataframes.length - 1));
 
-            return stddev > Constant.lambdaOscillationStandardDeviation;
+            return stddev > Constant.LAMBDA_OSCILLATION_MIN_STDDEV;
         }
 
         return true;
@@ -289,8 +294,8 @@ export class OperationalStatus {
     //
     _getExpectedEngineWarmTime() {
         let currentTime = new Date(this._dataframe._80x00_Time);
-        let degreesToWarm = Constant.engineOperatingTemp - this._dataframe._80x03_CoolantTemp;
-        let secondsToWarm = degreesToWarm * Constant.secondsPerDegree;
+        let degreesToWarm = Constant.ECU_ENGINE_OPERATING_TEMPERATURE - this._dataframe._80x03_CoolantTemp;
+        let secondsToWarm = degreesToWarm * Constant.SECONDS_PER_DEGREE;
         return new Date(currentTime.getTime() + secondsToWarm);
     }
 

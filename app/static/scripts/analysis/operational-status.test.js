@@ -1,9 +1,9 @@
-import {beforeEach, afterEach, describe, expect, it, test} from "@jest/globals";
+import {beforeEach, afterEach, describe, expect, it} from "@jest/globals";
 import {Dataframe7d, Dataframe80} from "../rosco/mems-dataframe.js";
 import {OperationalStatus} from "./operational-status.js";
 import {DataframeLog} from "../rosco/mems-dataframe-log.js";
-import * as Constant from "../analysis/analysis-constants.js";
-import {defaultIdleThrottlePot} from "../analysis/analysis-constants.js";
+import * as Constant from "./analysis-constants.js";
+
 
 var dataframeLog;
 var status;
@@ -99,11 +99,11 @@ afterEach(() => {
 describe('Faults', () => {
     it('engine hot idle is faulty', () => {
         let df = createValidDataframes(true, true,true);
-        df[0]._80x10_IdleHot = Constant.minimumIdleHot - 1;
+        df[0]._80x10_IdleHot = Constant.MIN_IDLE_HOT - 1;
         addValidDataframeToLog(df[0],df[1]);
 
         df = createValidDataframes(true, true,true);
-        df[0]._80x10_IdleHot = Constant.minimumIdleHot - 1;
+        df[0]._80x10_IdleHot = Constant.MIN_IDLE_HOT - 1;
         addValidDataframeToLog(df[0],df[1]);
 
         status = new OperationalStatus(dataframeLog.dataframes);
@@ -114,17 +114,16 @@ describe('Faults', () => {
 
 const warmIdle = 850;
 const coldIdle = 1150;
-const coolantWarm = Constant.engineOperatingTemp;
+const coolantWarm = Constant.ECU_ENGINE_OPERATING_TEMPERATURE;
 const coolantCold = 20;
 const goodIntake = 20;
-const goodBattery = Constant.lowestBatteryVoltage + 0.5;
-const poorBattery = Constant.lowestBatteryVoltage - 0.5;
-const idleThrottleAngle = Constant.defaultIdleThrottleAngle;
-const revThrottleAngle = Constant.defaultIdleThrottleAngle + 1000;
-const goodCoil = Constant.highestIdleCoilTime - 0.5;
-const goodCTS = Constant.invalidCASPosition + 1;
-const idleMAP = Constant.highestIdleMAPValue - 1;
-const runningMAP = Constant.highestIdleMAPValue - 10;
+const goodBattery = Constant.MIN_BATTERY_VOLTAGE + 0.5;
+const idleThrottleAngle = Constant.DEFAULT_IDLE_THROTTLE_ANGLE;
+const revThrottleAngle = Constant.DEFAULT_IDLE_THROTTLE_ANGLE + 1000;
+const goodCoil = Constant.MAX_IDLE_COIL_TIME - 0.5;
+const goodCTS = Constant.INVALID_CRANKSHAFT_POSITION_SENSOR + 1;
+const idleMAP = Constant.MAX_MAP_VALUE - 1;
+const runningMAP = Constant.MAX_MAP_VALUE - 10;
 const offMAP = 100;
 
 function addValidDataframeToLog(df80, df7d) {
@@ -148,11 +147,11 @@ function createValidDataframes(isRunning, isIdle, isWarm) {
         dataframe80._80x0A_IdleSwitch = true;
         dataframe80._80x07_ManifoldAbsolutePressure = idleMAP;
         dataframe7d._7Dx02_ThrottleAngle = idleThrottleAngle;
-        dataframe80._80x09_ThrottlePotSensor = defaultIdleThrottlePot;
+        dataframe80._80x09_ThrottlePotSensor = Constant.DEFAULT_IDLE_THROTTLE_POT_VOLTAGE;
     } else {
         dataframe80._80x07_ManifoldAbsolutePressure = runningMAP;
         dataframe7d._7Dx02_ThrottleAngle = revThrottleAngle;
-        dataframe80._80x09_ThrottlePotSensor = defaultIdleThrottlePot + 0.5;
+        dataframe80._80x09_ThrottlePotSensor = Constant.DEFAULT_IDLE_THROTTLE_POT_VOLTAGE + 0.5;
     }
 
     if (!isRunning) {
@@ -163,12 +162,12 @@ function createValidDataframes(isRunning, isIdle, isWarm) {
     dataframe80._80x05_IntakeAirTemp = goodIntake;
     dataframe80._80x08_BatteryVoltage = goodBattery;
     dataframe80._80x0F_IdleSetPoint = 0;
-    dataframe80._80x10_IdleHot = Constant.minimumIdleHot;
+    dataframe80._80x10_IdleHot = Constant.MIN_IDLE_HOT;
     dataframe80._80x12_IACPosition = goodCTS;
-    dataframe80._80x13_IdleSpeedDeviation = Constant.highestIdleSpeedDeviation;
+    dataframe80._80x13_IdleSpeedDeviation = Constant.MAX_IDLE_SPEED_DEVIATION;
     dataframe80._80x17_CoilTime = goodCoil;
-    dataframe80._80x19_CrankshaftPositionSensor = Constant.invalidCASPosition + 1;
-    dataframe80._7Dx13_IdleSpeedOffset = Constant.maximumIdleOffset;
+    dataframe80._80x19_CrankshaftPositionSensor = Constant.INVALID_CRANKSHAFT_POSITION_SENSOR + 1;
+    dataframe80._7Dx13_IdleSpeedOffset = Constant.MAX_IDLE_OFFSET;
 
     return [dataframe80, dataframe7d];
 }

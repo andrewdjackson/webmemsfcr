@@ -237,15 +237,15 @@ export class Dataframe {
     }
 
     get _isEngineRPMValid()  {
-        return (this._80x01_EngineRPM < Constant.maximumEngineRPM);
+        return (this._80x01_EngineRPM < Constant.MAX_RPM);
     }
 
     get _isCoolantTempValid() {
-        return (this._80x03_CoolantTemp < Constant.maximumAirIntakeTemperature);
+        return (this._80x03_CoolantTemp < Constant.MAX_AIR_INTAKE_TEMPERATURE);
     }
 
     get _isIntakeAirTempValid() {
-        return (this._80x05_IntakeAirTemp < Constant.maximumAirIntakeTemperature);
+        return (this._80x05_IntakeAirTemp < Constant.MAX_AIR_INTAKE_TEMPERATURE);
     }
 
     get _isMAPValid() {
