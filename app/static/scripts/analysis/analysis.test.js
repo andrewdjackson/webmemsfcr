@@ -60,6 +60,29 @@ describe('above operating temp', () => {
     })
 })
 
+describe('utilities', () => {
+    it('dedup array with same objects', () => {
+        const arr = [{'id':'1'}, {'id': '1'}, {'id': '1'}];
+        const res = analysis._dedupArrayByProperty(arr, 'id');
+
+        expect(res).toHaveLength(1);
+    })
+
+    it('dedup array with two objects', () => {
+        const arr = [{'id':'1'}, {'id': '1'}, {'id': '1'}, {'id':'2'}, {'id': '2'}, {'id': '2'}];
+        const res = analysis._dedupArrayByProperty(arr, 'id');
+
+        expect(res).toHaveLength(2);
+    })
+
+    it('dedup array with three objects', () => {
+        const arr = [{'id':'1'}, {'id': '1'}, {'id': '1'}, {'id':'2'}, {'id': '2'}, {'id': '3'}];
+        const res = analysis._dedupArrayByProperty(arr, 'id');
+
+        expect(res).toHaveLength(3);
+    })
+})
+
 function createValidDataframe80() {
     let df = new Dataframe80();
     df._80x07_ManifoldAbsolutePressure = 34;

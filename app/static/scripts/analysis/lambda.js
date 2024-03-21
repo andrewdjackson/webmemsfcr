@@ -34,6 +34,21 @@ export class Lambda {
         return this._isEngineRunning && (this._currentDataframe._7Dx06_LambdaVoltage < Constant.MIN_LAMBDA_VOLTAGE || this._currentDataframe._7Dx06_LambdaVoltage > Constant.MAX_LAMBDA_VOLTAGE);
     }
 
+    isSluggish() {
+        if (this._isEngineRunning) {
+            if (this._currentTime > this._expectOscillationsAt) {
+                const oscillationExpectedAtDataframe = this._getOscillationsExpectedAtDataframe();
+                const dataframesPostOscillationTime = this._dataframes.slice(oscillationExpectedAtDataframe.index);
+                const sample = dataframesPostOscillationTime.map(({_7Dx06_LambdaVoltage }) => _7Dx06_LambdaVoltage);
+                const stats = this.analyzeOscillations(sample);
+                return !(stats.length < (sample.length / Constant.MAX_VALUES_PER_OSCILLATION));
+            }
+        }
+
+        // ignore the lambda and return no fault
+        return LAMBDA_WORKING;
+    }
+
     isOscillating() {
         if (this._isEngineRunning) {
             if (this._currentTime > this._expectOscillationsAt) {
@@ -53,8 +68,8 @@ export class Lambda {
     isHeaterFaulty() {
         if (this._isEngineRunning) {
             if (this._currentTime > this._expectOscillationsAt) {
-                const oscillationStartDataframe = this._getOscillationsStartedDataframe();
-                const dataframesPreOscillationTime = this._dataframes.slice(0, oscillationStartDataframe.index);
+                const oscillationExpectedAtDataframe = this._getOscillationsExpectedAtDataframe();
+                const dataframesPreOscillationTime = this._dataframes.slice(0, oscillationExpectedAtDataframe.index);
 
                 if (!this._isLambdaOscillating(dataframesPreOscillationTime)) {
                     return LAMBDA_HEATER_FAULTY;
@@ -70,23 +85,74 @@ export class Lambda {
     // check if the lambda voltage is oscillating (std dev > 100)
     // need a full dataset for this analysis
     //
-    _isLambdaOscillating(sample) {
-        // calculate the mean
-        let sum = 0;
-        sample.forEach((item) => {
-            sum += item._7Dx06_LambdaVoltage;
-        });
-        const mean = sum / sample.length;
+    _isLambdaOscillating(dataframes) {
+        const sample = dataframes.map(({_7Dx06_LambdaVoltage }) => _7Dx06_LambdaVoltage);
+        const stdDev = this.calculateStandardDeviation(sample);
 
-        // calculate the standard deviation
-        let stddev = 0;
-        sample.forEach((item) => {
-            stddev += Math.pow(item._7Dx06_LambdaVoltage - mean, 2);
-        });
+        return stdDev > Constant.LAMBDA_OSCILLATION_MIN_STDDEV;
+    }
 
-        stddev = Math.sqrt(stddev / (sample.length - 1));
+    analyzeOscillations(data) {
+        const MIN_VALUE = 10;
+        const MIN_CHANGE = 50;
+        const MIN_DATA_POINTS = 4;
 
-        return stddev > Constant.LAMBDA_OSCILLATION_MIN_STDDEV;
+        const oscillations = [];
+        let inOscillation = false;
+        let oscillationStart = null;
+        let oscillationMin = Infinity;
+        let oscillationMax = -Infinity;
+        let oscillationStartValue = null;
+
+        for (let i = 0; i < data.length; i++) {
+            const value = data[i];
+
+            // Ignore values less than MIN_VALUE
+            if (value < MIN_VALUE) {
+                continue;
+            }
+
+            // Check if oscillation has started (rising after initial low)
+            if (!inOscillation && i > 0 && value > data[i - 1]) {
+                inOscillation = true;
+                oscillationStart = i;
+                oscillationMin = value;
+                oscillationMax = value;
+                oscillationStartValue = value; // Store starting value
+            }
+
+            // Update min and max values within the oscillation
+            if (inOscillation) {
+                oscillationMin = Math.min(oscillationMin, value);
+                oscillationMax = Math.max(oscillationMax, value);
+
+                // Check for oscillation end (falling below minimum after a peak)
+                if (i > oscillationStart + MIN_DATA_POINTS && value < oscillationMin + MIN_CHANGE) {
+                    // Check if peak is at least 100 higher than start and end
+                    if (oscillationMax >= oscillationStartValue + MIN_CHANGE) {
+                        //const standardDeviation = this.calculateStandardDeviation(data.slice(oscillationStart, i + 1));
+                        oscillations.push({
+                            startIndex: oscillationStart,
+                            endIndex: i,
+                            minValue: oscillationMin,
+                            maxValue: oscillationMax,
+                            dataPoints: i - oscillationStart + 1,
+                            //standardDeviation,
+                        });
+                    }
+                    inOscillation = false;
+                }
+            }
+        }
+
+        return oscillations;
+    }
+
+    calculateStandardDeviation(data) {
+        const mean = data.reduce((acc, val) => acc + val, 0) / data.length;
+        const squaredDifferences = data.map((val) => Math.pow(val - mean, 2));
+        const variance = squaredDifferences.reduce((acc, val) => acc + val, 0) / (data.length - 1);
+        return Math.sqrt(variance);
     }
 
     get _isEngineRunning() {
@@ -107,7 +173,7 @@ export class Lambda {
        return new EventDataframe(index, dataframe);
    }
 
-    _getOscillationsStartedDataframe() {
+    _getOscillationsExpectedAtDataframe() {
         let expected= new Date(this._engineStartedAtDataframe.startedAt);
         expected.setSeconds(expected.getSeconds() + Constant.LAMBDA_WARMUP_TIME_IN_SECONDS);
 

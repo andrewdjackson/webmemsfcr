@@ -66,6 +66,7 @@ export const LAMBDA_OSCILLATION_MIN_STDDEV      = 100
 export const LAMBDA_WARMUP_TIME_IN_SECONDS      = 90
 export const MIN_LAMBDA_VOLTAGE                 = 10
 export const MAX_LAMBDA_VOLTAGE                 = 900
+export const MAX_VALUES_PER_OSCILLATION        = 10
 
 //
 // Dataframe Array Location Pointers

@@ -100,15 +100,13 @@ export class Analysis {
 
     _dedupArrayByProperty(arr, prop) {
         let dedupedArray = Array.from(
-            arr
-                .reduce(
-                    (acc, item) => (
-                        item && item[prop] && acc.set(item[prop], item), acc
-                    ), // using map (preserves ordering)
-                    new Map()
-                )
-                .values()
-        )
+            arr.reduce((acc, item) => {
+                if (item && item[prop]) {
+                    acc.set(item[prop], item);
+                }
+                return acc;
+            }, new Map()).values()
+        );
 
         dedupedArray.sort(this._sortByMessageId);
         return dedupedArray;
