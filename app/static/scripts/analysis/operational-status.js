@@ -1,6 +1,7 @@
 import * as Constant from "./analysis-constants.js"
 import {Battery} from "./battery.js"
 import {Lambda} from "./lambda.js";
+import {Thermostat} from "./thermostat.js";
 
 export class OperationalStatus {
     constructor(dataframes) {
@@ -125,6 +126,7 @@ export class OperationalStatus {
         const lambda = new Lambda(this._dataframes);
         return (!lambda.isOscillating() || lambda.isHeaterFaulty() || lambda.isOutOfRange());
 
+        /*
         if (this.isEngineRunning) {
             if (this.engineStartedAt !== undefined) {
                 const currentTime = new Date(this._dataframe._80x00_Time).getTime();
@@ -138,6 +140,7 @@ export class OperationalStatus {
 
         // ignore the lambda status and return no fault
         return false;
+        */
     }
 
     //
@@ -196,6 +199,10 @@ export class OperationalStatus {
     }
 
     get isThermostatFaulty() {
+        const thermostat = new Thermostat(this._dataframes);
+        return thermostat.isFaulty();
+
+        /*
         if (this.isEngineRunning) {
             const currentTime = new Date(this._dataframe._80x00_Time).getTime();
             const expectedTimeEngineWarm = this._getExpectedEngineWarmTime().getTime();
@@ -203,6 +210,7 @@ export class OperationalStatus {
         } else {
             return false
         }
+        */
     }
 
     get isCoolantSensorFaulty() {
