@@ -200,11 +200,7 @@ export class DataframeLog {
             // if this dataframe is empty this indicates an invalid ECU response
             const df80Valid = data._80_RawData !== '';
             const df7dValid = data._7D_RawData !== '';
-            const validECUResponse = (df80Valid && df7dValid);
-
-            if (!validECUResponse) {
-                console.error(`Error in ECU response, invalid dataframe`);
-            }
+            return (df80Valid && df7dValid);
         }
     }
 }

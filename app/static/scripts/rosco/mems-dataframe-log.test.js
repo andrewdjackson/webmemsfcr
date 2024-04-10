@@ -29,6 +29,26 @@ describe('Log MEMS 1.6 dataframes', () => {
         for (let i = 0; i < MIN_DATAFRAMES; i++) {
             let df80 = createValidDataframe80();
             dataframeLog.addDataframe(df80);
+            let df7d = createValidDataframe7D();
+            dataframeLog.addDataframe(df7d);
+        }
+        expect(dataframeLog.hasLoggedData).toBe(true);
+        expect(dataframeLog.dataframes).toHaveLength(MIN_DATAFRAMES);
+    })
+
+    it('should add 2 valid dataframes and skip 2 invalid dataframes', () => {
+        for (let i = 0; i < MIN_DATAFRAMES; i++) {
+            let df80 = createValidDataframe80();
+            dataframeLog.addDataframe(df80);
+            let df7d = createValidDataframe7D();
+            dataframeLog.addDataframe(df7d);
+        }
+        expect(dataframeLog.hasLoggedData).toBe(true);
+        expect(dataframeLog.dataframes).toHaveLength(MIN_DATAFRAMES);
+
+        for (let i = 0; i < MIN_DATAFRAMES; i++) {
+            let df80 = createValidDataframe80();
+            dataframeLog.addDataframe(df80);
             let df7d = new Dataframe7d();
             dataframeLog.addDataframe(df7d);
         }
@@ -36,29 +56,18 @@ describe('Log MEMS 1.6 dataframes', () => {
         expect(dataframeLog.dataframes).toHaveLength(MIN_DATAFRAMES);
     })
 
-    it('should add 2 0x80 / 0x7d dataframes to the log', () => {
-        for (let i = 0; i < MIN_DATAFRAMES; i++) {
-            let df80 = createValidDataframe80();
-            dataframeLog.addDataframe(df80);
-            let df7d = new Dataframe7d();
-            dataframeLog.addDataframe(df7d);
-        }
-
-        for (let i = 0; i < MIN_DATAFRAMES; i++) {
-            let df80 = createValidDataframe80();
-            dataframeLog.addDataframe(df80);
-            let df7d = new Dataframe7d();
-            df7d._7D_RawData = '';
-            dataframeLog.addDataframe(df7d);
-        }
-
-        expect(dataframeLog.hasLoggedData).toBe(true);
-        expect(dataframeLog.dataframes).toHaveLength(MIN_DATAFRAMES);
-    })
 })
 
 function createValidDataframe80() {
     let df = new Dataframe80();
     df._80x07_ManifoldAbsolutePressure = 34;
+    df._80_RawData = "801C000072FF61FF638027001001020000288473043300380B16000000"
+    return df;
+}
+
+function createValidDataframe7D() {
+    let df = new Dataframe7d();
+    df._7Dx06_LambdaVoltage = 435;
+    df._7D_RawData = "7D201014FF92005CFFFF01009E6400FF55FFFF30807BCDFF1A80200027C035C00B"
     return df;
 }
