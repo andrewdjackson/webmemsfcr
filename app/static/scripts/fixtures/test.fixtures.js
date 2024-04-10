@@ -1,4 +1,50 @@
-import {Dataframe7d, Dataframe80} from "../rosco/mems-dataframe.js";
+import {Dataframe7d, Dataframe80, getDateTimeString} from "../rosco/mems-dataframe.js";
+import {DataframeLog} from "../rosco/mems-dataframe-log.js";
+import * as Constant from "../analysis/analysis-constants.js";
+import {Engine} from "../analysis/engine.js";
+
+export class EngineProfile {
+    rpm;
+    throttle;
+    temperature;
+
+    constructor(rpm, throttle, temperature) {
+        this.rpm = rpm;
+        this.throttle = throttle;
+        this.temperature = temperature;
+    }
+}
+
+export function createWarmIdleEngineProfile() {
+    const engineIdleWarm = new EngineProfile(Constant.MAX_IDLE_RPM - 1,Constant.DEFAULT_IDLE_THROTTLE_POT_VOLTAGE - 0.1, Constant.ECU_ENGINE_OPERATING_TEMPERATURE + 1);
+    let profile = [];
+
+    // increase RPM and throttle pot. voltage for each step
+    for (let i = 0; i < 5; i++) {
+        let p = engineIdleWarm;
+        p.rpm = p.rpm + (i * 100);
+        p.throttle = p.throttle + (i * 0.1);
+        profile.push(p);
+    }
+
+    const dataframes = createDataframesWithEngineProfile(profile);
+    return new Engine(dataframes);
+}
+
+export function createWarmingIdleEngineProfile() {
+    const engineIdleWarming = new EngineProfile(0,Constant.DEFAULT_IDLE_THROTTLE_POT_VOLTAGE - 0.1, 20);
+    let profile = [];
+
+    // increase RPM and throttle pot. voltage for each step
+    for (let i = 0; i < 5; i++) {
+        let p = engineIdleWarming;
+        p.rpm = p.rpm + (i * 100);
+        profile.push(p);
+    }
+
+    const dataframes = createDataframesWithEngineProfile(profile);
+    return new Engine(dataframes);
+}
 
 export function createValidDataframe() {
     let df7d = new Dataframe7d();
@@ -43,4 +89,22 @@ export function createValidDataframe() {
     df80._80_RawData = "801C06BF87FF56FF24872310000100000026885B036A006D0528100000"
 
     return {"df7d":df7d, "df80":df80}
+}
+
+export function createDataframesWithEngineProfile(profile) {
+    let dataframeLog = new DataframeLog();
+
+    for (let i=0; i < profile.length; i++) {
+        let df = createValidDataframe();
+        df.df80._80x01_EngineRPM = profile[i].rpm;
+        df.df80._80x09_ThrottlePotSensor = profile[i].throttle;
+        df.df80._80x03_CoolantTemp = profile[i].temperature;
+        df.df80._80x00_Time = getDateTimeString(i * 1000); // dataframes at 1 second intervals
+        df.df7d._7Dx00_Time = df.df80._80x00_Time;
+
+        dataframeLog.addDataframe(df.df7d);
+        dataframeLog.addDataframe(df.df80);
+    }
+
+    return dataframeLog.dataframes;
 }

@@ -1,15 +1,22 @@
-import {describe, expect, it} from "@jest/globals";
-import {Battery, BATTERY_LOW, BATTERY_GOOD, BATTERY_NOT_CHARGING, BATTERY_CHARGING} from "./battery.js";
-import {createValidDataframe} from "../fixtures/test.fixtures.js";
+import {describe, it, expect, beforeAll} from "@jest/globals";
+
+import {createValidDataframe, createWarmIdleEngineProfile} from "../fixtures/test.fixtures.js";
 import {getDateTimeString} from "../rosco/mems-dataframe.js";
 import {DataframeLog} from "../rosco/mems-dataframe-log.js";
+import {Battery, BATTERY_LOW, BATTERY_GOOD, BATTERY_NOT_CHARGING, BATTERY_CHARGING} from "./battery.js";
+
+var engine;
+
+beforeAll(() => {
+    engine = createWarmIdleEngineProfile();
+});
 
 describe('battery low, with engine starting', () => {
     it('with no recovery time', () => {
         const batteryProfile = [12.70, 12.70, 12.70, 12.70, 12.70, 12.70, 12.70, 12.70, 12.70, 12.70, 12.60, 12.60, 12.60, 12.60, 12.60, 12.60, 12.60, 12.40, 11.80, 11.90, 12.10, 12.40, 12.50];
         const dataframes = createDataframesWithBatteryProfile(batteryProfile);
 
-        const battery = new Battery(dataframes);
+        const battery = new Battery(dataframes, engine);
         expect(battery.isLow()).toBe(BATTERY_LOW);
         expect(battery.isCharging()).toBe(BATTERY_CHARGING);
     })
@@ -18,7 +25,7 @@ describe('battery low, with engine starting', () => {
         const batteryProfile = [12.70, 12.70, 12.70, 12.70, 12.70, 12.70, 12.70, 12.70, 12.70, 12.70, 12.60, 12.60, 12.60, 12.60, 12.60, 12.60, 12.60, 12.40, 11.80, 11.90, 12.10, 12.40, 12.50, 12.70, 12.70, 12.70, 12.70, 12.70];
         const dataframes = createDataframesWithBatteryProfile(batteryProfile);
 
-        const battery = new Battery(dataframes);
+        const battery = new Battery(dataframes, engine);
         expect(battery.isLow()).toBe(BATTERY_LOW);
         expect(battery.isCharging()).toBe(BATTERY_NOT_CHARGING);
     })
@@ -27,7 +34,7 @@ describe('battery low, with engine starting', () => {
         const batteryProfile = [12.70, 12.70, 12.70, 12.70, 12.70, 12.70, 12.70, 12.70, 12.70, 12.70, 12.60, 12.60, 12.60, 12.60, 12.60, 12.60, 12.60, 12.40, 11.80, 11.90, 12.10, 12.40, 12.50, 12.70, 12.80, 12.90, 13.00, 13.10, 13.20, 13.20, 13.20, 13.30, 13.30, 13.30, 13.40, 13.40, 13.40, 13.40, 13.40, 13.40, 13.40, 13.40, 13.40, 13.40];
         const dataframes = createDataframesWithBatteryProfile(batteryProfile);
 
-        const battery = new Battery(dataframes);
+        const battery = new Battery(dataframes, engine);
         expect(battery.isLow()).toBe(BATTERY_LOW);
         expect(battery.isCharging()).toBe(BATTERY_CHARGING);
     })
@@ -38,7 +45,7 @@ describe('battery good, with engine starting', () => {
         const batteryProfile = [12.90, 12.90, 12.90, 12.90, 12.90, 12.90, 12.90, 12.90, 12.90, 12.90, 12.80, 12.80, 12.80, 12.80, 12.80, 12.80, 12.80, 12.60, 11.90, 12.00, 12.20, 12.60, 12.70];
         const dataframes = createDataframesWithBatteryProfile(batteryProfile);
 
-        const battery = new Battery(dataframes);
+        const battery = new Battery(dataframes, engine);
         expect(battery.isLow()).toBe(BATTERY_GOOD);
         expect(battery.isCharging()).toBe(BATTERY_CHARGING);
     })
@@ -47,7 +54,7 @@ describe('battery good, with engine starting', () => {
         const batteryProfile = [12.90, 12.90, 12.90, 12.90, 12.90, 12.90, 12.90, 12.90, 12.90, 12.90, 12.80, 12.80, 12.80, 12.80, 12.80, 12.80, 12.80, 12.60, 11.90, 12.00, 12.20, 12.60, 12.70, 12.80, 12.90, 12.90, 12.90, 12.90];
         const dataframes = createDataframesWithBatteryProfile(batteryProfile);
 
-        const battery = new Battery(dataframes);
+        const battery = new Battery(dataframes, engine);
         expect(battery.isLow()).toBe(BATTERY_GOOD);
         expect(battery.isCharging()).toBe(BATTERY_NOT_CHARGING);
     })
@@ -56,7 +63,7 @@ describe('battery good, with engine starting', () => {
         const batteryProfile = [12.90, 12.90, 12.90, 12.90, 12.90, 12.90, 12.90, 12.90, 12.90, 12.90, 12.80, 12.80, 12.80, 12.80, 12.80, 12.80, 12.80, 12.60, 11.90, 12.00, 12.20, 12.60, 12.70, 12.80, 12.80, 12.90, 13.00, 13.10, 13.20, 13.20, 13.20, 13.30, 13.30, 13.30, 13.40, 13.40, 13.40, 13.40, 13.40, 13.40, 13.40, 13.40, 13.40, 13.40];
         const dataframes = createDataframesWithBatteryProfile(batteryProfile);
 
-        const battery = new Battery(dataframes);
+        const battery = new Battery(dataframes, engine);
         expect(battery.isLow()).toBe(BATTERY_GOOD);
         expect(battery.isCharging()).toBe(BATTERY_CHARGING);
     })
@@ -67,7 +74,7 @@ describe('battery good, with engine running', () => {
         const batteryProfile = [13.20, 13.00, 13.10, 13.20, 13.20, 13.20, 13.30, 13.30, 13.30, 13.40, 13.40, 13.40, 13.40, 13.40, 13.40, 13.40, 13.40, 13.40, 13.40];
         const dataframes = createDataframesWithBatteryProfile(batteryProfile);
 
-        const battery = new Battery(dataframes);
+        const battery = new Battery(dataframes, engine);
         expect(battery.isLow()).toBe(BATTERY_GOOD);
         expect(battery.isCharging()).toBe(BATTERY_CHARGING);
     })
@@ -76,7 +83,7 @@ describe('battery good, with engine running', () => {
         const batteryProfile = [13.20, 13.00, 13.10, 12.90, 12.90, 12.90, 12.90, 12.90, 12.90, 12.90, 12.90, 12.90, 12.90, 12.80, 12.80, 12.80, 12.80, 12.80, 12.80, 12.80, 12.80];
         const dataframes = createDataframesWithBatteryProfile(batteryProfile);
 
-        const battery = new Battery(dataframes);
+        const battery = new Battery(dataframes, engine);
         expect(battery.isLow()).toBe(BATTERY_GOOD);
         expect(battery.isCharging()).toBe(BATTERY_NOT_CHARGING);
     })

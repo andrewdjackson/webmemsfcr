@@ -64,14 +64,15 @@ export class DataframeLog {
         let dataframe;
 
         if (this.isMemsVersion13) {
-            dataframe = new Dataframe(this._dataframe80.at(-1));
+            dataframe = new Dataframe(this._dataframe80.at(Constant.CURRENT_DATAFRAME));
             console.debug(`MEMS 1.3 dataframe added to the log ${JSON.stringify(dataframe)}`);
         } else {
             if (this._dataframe80.length === this._dataframe7d.length) {
-                dataframe = new Dataframe(this._dataframe80.at(-1), this._dataframe7d.at(-1));
+                dataframe = new Dataframe(this._dataframe80.at(Constant.CURRENT_DATAFRAME), this._dataframe7d.at(Constant.CURRENT_DATAFRAME));
                 // console.debug(`MEMS 1.6+ dataframe added to the log ${JSON.stringify(dataframe)}`);
             }
         }
+
         if (dataframe !== undefined) {
             this._addDataframe(dataframe);
             // remove the individual dataframes as these are no longer needed
@@ -165,7 +166,8 @@ export class DataframeLog {
         let isValid = this._isEngineRPMValid(df) &&
             this._isCoolantTempValid(df) &&
             this._isIntakeAirTempValid(df) &&
-            this._isMAPValid(df);
+            this._isMAPValid(df) &&
+            this._isValidECUResponse(df);
 
         if (!isValid) {
             console.error(`invalid dataframe ${JSON.stringify(df)}`);
@@ -188,5 +190,21 @@ export class DataframeLog {
 
     _isMAPValid(data) {
         return (data._80x07_ManifoldAbsolutePressure > 0);
+    }
+
+    _isValidECUResponse(data) {
+        if (this.isMemsVersion13) {
+            // ignore ecu check for MEMS 1.3
+            return true;
+        } else {
+            // if this dataframe is empty this indicates an invalid ECU response
+            const df80Valid = data._80_RawData !== '';
+            const df7dValid = data._7D_RawData !== '';
+            const validECUResponse = (df80Valid && df7dValid);
+
+            if (!validECUResponse) {
+                console.error(`Error in ECU response, invalid dataframe`);
+            }
+        }
     }
 }

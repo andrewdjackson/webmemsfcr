@@ -35,6 +35,26 @@ describe('Log MEMS 1.6 dataframes', () => {
         expect(dataframeLog.hasLoggedData).toBe(true);
         expect(dataframeLog.dataframes).toHaveLength(MIN_DATAFRAMES);
     })
+
+    it('should add 2 0x80 / 0x7d dataframes to the log', () => {
+        for (let i = 0; i < MIN_DATAFRAMES; i++) {
+            let df80 = createValidDataframe80();
+            dataframeLog.addDataframe(df80);
+            let df7d = new Dataframe7d();
+            dataframeLog.addDataframe(df7d);
+        }
+
+        for (let i = 0; i < MIN_DATAFRAMES; i++) {
+            let df80 = createValidDataframe80();
+            dataframeLog.addDataframe(df80);
+            let df7d = new Dataframe7d();
+            df7d._7D_RawData = '';
+            dataframeLog.addDataframe(df7d);
+        }
+
+        expect(dataframeLog.hasLoggedData).toBe(true);
+        expect(dataframeLog.dataframes).toHaveLength(MIN_DATAFRAMES);
+    })
 })
 
 function createValidDataframe80() {

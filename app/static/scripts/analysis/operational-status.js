@@ -2,11 +2,18 @@ import * as Constant from "./analysis-constants.js"
 import {Battery} from "./battery.js"
 import {Lambda} from "./lambda.js";
 import {Thermostat} from "./thermostat.js";
+import {Engine} from "./engine.js";
 
 export class OperationalStatus {
+    _dataframes;
+    _dataframe;
+    _operationalFaults;
+    _engine;
+
     constructor(dataframes) {
         this._dataframes = dataframes;
         this._dataframe = dataframes.at(Constant.CURRENT_DATAFRAME);
+        this._engine = new Engine(dataframes);
         this._operationalFaults = {};
         this._initialiseFaults();
     }
@@ -24,7 +31,7 @@ export class OperationalStatus {
         this._operationalFaults._80x07_ManifoldAbsolutePressure = this.isMAPHigh;
         this._operationalFaults._80x08_BatteryVoltage = this.isBatteryVoltageLow;
         this._operationalFaults._80x10_IdleHot = this.isHotIdleFaulty;
-        this._operationalFaults._80x12_IACPosition = this.isIACFaulty;
+        this._operationalFaults._80x12_IACPosition = this.isIACFaulty || this.isStepperMotorOutOfExpectedRange;
         this._operationalFaults._80x17_CoilTime = this.isCoilFaulty;
         this._operationalFaults._80x19_CrankshaftPositionSensor = this.isCrankshaftSensorFaulty;
         this._operationalFaults._7Dx06_LambdaVoltage = this.isLambdaOutOfRange || this.isLambdaFaulty;
@@ -94,7 +101,7 @@ export class OperationalStatus {
     }
 
     get isBatteryVoltageLow() {
-        const battery = new Battery(this._dataframes);
+        const battery = new Battery(this._dataframes, this._engine);
         const lowBattery = battery.isLow();
         const batteryNotCharging = !battery.isCharging();
 
@@ -123,24 +130,8 @@ export class OperationalStatus {
     // if the lambda status is 0 and the lambda is not oscillating then ecu is not using the o2 system
     //
     get isO2SystemFaulty() {
-        const lambda = new Lambda(this._dataframes);
-        return (!lambda.isOscillating() || lambda.isHeaterFaulty() || lambda.isOutOfRange());
-
-        /*
-        if (this.isEngineRunning) {
-            if (this.engineStartedAt !== undefined) {
-                const currentTime = new Date(this._dataframe._80x00_Time).getTime();
-                const expectedO2ActiveAt = new Date(this.engineStartedAt.getTime() + 90).getTime();
-                if (currentTime > expectedO2ActiveAt) {
-                    // return true, e.g. faulty if the lambda status is 0
-                    return (this._dataframe._7Dx09_LambdaStatus === 0);
-                }
-            }
-        }
-
-        // ignore the lambda status and return no fault
-        return false;
-        */
+        const lambda = new Lambda(this._dataframes, this._engine);
+        return (!lambda.isOscillating || lambda.isHeaterFaulty || lambda.isOutOfRange);
     }
 
     //
@@ -174,6 +165,17 @@ export class OperationalStatus {
         }
 
         return false
+    }
+
+    get isStepperMotorOutOfExpectedRange() {
+        // stepped motor (IAC) should be between 30-35 when engine is at operating temperature and idle
+        if (this.isEngineIdle) {
+            if (this.isEngineWarm) {
+                return !((this._dataframe._80x12_IACPosition >= 30) && (this._dataframe._80x12_IACPosition <= 35))
+            }
+        }
+
+        return false;
     }
 
     //

@@ -1,28 +1,14 @@
 import * as Constant from "./analysis-constants.js"
+import {SensorEvent, Sensor} from "./sensor.js";
 
 export const THERMOSTAT_FAULTY = true;
 export const THERMOSTAT_WORKING = false;
 
-class MaxTemperatureDataframe {
-    index;
-    temperature;
-    dataframe;
-
-    constructor(index, dataframe) {
-        this.index = index;
-        this.temperature = dataframe._80x03_CoolantTemp;
-        this.dataframe = dataframe;
-    }
-}
-
-export class Thermostat {
+export class Thermostat extends Sensor {
     constructor(dataframes) {
+        super(dataframes);
+
         this._maxTemperatureDataframe = this._getPeakTemperature(dataframes);
-
-        this._currentDataframe = dataframes.at(Constant.CURRENT_DATAFRAME);
-        this._previousDataframe = dataframes.at(Constant.PREVIOUS_DATAFRAME);
-
-        this._currentTime = new Date(this._currentDataframe._80x00_Time).getTime();
         this._expectedThermostatOpenTime = this._getExpectedThermostatOpenTime().getTime();
     }
 
@@ -47,7 +33,7 @@ export class Thermostat {
     }
 
     _engineTooColdForThermostatToOpen() {
-        return this._maxTemperatureDataframe.temperature < Constant.THERMOSTAT_OPEN_TEMPERATURE;
+        return this._maxTemperatureDataframe.value < Constant.THERMOSTAT_OPEN_TEMPERATURE;
     }
 
 
@@ -59,7 +45,7 @@ export class Thermostat {
     // has the coolant temperature dropped after the thermostat has opened
     //
     _isThermostatOpenWhenExpected() {
-        return (this._currentTime > this._expectedThermostatOpenTime) && (this._currentDataframe._80x03_CoolantTemp < this._maxTemperatureDataframe.temperature);
+        return (this._currentTime > this._expectedThermostatOpenTime) && (this._currentDataframe._80x03_CoolantTemp < this._maxTemperatureDataframe.value);
     }
 
     _getPeakTemperature(dataframes) {
@@ -72,7 +58,7 @@ export class Thermostat {
         // and where it is in the dataframes array
         const index = dataframes.indexOf(dataframe);
 
-        return new MaxTemperatureDataframe(index, dataframe);
+        return new SensorEvent(index, dataframe._80x03_CoolantTemp, dataframe);
     }
 
     _getExpectedThermostatOpenTime() {

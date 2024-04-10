@@ -1,46 +1,55 @@
 import * as Constant from "./analysis-constants.js";
+import {SensorEvent, Sensor} from "./sensor.js";
 
 export const LAMBDA_FAULTY = false;
 export const LAMBDA_WORKING = true;
 export const LAMBDA_HEATER_FAULTY = true;
 export const LAMBDA_HEATER_WORKING = false;
 
-class EventDataframe {
-    index;
-    startedAt;
-    dataframe;
+export class Lambda extends Sensor {
+    constructor(dataframes, engine) {
+        super(dataframes);
 
-    constructor(index, dataframe) {
-        this.index = index;
-        this.dataframe = dataframe;
-        this.startedAt = new Date(this.dataframe._80x00_Time).getTime();
-    }
-}
-
-export class Lambda {
-    constructor(dataframes) {
-        this._dataframes = dataframes;
-        this._currentDataframe = dataframes.at(Constant.CURRENT_DATAFRAME);
-        this._currentTime = new Date(this._currentDataframe._80x00_Time).getTime();
-        this._engineStartedAtDataframe = this._getEngineStartedDataframe();
+        this._engine = engine;
+        this._active = this._isLambdaActive();
+        this._outOfRange = this._isOutOfRange();
+        this._sluggish = this._isSluggish();
+        this._oscillating = this._isOscillating();
+        this._heaterFaulty = this._isHeaterFaulty();
     }
 
-    isLambdaActive() {
+    get isLambdaActive() {
+        return this._active;
+    }
+
+    _isLambdaActive() {
         // faulty if the lambda status is 0
         return (this._currentDataframe._7Dx09_LambdaStatus > 0);
     }
 
-    isOutOfRange() {
-        return this._isEngineRunning && (this._currentDataframe._7Dx06_LambdaVoltage < Constant.MIN_LAMBDA_VOLTAGE || this._currentDataframe._7Dx06_LambdaVoltage > Constant.MAX_LAMBDA_VOLTAGE);
+    get isOutOfRange() {
+        return this._outOfRange;
     }
 
-    isSluggish() {
-        if (this._isEngineRunning) {
+    _isOutOfRange() {
+        return this._engine.isRunning && (this._currentDataframe._7Dx06_LambdaVoltage < Constant.MIN_LAMBDA_VOLTAGE || this._currentDataframe._7Dx06_LambdaVoltage > Constant.MAX_LAMBDA_VOLTAGE);
+    }
+
+    get isSluggish() {
+        return this._sluggish;
+    }
+
+    _isSluggish() {
+        if (this._engine.isRunning) {
             if (this._currentTime > this._expectOscillationsAt) {
                 const oscillationExpectedAtDataframe = this._getOscillationsExpectedAtDataframe();
+                if (oscillationExpectedAtDataframe.index === -1) {
+                    // dataframe not found, ignore and return no fault
+                    return LAMBDA_WORKING;
+                }
                 const dataframesPostOscillationTime = this._dataframes.slice(oscillationExpectedAtDataframe.index);
                 const sample = dataframesPostOscillationTime.map(({_7Dx06_LambdaVoltage }) => _7Dx06_LambdaVoltage);
-                const stats = this.analyzeOscillations(sample);
+                const stats = this._analyzeOscillations(sample);
                 return !(stats.length < (sample.length / Constant.MAX_VALUES_PER_OSCILLATION));
             }
         }
@@ -49,10 +58,14 @@ export class Lambda {
         return LAMBDA_WORKING;
     }
 
-    isOscillating() {
-        if (this._isEngineRunning) {
+    get isOscillating() {
+        return this._oscillating;
+    }
+
+    _isOscillating() {
+        if (this._engine.isRunning) {
             if (this._currentTime > this._expectOscillationsAt) {
-                if (this.isLambdaActive()) {
+                if (this.isLambdaActive) {
                     return this._isLambdaOscillating(this._dataframes);
                 } else {
                     // lambda is not being used by the ECU and is operating in open state
@@ -65,8 +78,12 @@ export class Lambda {
         return LAMBDA_WORKING;
     }
 
-    isHeaterFaulty() {
-        if (this._isEngineRunning) {
+    get isHeaterFaulty() {
+        return this._heaterFaulty;
+    }
+
+    _isHeaterFaulty() {
+        if (this._engine.isRunning) {
             if (this._currentTime > this._expectOscillationsAt) {
                 const oscillationExpectedAtDataframe = this._getOscillationsExpectedAtDataframe();
                 const dataframesPreOscillationTime = this._dataframes.slice(0, oscillationExpectedAtDataframe.index);
@@ -92,7 +109,7 @@ export class Lambda {
         return stdDev > Constant.LAMBDA_OSCILLATION_MIN_STDDEV;
     }
 
-    analyzeOscillations(data) {
+    _analyzeOscillations(data) {
         const MIN_VALUE = 10;
         const MIN_CHANGE = 50;
         const MIN_DATA_POINTS = 4;
@@ -155,26 +172,8 @@ export class Lambda {
         return Math.sqrt(variance);
     }
 
-    get _isEngineRunning() {
-        return (this._dataframes[this._engineStartedAtDataframe.index]._80x01_EngineRPM > Constant.ENGINE_NOT_RUNNING);
-    }
-
-    //
-    // find the time that the engine started, return undefined if the engine has not been started
-    //
-   _getEngineStartedDataframe() {
-       const dataframe = this._dataframes.find(function (df) {
-           return df._80x01_EngineRPM > Constant.ENGINE_NOT_RUNNING;
-       });
-
-       // and where it is in the dataframes array
-       const index = this._dataframes.indexOf(dataframe);
-
-       return new EventDataframe(index, dataframe);
-   }
-
     _getOscillationsExpectedAtDataframe() {
-        let expected= new Date(this._engineStartedAtDataframe.startedAt);
+        let expected= new Date(this._engine.startedAt.value);
         expected.setSeconds(expected.getSeconds() + Constant.LAMBDA_WARMUP_TIME_IN_SECONDS);
 
         const dataframe = this._dataframes.find(function (df) {
@@ -182,14 +181,19 @@ export class Lambda {
             return  dfTime > expected.getTime();
         });
 
+        if (dataframe === undefined) {
+            return new SensorEvent(-1, undefined, undefined);
+        }
+
         // and where it is in the dataframes array
         const index = this._dataframes.indexOf(dataframe);
+        const value = new Date(dataframe._80x00_Time).getTime();
 
-        return new EventDataframe(index, dataframe);
+        return new SensorEvent(index, value, dataframe);
     }
 
     get _expectOscillationsAt() {
-        let expected= new Date(this._engineStartedAtDataframe.startedAt);
+        let expected= new Date(this._engine.startedAt.value);
         expected.setSeconds(expected.getSeconds() + Constant.LAMBDA_WARMUP_TIME_IN_SECONDS);
         return expected.getTime();
     }
