@@ -50,18 +50,22 @@
         // whether the website is still active. when the site is closed
         // the websocket gets closed and triggers the server to shutdown
 
-        let wsUrl = "ws://" + document.location.host + "/ws";
-        let conn = new WebSocket(wsUrl);
+        if (document.location.host !== "web.memsfcr.co.uk") {
+            let wsUrl = "ws://" + document.location.host + "/ws";
+            console.info(`establishing websocket connection to local server ${wsUrl}`);
 
-        window.isLocalServer = true;
+            let conn = new WebSocket(wsUrl);
 
-        conn.onclose = function (evt) {
-            window.isLocalServer = false;
-            console.warn(`ws closed`);
-        };
-        conn.onmessage = function(evt) {
-            console.log(evt);
-        };
+            window.isLocalServer = true;
+
+            conn.onclose = function (evt) {
+                window.isLocalServer = false;
+                console.warn(`ws closed`);
+            };
+            conn.onmessage = function (evt) {
+                console.log(evt);
+            };
+        }
     </script>
 
 	<script type="module">

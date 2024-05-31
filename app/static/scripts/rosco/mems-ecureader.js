@@ -146,7 +146,7 @@ export class ECUReader {
     _sendNextCommandFromQueue() {
         if (this._commandQueue.length > 0) {
             if (this._waitingForResponse) {
-                console.warn(`waiting for serial response, adding command to the queue (${this._commandQueue.length} waiting)`);
+                console.info(`waiting for serial response, adding command to the queue (${this._commandQueue.length} waiting)`);
 
                 // on machines with slower processors the queue can grow faster than
                 // it can process the serial communications. reduce the queue to include unique commands only
