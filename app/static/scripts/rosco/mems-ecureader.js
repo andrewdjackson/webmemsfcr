@@ -221,7 +221,7 @@ export class ECUReader {
                     this._responseEventQueue.publish(ecuCommand.topic, ecuResponse);
                     return ecuResponse;
                 } else {
-                    reject(new Error(`_sendAndReceive command response do not match ${JSON.stringify(ecuResponse)}`));
+                    return new Error(`_sendAndReceive command response do not match ${JSON.stringify(ecuResponse)}`);
                 }
             })
             .catch((err) => {
