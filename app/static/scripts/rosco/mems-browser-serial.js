@@ -154,26 +154,26 @@ export class MemsBrowserSerialInterface extends MemsSerialInterface {
                             }
                         }
                         if (count === 1 && rxData[0] !== expectedCommand) {
-                            console.error(`expecting first byte to match command, discarding byte`);
+                            console.warn(`_read received ${this._arrayAsHexString(rxData)} but expecting first byte to match command  ${this._arrayAsHexString([expectedCommand])}, discarding byte`);
                             count--;
                         }
                         if (count === 2 && (rxData[0] === Command.MEMS_Dataframe80.command || rxData[0] === Command.MEMS_Dataframe7d.command)) {
                             // read the size of the remaining bytes from the dataframe response
                             let size = rxData[1] + 1;
                             if (size !== n) {
-                                console.warn(`expecting ${n} bytes, ecu response contains ${size}`);
+                                console.warn(`_read expecting ${n} bytes, ecu response contains ${size}`);
                                 n = size;
                             }
                         }
                     }
                 } catch (error) {
-                    console.error(`error ${error}`);
+                    console.error(`_read error ${error}`);
                 } finally {
                     this._reader.releaseLock();
-                    console.debug(`rx: ${this._arrayAsHexString(rxData)}`);
+                    console.debug(`_read rx: ${this._arrayAsHexString(rxData)}`);
                 }
             } else {
-                console.error(`serial not readable`);
+                console.error(`_read serial not readable`);
             }
         }
 

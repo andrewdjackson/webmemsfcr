@@ -3,14 +3,14 @@ import {ECUCommand} from "./mems-1x/mems-commands.js";
 
 // rate at which commands will be sent to the ECU
 // MEMS 1.6 dataframe request / response takes 150ms
-const MAX_ECU_SERIAL_RW_INTERVAL = 200;
+const MAX_ECU_SERIAL_RW_INTERVAL = 250;
 // rate at which dataframes will be requested, since we request 0x80 and 0x7D at the same time
 // this must be a minimum of double the serial rw rate
 const STANDARD_DATAFRAME_REQUEST_INTERVAL = MAX_ECU_SERIAL_RW_INTERVAL * 2;
 // rate at which connection keep-alive heartbeats will be requested
-const STANDARD_HEARTBEAT_REQUEST_INTERVAL = 2000;
+const STANDARD_HEARTBEAT_REQUEST_INTERVAL = 5000;
 // maximum commands in the queue
-const MAX_QUEUE_LENGTH = 20;
+const MAX_QUEUE_LENGTH = 4;
 
 export class ECUResponse {
     constructor(command, response) {
@@ -178,6 +178,7 @@ export class ECUReader {
         // remove any duplicate requests
         return this._dedupArrayByProperty(this._commandQueue, "command");
     }
+
     _dedupArrayByProperty(arr, prop) {
         let dedupedArray = Array.from(
             arr
@@ -242,21 +243,39 @@ export class ECUReader {
 
     _queueDataframeCommand() {
         if (!this.isPaused) {
-            // queue a request for the dataframes
-            this._dataframeCommands.forEach(async ecuCommand => {
-                let cmd = new ECUCommand(0, ecuCommand.topic, ecuCommand.command, ecuCommand.responseSize);
-                this.addCommandToSendQueue(cmd);
-                console.debug(`queued dataframe request ${JSON.stringify(cmd)}`);
-            });
+            console.debug(`queuing dataframe commands`);
+            if (this._hasQueueSpace(this._dataframeCommands.length)) {
+                // queue a request for the dataframes
+                this._dataframeCommands.forEach(async ecuCommand => {
+                    let cmd = new ECUCommand(0, ecuCommand.topic, ecuCommand.command, ecuCommand.responseSize);
+                    console.debug(`queuing dataframe request ${JSON.stringify(cmd)}`);
+                    this.addCommandToSendQueue(cmd);
+                });
+            }
         } else {
-            console.debug(`queuing heartbeat`)
-            // queue a heartbeat command
-            this.addCommandToSendQueue(Command.MEMS_Heartbeat);
+            console.debug(`queuing heartbeat`);
+            if (this._hasQueueSpace(1)) {
+                // queue a heartbeat command
+                this.addCommandToSendQueue(Command.MEMS_Heartbeat);
+            }
         }
     }
 
     _clearQueue() {
         this._commandQueue = [];
+    }
+
+    _hasQueueSpace(spaces) {
+        const queueLength = this._commandQueue.length;
+        const targetQueueLength = MAX_QUEUE_LENGTH - spaces;
+
+        const hasSpace = (queueLength < targetQueueLength);
+
+        if (!hasSpace) {
+            console.debug(`command queue is ${queueLength} and need ${spaces} spaces, ignoring command`);
+        }
+
+        return hasSpace;
     }
 
     async _waitForQueueToFinish() {
