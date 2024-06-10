@@ -109,7 +109,6 @@ export function getActuatorEcuCommand(actuator, operation) {
 }
 
 export function actuatorReceived(ecuResponse) {
-    console.info(`actuator received ${JSON.stringify(ecuResponse)}`);
     View.showToast(`Actuator Successful (${JSON.stringify(ecuResponse.response[1])})`)
 
     let actuator;
