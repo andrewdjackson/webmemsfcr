@@ -3,7 +3,7 @@ import * as Command from "../rosco/mems-1x/mems-commands.js";
 import * as View from "./view.js";
 import * as Dataframe from "./dataframe.js";
 import * as LocalSerialPort from "./local-serialport.js";
-import {ecu, ecuVersion, setECU, isLocal, sendCommand, dataframeLog, responseEventQueue} from "./init.js";
+import {ecu, ecuVersion, setECU, isLocal, sendCommand, dataframeLog, logControl} from "./init.js";
 
 export function attachControlEventListeners() {
     document.getElementById("connectButton").addEventListener('click', connect);
@@ -13,6 +13,7 @@ export function attachControlEventListeners() {
     document.getElementById("resetECUButton").addEventListener('click', reset);
     document.getElementById("downloadLogButton").addEventListener('click', downloadLog);
     document.getElementById("versionButton").addEventListener('change', selectEcuVersion, false);
+    document.getElementById("consoleDebug").addEventListener('change', consoleDebug, false);
 
     if (isLocal) {
         document.getElementById("selectPortConnectButton").addEventListener('click', LocalSerialPort.connectLocalSerialPort);
@@ -109,6 +110,16 @@ function showConnectErrorDialog() {
 function selectEcuVersion(event) {
     let ecuVersion = event.target.options[event.target.selectedIndex].value;
     setECU(ecuVersion);
+}
+
+function consoleDebug(event) {
+    if (event.target.checked) {
+        logControl.enable();
+        console.info(`console debug enabled`);
+    } else {
+        console.info(`console debug disabled`);
+        logControl.disable();
+    }
 }
 
 function loadEcuVersionTracking() {

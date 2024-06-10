@@ -25,6 +25,7 @@ export var memsSerialInterface = undefined;
 export var isLocal = false;
 export const MEMS16 = "1.6";
 export const MEMS19 = "1.9";
+export const logControl = enableLogging(true);
 
 export async function initialise(serialInterface) {
     if (!initialised) {
@@ -49,6 +50,8 @@ export async function initialise(serialInterface) {
         View.attachTabEventListeners();
         View.setButtonsOnConnectionState();
         View.setButtonsOnEngineRunning();
+
+        logControl.disable();
     }
 }
 
@@ -86,7 +89,7 @@ export function setECU(ecuVersion, serialInterface) {
     // we will try to reuse the existing serial interface if one exists
     window.ecuVersion = ecuVersion;
 
-    console.log(`ecuVersion ${ecuVersion}`);
+    console.info(`ecuVersion ${ecuVersion}`);
 
     if  (memsSerialInterface === undefined) {
         // no existing serial interface
@@ -118,4 +121,24 @@ export function sendCommand(ecuCommand) {
     // send the command to the top of the queue
     // this ensures that it gets serviced next
     ecu.addCommandToSendQueue(ecuCommand, true);
+}
+
+function enableLogging(isEnabled) {
+    const originalLog = console.info;
+    let loggingEnabled = isEnabled;
+
+    console.info = function() {
+        if (loggingEnabled) {
+            originalLog.apply(console, arguments);
+        }
+    };
+
+    return {
+        enable: function() {
+            loggingEnabled = true;
+        },
+        disable: function() {
+            loggingEnabled = false;
+        }
+    };
 }

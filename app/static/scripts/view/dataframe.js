@@ -120,7 +120,7 @@ export function pauseDataframe() {
     let paused = ecu.isPaused;
     ecu.paused = !paused;
 
-    console.log(`paused ${ecu.isPaused}`);
+    console.info(`paused ${ecu.isPaused}`);
 }
 
 export function stopDataframeLoop() {

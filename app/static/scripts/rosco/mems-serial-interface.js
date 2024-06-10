@@ -51,12 +51,11 @@ export class MemsSerialInterface {
         if (this._isConnected) {
             await this.close()
                 .then(() => {
-                    console.log(`disconnect: closed port`);
+                    console.info(`disconnect: closed port`);
                     this._isConnected = false;
                 })
                 .catch((error) => {
-                    console.error(`disconnect: error closing port ${error}`);
-                    reject();
+                    console.warn(`disconnect: error closing port ${error}`);
                 });
         }
 
