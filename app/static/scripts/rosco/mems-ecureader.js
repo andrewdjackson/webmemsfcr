@@ -8,7 +8,7 @@ const MAX_ECU_SERIAL_RW_INTERVAL = 250;
 // this must be a minimum of double the serial rw rate
 const STANDARD_DATAFRAME_REQUEST_INTERVAL = MAX_ECU_SERIAL_RW_INTERVAL * 2;
 // rate at which connection keep-alive heartbeats will be requested
-const STANDARD_HEARTBEAT_REQUEST_INTERVAL = 5000;
+const STANDARD_HEARTBEAT_REQUEST_INTERVAL = 10000;
 // maximum commands in the queue
 const MAX_QUEUE_LENGTH = 4;
 
