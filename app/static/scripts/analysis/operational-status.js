@@ -9,13 +9,28 @@ export class OperationalStatus {
     _dataframe;
     _operationalFaults;
     _engine;
+    _thermostat;
+    _lambda;
+    _battery;
+    _initialised;
 
-    constructor(dataframes) {
-        this._dataframes = dataframes;
-        this._dataframe = dataframes.at(Constant.CURRENT_DATAFRAME);
-        this._engine = new Engine(dataframes);
+    constructor() {
         this._operationalFaults = {};
         this._initialiseFaults();
+    }
+
+    update(dataframes) {
+        this._dataframes = dataframes;
+        this._dataframe = dataframes.at(Constant.CURRENT_DATAFRAME);
+
+        if (!this._initialised) {
+            this._initialiseSensors()
+        } else {
+            this._engine.update(dataframes);
+            this._thermostat.update(dataframes);
+            this._battery.update(dataframes);
+            this._lambda.update(dataframes);
+        }
     }
 
     get dataframes() {
@@ -101,9 +116,8 @@ export class OperationalStatus {
     }
 
     get isBatteryVoltageLow() {
-        const battery = new Battery(this._dataframes, this._engine);
-        const lowBattery = battery.isLow();
-        const batteryNotCharging = !battery.isCharging();
+        const lowBattery = this._battery.isLow();
+        const batteryNotCharging = !this._battery.isCharging();
 
         return (lowBattery && batteryNotCharging);
     }
@@ -130,8 +144,7 @@ export class OperationalStatus {
     // if the lambda status is 0 and the lambda is not oscillating then ecu is not using the o2 system
     //
     get isO2SystemFaulty() {
-        const lambda = new Lambda(this._dataframes, this._engine);
-        return (!lambda.isOscillating || lambda.isHeaterFaulty || lambda.isOutOfRange);
+        return (!this._lambda.isOscillating || this._lambda.isHeaterFaulty || this._lambda.isOutOfRange);
     }
 
     //
@@ -201,8 +214,8 @@ export class OperationalStatus {
     }
 
     get isThermostatFaulty() {
-        const thermostat = new Thermostat(this._dataframes);
-        return thermostat.isFaulty();
+        this._thermostat.dataframes = this._dataframes;
+        return this._thermostat.isFaulty();
 
         /*
         if (this.isEngineRunning) {
@@ -307,6 +320,16 @@ export class OperationalStatus {
         let degreesToWarm = Constant.ECU_ENGINE_OPERATING_TEMPERATURE - this._dataframe._80x03_CoolantTemp;
         let secondsToWarm = degreesToWarm * Constant.SECONDS_PER_DEGREE;
         return new Date(currentTime.getTime() + secondsToWarm);
+    }
+
+    _initialiseSensors() {
+        if (this._dataframes.length > 1) {
+            this._engine = new Engine();
+            this._thermostat = new Thermostat();
+            this._battery = new Battery(this._engine);
+            this._lambda = new Lambda(this._engine);
+            this._initialised = true;
+        }
     }
 
     _initialiseFaults() {

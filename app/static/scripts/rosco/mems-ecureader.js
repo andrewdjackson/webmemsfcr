@@ -2,7 +2,7 @@ import * as Command from "./mems-1x/mems-commands.js";
 import {ECUCommand} from "./mems-1x/mems-commands.js";
 
 // rate at which commands will be sent to the ECU
-// MEMS 1.6 dataframe request / response takes 150ms
+// MEMS 1.6 dataframe request / response takes 150ms, so setting to 250ms for margin
 const MAX_ECU_SERIAL_RW_INTERVAL = 250;
 // rate at which dataframes will be requested, since we request 0x80 and 0x7D at the same time
 // this must be a minimum of double the serial rw rate

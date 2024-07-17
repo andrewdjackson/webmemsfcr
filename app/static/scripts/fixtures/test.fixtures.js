@@ -28,7 +28,9 @@ export function createWarmIdleEngineProfile() {
     }
 
     const dataframes = createDataframesWithEngineProfile(profile);
-    return new Engine(dataframes);
+    const engine = new Engine();
+    engine.update(dataframes);
+    return engine;
 }
 
 export function createWarmingIdleEngineProfile() {
@@ -43,13 +45,16 @@ export function createWarmingIdleEngineProfile() {
     }
 
     const dataframes = createDataframesWithEngineProfile(profile);
-    return new Engine(dataframes);
+    const engine = new Engine();
+    engine.update(dataframes);
+    return engine;
 }
 
 export function createValidDataframe() {
     let df7d = new Dataframe7d();
     let df80 = new Dataframe80();
 
+    df7d._7Dx00_Time = new Date().toDateString();
     df7d._7Dx01_IgnitionSwitch = true
     df7d._7Dx02_ThrottleAngle = 12
     df7d._7Dx04_AirFuelRatio = 14.6
@@ -67,6 +72,7 @@ export function createValidDataframe() {
     df7d._7Dx1F_JackCount = 6
     df7d._7D_RawData = "7D201014FF92003EFFFF010180620CFF37FFFF30808373FF16401AC022402FC006"
 
+    df80._80x00_Time = new Date().toDateString();
     df80._80x01_EngineRPM = 1727
     df80._80x03_CoolantTemp = 80
     df80._80x04_AmbientTemp = 200
@@ -93,13 +99,14 @@ export function createValidDataframe() {
 
 export function createDataframesWithEngineProfile(profile) {
     let dataframeLog = new DataframeLog();
+    const timeNow = new Date().getTime();
 
     for (let i=0; i < profile.length; i++) {
         let df = createValidDataframe();
         df.df80._80x01_EngineRPM = profile[i].rpm;
         df.df80._80x09_ThrottlePotSensor = profile[i].throttle;
         df.df80._80x03_CoolantTemp = profile[i].temperature;
-        df.df80._80x00_Time = getDateTimeString(i * 1000); // dataframes at 1 second intervals
+        df.df80._80x00_Time = getDateTimeString(timeNow + (i * 1000)); // dataframes at 1 second intervals
         df.df7d._7Dx00_Time = df.df80._80x00_Time;
 
         dataframeLog.addDataframe(df.df7d);

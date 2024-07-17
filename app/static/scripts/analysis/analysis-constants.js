@@ -16,7 +16,7 @@ export const maximumIdleBasePosition            = 250
 export const MAX_IDLE_RPM                       = 1300
 export const MAX_RPM                            = 6000
 export const ENGINE_NOT_RUNNING                 = 0
-export const MAX_IDLE_COIL_TIME                 = 4 // time in milliseconds
+export const MAX_IDLE_COIL_TIME                 = 5 // time in milliseconds
 export const INVALID_CRANKSHAFT_POSITION_SENSOR = 0
 
 // Engine Load and MAP Constants
@@ -26,7 +26,7 @@ export const MAP_ENGINE_NOT_RUNNING             = 100
 
 // Stepper Motor and Idle Air Control Constants
 export const INVALID_IAC_POSITION               = 0
-export const MAX_JACK_COUNT                     = 50
+export const MAX_JACK_COUNT                     = 100
 export const MAX_AIR_INTAKE_TEMPERATURE         = 120
 
 //

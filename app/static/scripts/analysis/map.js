@@ -28,9 +28,13 @@ const expectedMAP = [
 ];
 
 export class Map extends Sensor {
-    constructor(dataframes, engine) {
-        super(dataframes);
+    constructor(engine) {
+        super();
         this._engine = engine;
+    }
+
+    update(dataframes) {
+        super.update(dataframes);
     }
 
     isFaulty() {

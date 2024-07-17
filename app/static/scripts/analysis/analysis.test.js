@@ -1,5 +1,5 @@
 import {describe, expect, beforeEach, it} from "@jest/globals";
-import {Dataframe7d, Dataframe80} from "../rosco/mems-dataframe.js";
+import {Dataframe7d, Dataframe80, getDateTimeString} from "../rosco/mems-dataframe.js";
 import {DataframeLog} from "../rosco/mems-dataframe-log.js";
 import {Analysis} from "./analysis.js";
 
@@ -85,6 +85,8 @@ describe('utilities', () => {
 
 function createValidDataframe80() {
     let df = new Dataframe80();
+    const timeNow = new Date().getTime();
+    df.df80._80x00_Time = getDateTimeString(timeNow); // dataframes at 1 second intervals
     df._80x07_ManifoldAbsolutePressure = 34;
     return df;
 }
@@ -92,6 +94,10 @@ function createValidDataframe80() {
 function createValidDataframesBelowOperatingTemp() {
     let df7d = new Dataframe7d();
     let df80 = new Dataframe80();
+
+    const timeNow = new Date().getTime();
+    df.df80._80x00_Time = getDateTimeString(timeNow); // dataframes at 1 second intervals
+    df.df7d._7Dx00_Time = df.df80._80x00_Time;
 
     df7d._7Dx01_IgnitionSwitch = true
     df7d._7Dx02_ThrottleAngle = 12
@@ -137,6 +143,10 @@ function createValidDataframesBelowOperatingTemp() {
 function createValidDataframesAboveOperatingTemp() {
     let df7d = new Dataframe7d();
     let df80 = new Dataframe80();
+
+    const timeNow = new Date().getTime();
+    df.df80._80x00_Time = getDateTimeString(timeNow); // dataframes at 1 second intervals
+    df.df7d._7Dx00_Time = df.df80._80x00_Time;
 
     df7d._7Dx01_IgnitionSwitch = true
     df7d._7Dx02_ThrottleAngle = 12

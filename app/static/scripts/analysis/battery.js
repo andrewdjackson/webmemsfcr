@@ -7,14 +7,21 @@ export const BATTERY_CHARGING = true;
 export const BATTERY_NOT_CHARGING = false;
 
 export class Battery  extends Sensor {
-    constructor(dataframes, engine) {
-        super(dataframes);
+    constructor(engine) {
+        super();
 
         this._engine = engine;
+        this._minVoltageDataframe = new SensorEvent(-1, undefined, undefined);
+    }
+
+    update(dataframes) {
+        super.update(dataframes);
         this._minVoltageDataframe = this._getMinVoltage(dataframes);
     }
 
     isLow() {
+        if (this._firstDataframe === undefined) return false;
+
         return (this._firstDataframe._80x08_BatteryVoltage < Constant.MIN_BATTERY_VOLTAGE);
     }
 

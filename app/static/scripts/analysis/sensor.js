@@ -22,14 +22,21 @@ export class Sensor {
     _currentDataframe;
     _currentTime;
 
-    constructor(dataframes) {
-        this._dataframes = dataframes;
-        this._firstDataframe = dataframes.at(Constant.FIRST_DATAFRAME);
-        this._currentDataframe = dataframes.at(Constant.CURRENT_DATAFRAME);
-        this._currentTime = new Date(this._currentDataframe._80x00_Time).getTime();
+    constructor() {
+    }
 
-        if (this._dataframes.length > 1) {
-            this._previousDataframe = dataframes.at(Constant.PREVIOUS_DATAFRAME);
+    update(dataframes) {
+        try {
+            this._dataframes = dataframes;
+            this._firstDataframe = dataframes.at(Constant.FIRST_DATAFRAME);
+            this._currentDataframe = dataframes.at(Constant.CURRENT_DATAFRAME);
+            this._currentTime = new Date(this._currentDataframe._80x00_Time).getTime();
+
+            if (this._dataframes.length > 1) {
+                this._previousDataframe = dataframes.at(Constant.PREVIOUS_DATAFRAME);
+            }
+        } catch(e) {
+            console.warn(`exception updating sensor (${e})`);
         }
     }
 

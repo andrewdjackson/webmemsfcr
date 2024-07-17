@@ -25,15 +25,19 @@ export function dataframeReceived(ecuResponse) {
     let currentFaults = [];
 
     if (currentStatus !== undefined) {
-        currentFaults = currentStatus.operationalFaults;
+        try {
+            currentFaults = currentStatus.operationalFaults;
 
-        // update dashboard items that are a status rather than a value
-        // colour faulty metrics red
-        if (analysis.status.length > 0) {
-            updateState(df, currentStatus);
-            if (currentFaults !== undefined) {
-                colouriseFaults(currentFaults);
+            // update dashboard items that are a status rather than a value
+            // colour faulty metrics red
+            if (analysis.status.length > 0) {
+                updateState(df, currentStatus);
+                if (currentFaults !== undefined) {
+                    colouriseFaults(currentFaults);
+                }
             }
+        } catch (e) {
+            console.warn(`exception updating dataframe op status (${e})`);
         }
     }
 

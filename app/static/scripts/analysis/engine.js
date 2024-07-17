@@ -7,10 +7,19 @@ export class Engine extends Sensor {
     isWarm;
     startedAt;
 
-    constructor(dataframes) {
-        super(dataframes);
+    constructor() {
+        super();
 
         // start with engine running state as other states depend upon this
+        this.isRunning = false;
+        this.isIdle = true;
+        this.isWarm = false;
+        this.startedAt = new SensorEvent(-1, undefined, undefined);
+    }
+
+    update(dataframes) {
+        super.update(dataframes);
+
         this.isRunning = this._isRunning();
         this.isIdle = this._isIdle();
         this.isWarm = this._isWarm();

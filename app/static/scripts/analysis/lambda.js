@@ -7,10 +7,27 @@ export const LAMBDA_HEATER_FAULTY = true;
 export const LAMBDA_HEATER_WORKING = false;
 
 export class Lambda extends Sensor {
-    constructor(dataframes, engine) {
-        super(dataframes);
+    _engine;
+    _active;
+    _outOfRange;
+    _sluggish;
+    _oscillating;
+    _heaterFaulty;
+
+    constructor(engine) {
+        super();
 
         this._engine = engine;
+        this._active = false;
+        this._outOfRange = false;
+        this._sluggish = false;
+        this._oscillating = false;
+        this._heaterFaulty = false;
+    }
+
+    update(dataframes) {
+        super.update(dataframes);
+
         this._active = this._isLambdaActive();
         this._outOfRange = this._isOutOfRange();
         this._sluggish = this._isSluggish();

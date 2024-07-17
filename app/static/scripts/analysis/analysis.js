@@ -5,6 +5,7 @@ import * as Faults from "./analysis-faults.js";
 export class Analysis {
     constructor(dataframeLog) {
         this._dataframeLog = dataframeLog;
+        this._opStatus = new OperationalStatus();
         this._statusLog = [];
         this._faultLog = [];
     }
@@ -33,8 +34,8 @@ export class Analysis {
     //
     analyse() {
         if (this._dataframeLog.hasLoggedData) {
-            const opStatus = new OperationalStatus(this.dataframes);
-            this._statusLog.push(opStatus);
+            this._opStatus.update(this.dataframes);
+            this._statusLog.push(this._opStatus);
         }
     }
 

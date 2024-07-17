@@ -10,31 +10,28 @@ DARWIN_APP_CONTENTS=$(DARWIN_DIST_PATH)/$(APPNAME).app/Contents
 EXEPATH=$(DARWIN_DIST_PATH)/$(EXECUTABLE)
 MIN_OS_VERSION=11.6.7
 MIN_DEPLOYMENT_TARGET=-mmacosx-version-min=$(MIN_OS_VERSION)
-
 DEVID="Developer ID Application: Andrew Jackson (MD9E767XF5)"
-LOCAL_DISTID="Developer ID Application: Andrew Jackson (MD9E767XF5)"
-LOCAL_INSTID="Developer ID Installer: Andrew Jackson (MD9E767XF5)"
-STORE_DISTID="3rd Party Mac Developer Application: Andrew Jackson (MD9E767XF5)"
-STORE_INSTID="3rd Party Mac Developer Installer: Andrew Jackson (MD9E767XF5)"
 
-.PHONY: clean
+.PHONY: clean help build_go build_macapp
 
-# build go and create a macos app for arm64
-build-arm: build_macapp build_go_arm64 create_darwin_app
-# build go and create a macos app
-build: build_macapp build_go create_darwin_app
-# build go and create an unsigned  macos app and dmg package
-build-package: build_macapp build_go create_darwin_app package_local_app
-# build go and create a signed macos app and dmg package, and notarize
-all: build_macapp build_go create_darwin_app sign_app_local package_local_app notarize_local_package
+default: help
+
+build: clean build_macapp build_go create_darwin_app ## build go and create a macos app for current architecture
+build-arm: clean build_macapp build_go_arm64 create_darwin_app ## build go and create a macos app for apple silicon
+build-amd: clean build_macapp build_go_amd64 create_darwin_app ## build go and create a macos app for apple intel
+build-package: clean build_macapp build_go create_darwin_app package_local_app ## build go and create an unsigned macos app and dmg package
+all: clean build_macapp build_go create_darwin_app sign_app_local package_local_app notarize_local_package ## build go and create a signed macos app and dmg package, and notarize
 
 build_macapp:
 	cd $(DIST_PATH) && env GOOS=darwin go build macapp.go
 
+build_go:
+	cd $(APP_PATH) && env GOOS=darwin CGO_CFLAGS="$(MIN_DEPLOYMENT_TARGET)" CGO_LDFLAGS="$(MIN_DEPLOYMENT_TARGET)" go build -v -o "../$(DARWIN_DIST_PATH)/$(EXECUTABLE)" -ldflags="-s -w"
+
 build_go_arm64:
 	cd $(APP_PATH) && env GOOS=darwin GOARCH=arm64 CGO_CFLAGS="$(MIN_DEPLOYMENT_TARGET)" CGO_LDFLAGS="$(MIN_DEPLOYMENT_TARGET)" go build -v -o "../$(DARWIN_DIST_PATH)/$(EXECUTABLE)" -ldflags="-s -w"
 
-build_go:
+build_go_amd64:
 	cd $(APP_PATH) && env GOOS=darwin GOARCH=amd64 CGO_CFLAGS="$(MIN_DEPLOYMENT_TARGET)" CGO_LDFLAGS="$(MIN_DEPLOYMENT_TARGET)" go build -v -o "../$(DARWIN_DIST_PATH)/$(EXECUTABLE)" -ldflags="-s -w"
 
 create_darwin_app:
@@ -81,4 +78,4 @@ clean: ## Remove previous build
 	rm -fr $(DIST_PATH)/darwin
 
 help: ## Display available commands
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
