@@ -11,5 +11,8 @@
     "jest": "^29.5.0",
     "jest-environment-jsdom": "^29.5.0",
     "jest-fetch-mock": "^3.0.3"
+  },
+  "dependencies": {
+    "macos-alias": "^0.2.11"
   }
 }
