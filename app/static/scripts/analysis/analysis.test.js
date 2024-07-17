@@ -16,8 +16,10 @@ describe('Analyse dataframes ', () => {
     it('should add dataframes', () => {
         for (let i=0; i < MIN_DATAFRAMES; i++) {
             let df80 = createValidDataframe80();
+            df80._80_RawData = "801C06BF87FF56FF24872310000100000026885B036A006D0528100000"
             dataframeLog.addDataframe(df80);
             let df7d = new Dataframe7d();
+            df7d._7D_RawData = "7D201014FF92003EFFFF010180620CFF37FFFF30808373FF16401AC022402FC006"
             dataframeLog.addDataframe(df7d);
         }
 
@@ -86,7 +88,7 @@ describe('utilities', () => {
 function createValidDataframe80() {
     let df = new Dataframe80();
     const timeNow = new Date().getTime();
-    df.df80._80x00_Time = getDateTimeString(timeNow); // dataframes at 1 second intervals
+    df._80x00_Time = getDateTimeString(timeNow); // dataframes at 1 second intervals
     df._80x07_ManifoldAbsolutePressure = 34;
     return df;
 }
@@ -96,8 +98,8 @@ function createValidDataframesBelowOperatingTemp() {
     let df80 = new Dataframe80();
 
     const timeNow = new Date().getTime();
-    df.df80._80x00_Time = getDateTimeString(timeNow); // dataframes at 1 second intervals
-    df.df7d._7Dx00_Time = df.df80._80x00_Time;
+    df80._80x00_Time = getDateTimeString(timeNow);
+    df7d._7Dx00_Time = df80._80x00_Time;
 
     df7d._7Dx01_IgnitionSwitch = true
     df7d._7Dx02_ThrottleAngle = 12
@@ -145,8 +147,8 @@ function createValidDataframesAboveOperatingTemp() {
     let df80 = new Dataframe80();
 
     const timeNow = new Date().getTime();
-    df.df80._80x00_Time = getDateTimeString(timeNow); // dataframes at 1 second intervals
-    df.df7d._7Dx00_Time = df.df80._80x00_Time;
+    df80._80x00_Time = getDateTimeString(timeNow); // dataframes at 1 second intervals
+    df7d._7Dx00_Time = df80._80x00_Time;
 
     df7d._7Dx01_IgnitionSwitch = true
     df7d._7Dx02_ThrottleAngle = 12

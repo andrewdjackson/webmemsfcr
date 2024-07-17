@@ -24,7 +24,8 @@ afterEach(() => {
         it('should add a dataframe', () => {
             let df = createValidDataframes();
             addValidDataframeToLog(df[0], df[1]);
-            status = new OperationalStatus(dataframeLog.dataframes);
+            status = new OperationalStatus();
+            status.update(dataframeLog.dataframes);
             expect(status.isMAPHigh).toBe(false);
         })
 
@@ -34,7 +35,8 @@ afterEach(() => {
                 addValidDataframeToLog(df[0], df[1]);
             }
 
-            status = new OperationalStatus(dataframeLog.dataframes);
+            status = new OperationalStatus();
+            status.update(dataframeLog.dataframes);
             expect(status.isMAPHigh).toBe(false);
         })
     })
@@ -49,7 +51,8 @@ afterEach(() => {
             df = createValidDataframes(true, true, false);
             addValidDataframeToLog(df[0], df[1]);
 
-            status = new OperationalStatus(dataframeLog.dataframes);
+            status = new OperationalStatus();
+            status.update(dataframeLog.dataframes);
             expect(status.engineStartedAt.getTime()).toBeGreaterThanOrEqual(new Date(dataframeLog.dataframes.at(LAST_DATAFRAME)._80x00_Time).getTime()-10);
         })
 
@@ -62,7 +65,8 @@ afterEach(() => {
             df = createValidDataframes(true, true, false);
             addValidDataframeToLog(df[0], df[1]);
 
-            status = new OperationalStatus(dataframeLog.dataframes);
+            status = new OperationalStatus();
+            status.update(dataframeLog.dataframes);
             expect(status.engineStartedAt.getTime()).toBeGreaterThanOrEqual(new Date(dataframeLog.dataframes.at(FIRST_DATAFRAME)._80x00_Time).getTime()-10);
         })
     })
@@ -77,7 +81,8 @@ afterEach(() => {
             df = createValidDataframes(true, true, false);
             addValidDataframeToLog(df[0], df[1]);
 
-            status = new OperationalStatus(dataframeLog.dataframes);
+            status = new OperationalStatus();
+            status.update(dataframeLog.dataframes);
             expect(status.isEngineIdle).toBe(true);
         })
 
@@ -90,7 +95,8 @@ afterEach(() => {
             df = createValidDataframes(true, false, false);
             addValidDataframeToLog(df[0], df[1]);
 
-            status = new OperationalStatus(dataframeLog.dataframes);
+            status = new OperationalStatus();
+            status.update(dataframeLog.dataframes);
             expect(status.isEngineIdle).toBe(false);
         })
     })
@@ -106,7 +112,8 @@ describe('Faults', () => {
         df[0]._80x10_IdleHot = Constant.MIN_IDLE_HOT - 1;
         addValidDataframeToLog(df[0],df[1]);
 
-        status = new OperationalStatus(dataframeLog.dataframes);
+        status = new OperationalStatus();
+        status.update(dataframeLog.dataframes);
         expect(status.isHotIdleFaulty).toBeTruthy();
         expect(status.operationalFaults._80x10_IdleHot).toBeTruthy();
     })
@@ -167,7 +174,9 @@ function createValidDataframes(isRunning, isIdle, isWarm) {
     dataframe80._80x13_IdleSpeedDeviation = Constant.MAX_IDLE_SPEED_DEVIATION;
     dataframe80._80x17_CoilTime = goodCoil;
     dataframe80._80x19_CrankshaftPositionSensor = Constant.INVALID_CRANKSHAFT_POSITION_SENSOR + 1;
-    dataframe80._7Dx13_IdleSpeedOffset = Constant.MAX_IDLE_OFFSET;
+    dataframe80._80_RawData = "80"
+    dataframe7d._7Dx13_IdleSpeedOffset = Constant.MAX_IDLE_OFFSET;
+    dataframe7d._7D_RawData = "7D"
 
     return [dataframe80, dataframe7d];
 }
