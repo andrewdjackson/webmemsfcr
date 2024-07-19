@@ -163,33 +163,12 @@ export class DataframeLog {
     // only use data that contains valid entries for analysis
     //
     _isDataframeValid(df) {
-        let isValid = this._isEngineRPMValid(df) &&
-            this._isCoolantTempValid(df) &&
-            this._isIntakeAirTempValid(df) &&
-            this._isMAPValid(df) &&
-            this._isValidECUResponse(df);
-
-        if (!isValid) {
-            console.error(`invalid dataframe ${JSON.stringify(df)}`);
+        if (this._isValidECUResponse(df)) {
+            return true;
         }
 
-        return isValid;
-    }
-
-    _isEngineRPMValid(data)  {
-        return (data._80x01_EngineRPM < Constant.MAX_RPM);
-    }
-
-    _isCoolantTempValid(data) {
-        return (data._80x03_CoolantTemp < Constant.MAX_COOLANT_TEMPERATURE);
-    }
-
-    _isIntakeAirTempValid(data) {
-        return (data._80x05_IntakeAirTemp < Constant.MAX_AIR_INTAKE_TEMPERATURE);
-    }
-
-    _isMAPValid(data) {
-        return (data._80x07_ManifoldAbsolutePressure > 0);
+        console.warn(`invalid dataframe ${JSON.stringify(df)}`);
+        return false;
     }
 
     _isValidECUResponse(data) {

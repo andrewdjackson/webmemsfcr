@@ -20,7 +20,7 @@ export const MAX_IDLE_COIL_TIME                 = 5 // time in milliseconds
 export const INVALID_CRANKSHAFT_POSITION_SENSOR = 0
 
 // Engine Load and MAP Constants
-export const MAX_MAP_VALUE                      = 45
+export const MAX_MAP_VALUE                      = 42
 export const MAX_MAP_WARM_IDLE                  = 37
 export const MAP_ENGINE_NOT_RUNNING             = 100
 

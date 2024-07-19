@@ -1,16 +1,14 @@
 import {beforeAll, describe, expect, it} from "@jest/globals";
 import {
-    createDataframesWithEngineProfile,
     createValidDataframe,
     createWarmIdleEngineProfile,
-    createWarmingIdleEngineProfile, EngineProfile
+    createWarmingIdleEngineProfile
 } from "../fixtures/test.fixtures.js";
-import {goodMAPProfile} from "../fixtures/map.fixtures.js";
+import {faultyMAPProfile, workingMAPProfile} from "../fixtures/map.fixtures.js";
 import {getDateTimeString} from "../rosco/mems-dataframe.js";
 import {DataframeLog} from "../rosco/mems-dataframe-log.js";
 
 import {Map, MAP_FAULTY, MAP_WORKING} from "./map.js";
-import * as Constant from "./analysis-constants.js";
 import {Engine} from "./engine.js";
 
 var engineWarm;
@@ -21,37 +19,45 @@ beforeAll(() => {
     engineWarming = createWarmingIdleEngineProfile();
 });
 
-describe('engine not running', () => {
-    it('MAP too high when engine is running', () => {
-        const profile = [69,70,71,72,73,74,75,76,77,77,77];
-        const dataframes = createDataframesWithMapProfile(goodMAPProfile);
+describe('MAP sensor', () => {
+    it('Vacuum leak, MAP values too high', () => {
+        const dataframes = createDataframesWithMapProfile(faultyMAPProfile);
 
-        const map = new Map(engineWarm);
+        const engine = new Engine();
+        engine.update(dataframes);
+
+        const map = new Map(engine);
         map.update(dataframes);
+
         expect(map.isFaulty()).toBe(MAP_FAULTY);
     })
 
-    it('MAP engine is warming', () => {
-        const profile = [30,30,30,30,30,30,35,36,30,30];
-        const dataframes = createDataframesWithMapProfile(goodMAPProfile);
+    it('No vacuum leak, MAP values as expected', () => {
+        const dataframes = createDataframesWithMapProfile(workingMAPProfile);
 
-        const map = new Map(engineWarm);
+        const engine = new Engine();
+        engine.update(dataframes);
+
+        const map = new Map(engine);
         map.update(dataframes);
-        expect(map.isFaulty()).toBe(MAP_FAULTY);
+
+        expect(map.isFaulty()).toBe(MAP_WORKING);
     })
 })
 
-function createDataframesWithMapProfile(mapProfile) {
+function createDataframesWithMapProfile(profile) {
     let dataframeLog = new DataframeLog();
     const timeNow = new Date().getTime();
 
-    for (let i=0; i < mapProfile.length; i++) {
+    for (let i=0; i < profile.length; i++) {
         let df = createValidDataframe();
-        df.df80._80x05_IntakeAirTemp = mapProfile[i].iat;
-        df.df80._80x01_EngineRPM = mapProfile[1].rpm;
-        df.df80._80x07_ManifoldAbsolutePressure = mapProfile[i].map;
+        df.df80._80x01_EngineRPM = profile[i].rpm;
+        df.df80._80x07_ManifoldAbsolutePressure = profile[i].map;
         df.df80._80x00_Time = getDateTimeString(timeNow + (i * 1000)); // dataframes at 1 second intervals
+        df.df80._80_RawData = "801C06B088FF56FF238721100001000000268859035D006B0524100000";
+
         df.df7d._7Dx00_Time = df.df80._80x00_Time;
+        df.df7d._7D_RawData = "7D201014FF92003EFFFF010180620CFF37FFFF30808373FF16401AC022402FC006";
 
         dataframeLog.addDataframe(df.df7d);
         dataframeLog.addDataframe(df.df80);

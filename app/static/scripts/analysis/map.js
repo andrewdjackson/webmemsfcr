@@ -1,36 +1,14 @@
 import * as Constant from "./analysis-constants.js";
-import {SensorEvent, Sensor} from "./sensor.js";
-import {Engine} from "./engine.js";
-import {MAP_ENGINE_NOT_RUNNING} from "./analysis-constants.js";
+import {Sensor} from "./sensor.js";
 
 export const MAP_FAULTY = true;
 export const MAP_WORKING = false;
-
-class ExpectedMAPatEngineRPM {
-    rpm;
-    minMap;
-    maxMax;
-    constructor(rpm, minMap, maxMap) {
-        this.rpm = rpm;
-        this.minMap = minMap;
-        this.maxMap = maxMap;
-    }
-}
-
-const expectedMAP = [
-    new ExpectedMAPatEngineRPM(   0, 97, 100),
-    new ExpectedMAPatEngineRPM( 800, 30, 34),
-    new ExpectedMAPatEngineRPM( 900, 32, 34),
-    new ExpectedMAPatEngineRPM(1000, 33, 35),
-    new ExpectedMAPatEngineRPM(1100, 34, 42),
-    new ExpectedMAPatEngineRPM(1200, 36, 41),
-    new ExpectedMAPatEngineRPM(1300, 37, 45),
-];
 
 export class Map extends Sensor {
     constructor(engine) {
         super();
         this._engine = engine;
+        this._faulty = false;
     }
 
     update(dataframes) {
@@ -38,29 +16,43 @@ export class Map extends Sensor {
     }
 
     isFaulty() {
-        return !this._isMAPNominal();
+        if (!this._faulty) {
+            this._isMAPNominal();
+        }
+
+        return this._faulty;
     }
 
     _isMAPNominal() {
-        if (this._engine.isRunning) {
-            const m = this._getExpectedMAP();
-            return (this._currentDataframe._80x07_ManifoldAbsolutePressure < Constant.MAX_MAP_VALUE);
-        } else {
-            return (this._currentDataframe._80x07_ManifoldAbsolutePressure === Constant.MAP_ENGINE_NOT_RUNNING);
-        }
-    }
+        const start_buffer = 1;
+        let expectedMaxMap = Constant.MAX_MAP_VALUE;
 
-    _getExpectedMAP() {
-        for (let i = expectedMAP.length - 1; i > 0;  i--) {
-            const maxRPM = expectedMAP[i].rpm;
-            const minRPM = expectedMAP[i-1].rpm;
+        for (let i = 0; i < this._dataframes.length; i++) {
+            // engine running
+            if (this._dataframes[i]._80x01_EngineRPM > 0) {
+                // ignore the first few readings after the engine has just started
+                if (i > start_buffer) {
+                    if (this._dataframes[i - start_buffer]._80x01_EngineRPM === 0) {
+                        break;
+                    }
+                }
+                // check the MAP doesn't exceed expected values
+                if (this._dataframes[i]._80x03_CoolantTemp >= Constant.ECU_ENGINE_OPERATING_TEMPERATURE) {
+                    expectedMaxMap = Constant.MAX_MAP_WARM_IDLE;
+                }
 
-            if ((this._currentDataframe._80x01_EngineRPM >= minRPM) && (this._currentDataframe._80x01_EngineRPM < maxRPM)) {
-                return expectedMAP[i];
+                if (this._dataframes[i]._80x07_ManifoldAbsolutePressure > expectedMaxMap) {
+                    this._faulty = true;
+                    break;
+                }
+            } else {
+                // expect the MAP to be 100 if not running
+                if (this._dataframes[i]._80x07_ManifoldAbsolutePressure !== Constant.MAP_ENGINE_NOT_RUNNING) {
+                    this._faulty = true;
+                    break;
+                }
             }
         }
-
-        return new ExpectedMAPatEngineRPM(1300, 30, 100);
     }
 }
 
