@@ -16,6 +16,18 @@ body {
     background-color: orangered;
 }
 
+.fault-alert {
+    background-color: orangered;
+}
+
+.fault-warning {
+    background-color: sandybrown;
+}
+
+.fault-info {
+    background-color: lightblue;
+}
+
 .nofault {
     background-color: yellowgreen;
 }

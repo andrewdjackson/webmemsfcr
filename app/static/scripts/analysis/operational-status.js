@@ -184,7 +184,7 @@ export class OperationalStatus {
         // stepped motor (IAC) should be between 30-35 when engine is at operating temperature and idle
         if (this.isEngineIdle) {
             if (this.isEngineWarm) {
-                return !((this._dataframe._80x12_IACPosition >= 30) && (this._dataframe._80x12_IACPosition <= 35))
+                return !((this._dataframe._80x12_IACPosition >= Constant.MIN_IAC_STEPS) && (this._dataframe._80x12_IACPosition <= Constant.MAX_IAC_STEPS));
             }
         }
 

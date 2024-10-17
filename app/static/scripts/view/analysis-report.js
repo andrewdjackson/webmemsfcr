@@ -21,7 +21,7 @@ export class AnalysisReport {
     updateFaultPill() {
         if (this.analysis.hasData) {
             if (this.analysis.faults.length > 0) {
-                const alerts = this.analysis.faults.filter(fault => fault.level !== "info");
+                const alerts = this.analysis.faults.filter(fault => fault.level !== Faults.StatusInfo);
                 if (alerts.length > 0) {
                     let elements = document.querySelectorAll(`.fault-count`);
                     this._updateElementsInnerHTML(elements, alerts.length);
@@ -31,14 +31,50 @@ export class AnalysisReport {
         }
     }
 
+    updateFaultTitle() {
+        const element = document.getElementById("analysis-faults-header");
+        const alertLevel = this._highestFaultLevel();
+        let alertClass = `alert-${alertLevel}`;
+
+        if (alertLevel === Faults.StatusFault) {
+            alertClass = "alert-danger";
+            element.innerText = "Faults";
+        }
+
+        if (alertLevel === Faults.StatusWarning) {
+            alertClass = "alert-warning";
+            element.innerText = "Warnings";
+        }
+
+        if (alertLevel === Faults.StatusInfo) {
+            alertClass = "alert-info";
+            element.innerText = "Potential Issues";
+        }
+
+        this._updateClass("analysis-faults-header", "alert-danger", alertClass);
+    }
+
+    _updateClass(elementId, classToRemove, classToAdd) {
+        var element = document.getElementById(elementId);
+
+        if (element) {
+            // Remove the class
+            element.classList.remove(classToRemove);
+
+            // Add the new class
+            element.classList.add(classToAdd);
+        }
+    }
+
     _displayFaults() {
-        const alerts = this.analysis.faults.filter(fault => fault.level !== "info");
+        const alerts = this.analysis.faults.filter(fault => fault.level !== Faults.StatusInfo);
 
         this._displayAtOperatingTemperature();
 
         if (alerts.length > 0) {
             this._hideElement("analysis-no_faults");
             this._displayElement("analysis-has_faults");
+            this.updateFaultTitle();
 
             this.analysis.faults.forEach((fault) => {
                 const faultId = `analysis-${fault.id}`;
@@ -47,6 +83,19 @@ export class AnalysisReport {
             });
         }
     }
+
+    _highestFaultLevel() {
+        const alerts = this.analysis.faults.filter(fault => fault.level === Faults.StatusFault);
+        if (alerts.length > 0) {
+            return Faults.StatusFault;
+        }
+        const warnings = this.analysis.faults.filter(fault => fault.level === Faults.StatusWarning);
+        if (warnings.length > 0) {
+            return Faults.StatusWarning;
+        }
+        return Faults.StatusInfo;
+    }
+
     _displayNoFaults() {
         this._displayAtOperatingTemperature();
 

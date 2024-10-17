@@ -95,6 +95,7 @@ export class Analysis {
     _isAboveMinimum(fault) {
         return fault.count >= Constant.MIN_FAULTS;
     }
+
     _removeFaultsBelowMinimum() {
         return this._faultLog.filter(this._isAboveMinimum);
     }
