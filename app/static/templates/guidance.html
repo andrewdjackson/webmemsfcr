@@ -1,40 +1,110 @@
-<!-- guide-to-ecu.jinja -->
-<div class="card mt-3 bg-light">
-	<div class="card-header">How the ECU and Injection System Works</div>
-	<div class="card-body">
-		<div>
-			<div class="card p-3">
-				<h5>The Rover Modular Engine Management System (MEMS) ECU</h5>
-				<p>
-					The Rover MEMS ECU is a sophisticated engine management system.
-					It's principle role is to create the most optimised air / fuel mixture for the engine given the current conditions.
-					To do this the ECU needs to know the load and environmental conditions that it uses in the complex air / fuel ratio (AFR) calculation.
-				</p>
-				<div class="row row-cols-8 my-2">
-					<div class="col-1">
-						<img src="/static/images/mems-1.3.jpg" style="width:100%;" class="rounded" alt="emssion control systems">
-					</div>
-					<div class="col">
-						<p>
-							The early SPI (pre-1993) is fitted with the Rover MEMS 1.3, this ECU is distinguishable from later versions as it has 2 connectors.
-							This ECU does not support O2 System information.
-						</p>
-					</div>
-					<div class="col-1">
-						<img src="/static/images/mems-1.6.jpg" style="width:100%;" class="rounded" alt="emssion control systems">
-					</div>
-					<div class="col">
-						<p>
-							Later SPI's are fitted with the Rover MEMS ECU 1.6.
-							This version of the ECU has a single connector and provides additional data for management of the O2 System / Closed-loop operation.
-						</p>
-					</div>
-				</div>
-			</div>
+<div class="accordion mt-3 bg-light" id="memsGuide">
 
-			<!-- guide-to-ecu-sensors.html -->
-			<div class="card p-3 mt-2">
-				<h5>Sensors used by the ECU</h5>
+    <!-- processes -->
+    <div class="accordion-item">
+        <div class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLostMotion" aria-expanded="true" aria-controls="collapseLostMotion">
+                Setting the Lost Motion Gap
+            </button>
+        </div>
+        <div id="collapseLostMotion" class="accordion-collapse collapse show" data-bs-parent="#memsGuide">
+            <div class="accordion-body">
+
+                <div class="card mb-3 p-3">
+                    <div class="row">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="text-black-50 fault__80x12_IACPosition">IAC Position</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="fs-1 ecudata__80x12_IACPosition">&nbsp;</div>
+                                </div>
+                                <div class="col">
+                                    Steps
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col">
+                        <h2>1. Check the Lost Motion Gap</h2>
+                        <div class="row">
+                            <div class="col">
+                                <img src="static/images/spi-lost-motion-gap.jpg" style="width:50%;" class="rounded" alt="lost motion gap">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <h5>Lost Motion Gap</h5>
+                                <p>
+                                    Check the position of the Tab between the top and bottom stops.
+                                    The tab should be in the middle equally spaced between the top and bottom stops.
+                                    If this is not the case, then follow this procedure (it's easier to view the gap with the air filter removed)
+                                </p>
+                            </div>
+                        </div>
+
+                        <h2>3. Check the IAC Position (Stepper motor steps)</h2>
+                        <ol>
+                            <li>Switch on Ignition. <strong class="text-danger">DO NOT START THE ENGINE</strong></li>
+                            <li><strong class="text-success">Connect MemsFCR</strong></li>
+                            <li>Open and Close the throttle fully using the throttle cam rod to position the stepper motor.<br>
+                                <em class="text-secondary">If you don't hear the stepper motor whir when you do this, you probably haven't opened it fully</em>
+                                <div class="row">
+                                    <div class="col mb-3">
+                                        <img src="static/images/spi-lost-motion-gap-top.jpg" style="width:50%;" class="rounded" alt="lost motion gap">
+                                    </div>
+                                </div>
+                            </li>
+                            <li><strong class="fs-5 text-success">IAC Position should read between 25 and 35 Steps</strong></li>
+                        </ol>
+                    </div>
+
+                    <div class="col">
+                        <h2>2. Adjust the Lost Motion Gap</h2>
+                        <div class="row">
+                            <div class="col">
+                                <ol>
+                                    <li><strong class="text-danger">Switch OFF the Ignition</strong></li>
+                                    <li>Slacken the cable locknut from the abutment bracket with a 13mm spanner
+                                        <div class="row">
+                                            <div class="col">
+                                                <img src="static/images/spi-lost-motion-adjustment.jpg" style="width:50%;" class="rounded" alt="lost motion gap">
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>Slacken the cable adjusting nut from the abutment bracket</li>
+                                    <li>Tighten the adjusting nut to tension throttle cable until an equal gap is obtained on each side of the throttle body</li>
+                                    <li>Tighten locknut to contact abutment bracket with a 13mm spanner</li>
+                                    <li>Using two 13mm spanners tighten nuts against abutment bracket</li>
+                                    <li>Ensure gap is still equal each side of the throttle level</li>
+                                    <li><strong class="text-danger">Switch OFF the Ignition.<br>IMPORTANT Settings will not be remembered if you do not do this.</strong></li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- /processes -->
+
+    <!-- guide-to-ecu-sensors.html -->
+    <div class="accordion-item">
+        <div class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSensors" aria-expanded="false" aria-controls="collapseSensors">
+                Sensors used by the ECU
+            </button>
+        </div>
+        <div id="collapseSensors" class="accordion-collapse collapse hide" data-bs-parent="#memsGuide">
+            <div class="accordion-body">
 
 				<div class="row my-2">
 					<div class="col-2">
@@ -130,198 +200,245 @@
 						</p>
 					</div>
 				</div>
+
+                <div class="row my-2">
+                    <div class="col-2">
+                        <img src="static/images/spi-idle-stop-screw.jpg" style="width:100%;" class="rounded" alt="emssion control systems">
+                    </div>
+                    <div class="col">
+                        <h5>Stepper Motor / Idle Air Control (IAC) Steps</h5>
+                        <p>
+                            The stepper motor is used to control the idle speed during normal idle and during engine warm-up by adjusting the throttle.
+                            The ECU will also use the stepper motor to adjust the idle when additional electrical load such as headlights are switched on as this can cause the engine speed to drop.
+                            The ECU drives the stepper motor via a cam, to a push rod (both are in the stepper housing lid) which acts directly on to what is called the Throttle Spindle Stop.
+                            This small round flat disc is attached, via the Idle Stop Screw, to the throttle body linkage (see pic) and therefore the throttle disc and air supply/flow into the engine.
+                            If you watch the push rod carefully when the engine is warming up, you will be able to see it moving in and out a bit.
+                            <strong>Never adjust this screw without using a diagnostic tool and follow <a href="https://memsfcr.co.uk/setting-the-idle-speed-stepper-motor/" target="_blank">this guide</a></strong>
+                        </p>
+                        <p>
+                            It is important to understand that the ECU cannot read the position of the stepper motor. When you turn off the engine, you should hear an audible clicking, this is the ECU driving the stepper fully closed.
+                            It drives it for 180 steps and a few more to make sure its closed, in doing this it knows where it is, zero steps, and can then count the steps open.
+                            After it has driven the stepper full closed and before the ECU switches off, it then opens the stepper to a point determined by the engine temp, ready for the next start.
+                            The IAC Position reported by the ECU is based on this learnt position and reports the number of steps it has applied to the stepper motor.
+                        </p>
+                    </div>
+                </div>
 			</div>
-			<!-- guide-to-ecu-sensors.html -->
+        </div>
+    </div>
+    <!-- /guide-to-ecu-sensors.html -->
 
-			<!-- guide-to-ecu-actuators.html -->
-			<div class="card p-3 mt-2">
-				<div class="row my-2">
-					<div class="col-2">
-						<img src="static/images/spi-idle-stop-screw.jpg" style="width:100%;" class="rounded" alt="emssion control systems">
-					</div>
-					<div class="col">
-						<h5>Stepper Motor / Idle Air Control (IAC) Steps</h5>
-						<p>
-							The stepper motor is used to control the idle speed during normal idle and during engine warm-up by adjusting the throttle.
-							The ECU will also use the stepper motor to adjust the idle when additional electrical load such as headlights are switched on as this can cause the engine speed to drop.
-							The ECU drives the stepper motor via a cam, to a push rod (both are in the stepper housing lid) which acts directly on to what is called the Throttle Spindle Stop.
-							This small round flat disc is attached, via the Idle Stop Screw, to the throttle body linkage (see pic) and therefore the throttle disc and air supply/flow into the engine.
-							If you watch the push rod carefully when the engine is warming up, you will be able to see it moving in and out a bit.
-							<strong>Never adjust this screw without using a diagnostic tool and follow <a href="https://memsfcr.co.uk/setting-the-idle-speed-stepper-motor/" target="_blank">this guide</a></strong>
-						</p>
-						<p>
-							It is important to understand that the ECU cannot read the position of the stepper motor. When you turn off the engine, you should hear an audible clicking, this is the ECU driving the stepper fully closed.
-							It drives it for 180 steps and a few more to make sure its closed, in doing this it knows where it is, zero steps, and can then count the steps open.
-							After it has driven the stepper full closed and before the ECU switches off, it then opens the stepper to a point determined by the engine temp, ready for the next start.
-							The IAC Position reported by the ECU is based on this learnt position and reports the number of steps it has applied to the stepper motor.
-						</p>
-					</div>
-				</div>
-			</div>
-			<!-- guide-to-ecu-actuators.html -->
-		</div>
-	</div>
-</div>
-<!-- guide-to-ecu.jinja -->
+    <!-- guide-to-ecu-faults.html -->
+    <div class="accordion-item">
+        <div class="accordion-header" id="headingFaults">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFaults" aria-expanded="false" aria-controls="collapseFaults">
+                Common Faults and Potential Fixes
+            </button>
+        </div>
+        <div id="collapseFaults" class="accordion-collapse collapse hide" data-bs-parent="#memsGuide">
+            <div class="accordion-body">
+                <div class="card mt-3">
+                    <div class="card-header bg-danger text-white">ECU Sensor Faults</div>
+                    <div class="card-body">
+                        <div>
+                            <p>
+                                Any reported sensor fault will cause the ECU to run the engine in limp mode and likely cause over fueling. Do not make any adjustments until the sensor fault is fixed.
+                            </p>
+                            <h4>Action Plan</h4>
+                            <ul>
+                                <li>Clear the faults</li>
+                                <li>Switch off ignition</li>
+                                <li>Switch on ignition and check the fault codes again</li>
+                                <li>If the faults persist or after driving the car they reappear, replace the sensor / check the relevant circuit</li>
+                            </ul>
+                        </div>
+                    </div>
 
-<!-- guide-to-ecu-faults.html -->
-<div class="card mt-3">
-	<div class="card-header bg-danger text-white">ECU Sensor Faults</div>
-	<div class="card-body">
-		<div>
-			<p>
-				Any reported sensor fault will cause the ECU to run the engine in limp mode and likely cause over fueling. Do not make any adjustments until the sensor fault is fixed.
-			</p>
-			<h4>Action Plan</h4>
-			<ul>
-				<li>Clear the faults</li>
-				<li>Switch off ignition</li>
-				<li>Switch on ignition and check the fault codes again</li>
-				<li>If the faults persist or after driving the car they reappear, replace the sensor / check the relevant circuit</li>
-			</ul>
-		</div>
-	</div>
-</div>
-<!-- guide-to-ecu-faults.html -->
+                    <div class="card-header bg-success text-white">Guide to Expected Values</div>
+                    <div class="card-body">
+                        <div>
+                            <p>
+                                The ECU will react to conditions based on the values it reads from the sensors fitted to the engine. The following details the behaviour and expected values.
+                            </p>
+                            <h4>Ignition is ON, Engine not Running</h4>
+                            <ul>
+                                <li>Engine RPM 0</li>
+                                <li>MAP 100kPa (this is atmospheric pressure, e.g. no vacuum)</li>
+                                <li>Air Intake Temperature at general air temperature e.g 20C</li>
+                                <li>Lambda Voltage 435mV, not oscillating</li>
+                                <li>O2 System (Lambda Status) is Inactive (0)</li>
+                                <li>Loop is Open (Closed Loop = 0)</li>
+                            </ul>
+                            <h4>Ignition is ON, Engine COLD : Running and Idle</h4>
+                            <ul>
+                                <li>Engine RPM 1200 and actively decreasing to 850 as the engine warms</li>
+                                <li>MAP 40kPa or less (lower is better), higher than 40kPa indicates a possible vacuum fault, 0kPA is a sensor fault</li>
+                                <li>Coolant Temperature increasing a degree every 10-15 seconds until the thermostat temperature is reached (88C). A static 60C indicates a possible fault</li>
+                                <li>Air Intake Temperature at general air temperature e.g 20C</li>
+                                <li>Lambda Voltage will rise and then gradually reduce, then start rapidly oscillating between 100mV and 900mV after 90 seconds</li>
+                                <li>O2 System (Lambda Status) is Active (1) after 90 seconds. If the lambda fails to oscillate then this value will change 0 and the ECU will enter limp home mode</li>
+                            </ul>
+                            <h4>Ignition is ON, Engine WARM : Running and Idle</h4>
+                            <ul>
+                                <li>Engine RPM 850 +/- 10 </li>
+                                <li>MAP 40kPa or less (lower is better)</li>
+                                <li>Coolant Temperature > 80C. Whilst the thermostat is 88C, the ECU determines a coolant temperature > 80C as operating temperature.</li>
+                                <li>Air Intake Temperature at general air temperature e.g 20C</li>
+                                <li>Lambda Voltage is oscillating</li>
+                                <li>O2 System (Lambda Status) is Active (1)</li>
+                            </ul>
+                        </div>
+                    </div>
 
-<!-- guide-to-expected-values.html -->
-<div class="card mt-3">
-	<div class="card-header bg-success text-white">Guide to Expected Values</div>
-	<div class="card-body">
-		<div>
-			<p>
-				The ECU will react to conditions based on the values it reads from the sensors fitted to the engine. The following details the behaviour and expected values.
-			</p>
-			<h4>Ignition is ON, Engine not Running</h4>
-			<ul>
-				<li>Engine RPM 0</li>
-				<li>MAP 100kPa (this is atmospheric pressure, e.g. no vacuum)</li>
-				<li>Air Intake Temperature at general air temperature e.g 20C</li>
-				<li>Lambda Voltage 435mV, not oscillating</li>
-				<li>O2 System (Lambda Status) is Inactive (0)</li>
-				<li>Loop is Open (Closed Loop = 0)</li>
-			</ul>
-			<h4>Ignition is ON, Engine COLD : Running and Idle</h4>
-			<ul>
-				<li>Engine RPM 1200 and actively decreasing to 850 as the engine warms</li>
-				<li>MAP 40kPa or less (lower is better), higher than 40kPa indicates a possible vacuum fault, 0kPA is a sensor fault</li>
-				<li>Coolant Temperature increasing a degree every 10-15 seconds until the thermostat temperature is reached (88C). A static 60C indicates a possible fault</li>
-				<li>Air Intake Temperature at general air temperature e.g 20C</li>
-				<li>Lambda Voltage will rise and then gradually reduce, then start rapidly oscillating between 100mV and 900mV after 90 seconds</li>
-				<li>O2 System (Lambda Status) is Active (1) after 90 seconds. If the lambda fails to oscillate then this value will change 0 and the ECU will enter limp home mode</li>
-			</ul>
-			<h4>Ignition is ON, Engine WARM : Running and Idle</h4>
-			<ul>
-				<li>Engine RPM 850 +/- 10 </li>
-				<li>MAP 40kPa or less (lower is better)</li>
-				<li>Coolant Temperature > 80C. Whilst the thermostat is 88C, the ECU determines a coolant temperature > 80C as operating temperature.</li>
-				<li>Air Intake Temperature at general air temperature e.g 20C</li>
-				<li>Lambda Voltage is oscillating</li>
-				<li>O2 System (Lambda Status) is Active (1)</li>
-			</ul>
-		</div>
-	</div>
-</div>
-<!-- guide-to-expected-values.html -->
+                    <div class="card-header bg-success text-white">Guide to the Oxygen Monitoring System</div>
+                    <div class="card-body">
+                        <div>
+                            <p>
+                                The oxygen monitoring system (O2 System) is critical to the fuel mixture determined by the ECU. The system relies on a working Lambda Sensor (O2 Sensor).<br>
+                                When the ignition is switched on, the ECU Lambda relay is energised to enable the Lambda Sensor heater. A failure in the lambda heater or the circuit will delay the start of the lambda oscillating and a failure in the O2 System.<br>
+                                After approximately 90 seconds the Lambda Sensor should start rapidly oscillating between 100mv and 900mV.
+                                The ECU expects this behaviour, <strong>if the lambda voltage is a static or oscillations are slow, the ECU will determine a failure in the O2 System.</strong>
+                                If the lambda is working correctly, the ECU will enter Closed Loop mode where it uses the lambda readings to adjust the fueling accordingly.
+                            </p>
+                            <h4>A Working O2 System</h4>
+                            <ul>
+                                <li>Lambda Voltage oscillates rapidly between 100mV and 900mV after 90s of start</li>
+                                <li>O2 System  Status is Active (O2 Lambda Status = 1) after 90s of start</li>
+                                <li>Loop is Closed (Closed Loop = 1)</li>
+                                <li>Lambda Heater relay is working, this can be tested</li>
+                            </ul>
+                        </div>
+                    </div>
 
-<!-- guide-to-o2-system.html -->
-<div class="card mt-3">
-	<div class="card-header bg-success text-white">Guide to the Oxygen Monitoring System</div>
-	<div class="card-body">
-		<div>
-			<p>
-				The oxygen monitoring system (O2 System) is critical to the fuel mixture determined by the ECU. The system relies on a working Lambda Sensor (O2 Sensor).<br>
-				When the ignition is switched on, the ECU Lambda relay is energised to enable the Lambda Sensor heater. A failure in the lambda heater or the circuit will delay the start of the lambda oscillating and a failure in the O2 System.<br>
-				After approximately 90 seconds the Lambda Sensor should start rapidly oscillating between 100mv and 900mV.
-				The ECU expects this behaviour, <strong>if the lambda voltage is a static or oscillations are slow, the ECU will determine a failure in the O2 System.</strong>
-				If the lambda is working correctly, the ECU will enter Closed Loop mode where it uses the lambda readings to adjust the fueling accordingly.
-			</p>
-			<h4>A Working O2 System</h4>
-			<ul>
-				<li>Lambda Voltage oscillates rapidly between 100mV and 900mV after 90s of start</li>
-				<li>O2 System  Status is Active (O2 Lambda Status = 1) after 90s of start</li>
-				<li>Loop is Closed (Closed Loop = 1)</li>
-				<li>Lambda Heater relay is working, this can be tested</li>
-			</ul>
-		</div>
-	</div>
-</div>
-<!-- guide-to-o2-system.html -->
+                    <div class="card-header bg-success text-white">Guide to the Vacuum System</div>
+                    <div class="card-body">
+                        <div>
+                            <p>
+                                There are several parts to the vacuum system, namely the inlet manifold, the inlet manifold pipes and fuel trap, the vacuum rail and the carbon canister.
+                                Pressure is created in the inlet manifold when the engine is running and can be measured to determine the load and performance of the engine.
+                                A loss of vacuum pressure will result in the ECU being unable to accurately measure and adapt to engine load and lose the ability to control the rpm of the engine.
+                                In the worst case, this will result in erratic engine rpm and massive over-fuelling.
+                                The most notorious and troublesome part of this system is the inlet manifold vacuum pipes and fuel trap that run to the ECU.
+                                A break in the pipe can lead to complete loss of vacuum, however more common is a split in an elbow connector will give partial loss and over-fuelling will be the most notable symptom rather than erratic running.
+                            </p>
+                            <div class="row row-cols-3">
+                                <div class="col"><img src="static/images/vacuum-pipe.jpeg" style="width:100%;" class="rounded m-1" alt="emssion control systems">Vacuum Pipe Elbows can split causing a high MAP reading</div>
+                                <div class="col"><img src="static/images/vacuum-manifold.jpeg" style="width:100%;" class="rounded m-1" alt="emssion control systems">Vacuum Pipe fits behind the inlet manifold</div>
+                                <div class="col"><img src="static/images/vacuum-fueltrap.jpeg" style="width:100%;" class="rounded m-1" alt="emssion control systems">The fuel trap. This prevents vapours entering the ECU MAP sensor</div>
+                            </div>
+                            <div class="row row-cols-3 mb-5">
+                                <div class="col"><img src="static/images/vacuum-ecu.jpeg" style="width:100%;" class="rounded m-1" alt="emssion control systems">ECU MAP connection</div>
+                                <div class="col"><img src="static/images/vacuum-charcoal.jpeg" style="width:100%;" class="rounded m-1" alt="emssion control systems">Carbon Filter Solenoid Valve</div>
+                                <div class="col"></div>
+                            </div>
+                            <h4>A Working Vacuum System</h4>
+                            <ul>
+                                <li>Manifold Absolute Pressure (MAP) is 40kPa or lower. A warm engine is likely to be in the range of 34kPA - 40kPA.</li>
+                                <li>Carbon Canister Value relay operates after the throttle has been held open at >= 2000 rpm for a period of time (30 seconds or so)</li>
+                            </ul>
+                            <h4>Action Plan for a Failing Vacuum System</h4>
+                            <ul>
+                                <li>Check vacuum pipes for breaks, in particular check the elbow connectors for splits and are firmly attached to the pipes</li>
+                                <li>Check vacuum pipes are not pushed so far on to the fuel trap so they block the air flow.</li>
+                                <li>Check fuel trap by sealing one end with your finger and blowing into it</li>
+                            </ul>
+                            <h4>Action Plan for a Partial Vacuum System</h4>
+                            <p>In many cases the Manifold Absolute Pressure (MAP) in a partially failing system maybe just above 40kPa, probably in the range of 41kPA - 50kPA. Over-fuelling will be the most notable symptom rather than erratic running</p>
+                            <ul>
+                                <li>Follow steps for a Failing Vacuum System</li>
+                                <li>Check inlet manifold is tightened correctly</li>
+                                <li>Check vacuum pipe from inlet manifold to vacuum rail</li>
+                                <li>Check vacuum pipe to carbon canister</li>
+                                <li>Optionally replace the vacuum pipes with silicon vacuum pipes (3mm internal diameter).</li>
+                            </ul>
+                        </div>
+                    </div>
 
-<!-- guide-to-vacuum-system.html -->
-<div class="card mt-3">
-	<div class="card-header bg-success text-white">Guide to the Vacuum System</div>
-	<div class="card-body">
-		<div>
-			<p>
-				There are several parts to the vacuum system, namely the inlet manifold, the inlet manifold pipes and fuel trap, the vacuum rail and the carbon canister.
-				Pressure is created in the inlet manifold when the engine is running and can be measured to determine the load and performance of the engine.
-				A loss of vacuum pressure will result in the ECU being unable to accurately measure and adapt to engine load and lose the ability to control the rpm of the engine.
-				In the worst case, this will result in erratic engine rpm and massive over-fuelling.
-				The most notorious and troublesome part of this system is the inlet manifold vacuum pipes and fuel trap that run to the ECU.
-				A break in the pipe can lead to complete loss of vacuum, however more common is a split in an elbow connector will give partial loss and over-fuelling will be the most notable symptom rather than erratic running.
-			</p>
-			<div class="row row-cols-3">
-				<div class="col"><img src="static/images/vacuum-pipe.jpeg" style="width:100%;" class="rounded m-1" alt="emssion control systems">Vacuum Pipe Elbows can split causing a high MAP reading</div>
-				<div class="col"><img src="static/images/vacuum-manifold.jpeg" style="width:100%;" class="rounded m-1" alt="emssion control systems">Vacuum Pipe fits behind the inlet manifold</div>
-				<div class="col"><img src="static/images/vacuum-fueltrap.jpeg" style="width:100%;" class="rounded m-1" alt="emssion control systems">The fuel trap. This prevents vapours entering the ECU MAP sensor</div>
-			</div>
-			<div class="row row-cols-3 mb-5">
-				<div class="col"><img src="static/images/vacuum-ecu.jpeg" style="width:100%;" class="rounded m-1" alt="emssion control systems">ECU MAP connection</div>
-				<div class="col"><img src="static/images/vacuum-charcoal.jpeg" style="width:100%;" class="rounded m-1" alt="emssion control systems">Carbon Filter Solenoid Valve</div>
-				<div class="col"></div>
-			</div>
-			<h4>A Working Vacuum System</h4>
-			<ul>
-				<li>Manifold Absolute Pressure (MAP) is 40kPa or lower. A warm engine is likely to be in the range of 34kPA - 40kPA.</li>
-				<li>Carbon Canister Value relay operates after the throttle has been held open at >= 2000 rpm for a period of time (30 seconds or so)</li>
-			</ul>
-			<h4>Action Plan for a Failing Vacuum System</h4>
-			<ul>
-				<li>Check vacuum pipes for breaks, in particular check the elbow connectors for splits and are firmly attached to the pipes</li>
-				<li>Check vacuum pipes are not pushed so far on to the fuel trap so they block the air flow.</li>
-				<li>Check fuel trap by sealing one end with your finger and blowing into it</li>
-			</ul>
-			<h4>Action Plan for a Partial Vacuum System</h4>
-			<p>In many cases the Manifold Absolute Pressure (MAP) in a partially failing system maybe just above 40kPa, probably in the range of 41kPA - 50kPA. Over-fuelling will be the most notable symptom rather than erratic running</p>
-			<ul>
-				<li>Follow steps for a Failing Vacuum System</li>
-				<li>Check inlet manifold is tightened correctly</li>
-				<li>Check vacuum pipe from inlet manifold to vacuum rail</li>
-				<li>Check vacuum pipe to carbon canister</li>
-				<li>Optionally replace the vacuum pipes with silicon vacuum pipes (3mm internal diameter).</li>
-			</ul>
-		</div>
-	</div>
-</div>
-<!-- guide-to-vacuum-system.html -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /guide-to-ecu-faults.html -->
 
-<!-- credits.html -->
-<div class="card mt-3 bg-light">
-	<div class="card-header">Credits and Thanks</div>
-	<div class="card-body">
-		<p>
-			Much of the information and guidance has been sourced from the community, if your images or words feature and I haven't thanked you specifically for your contribution, then thank you.
-			I have reused guides and images as these are publicly searchable and available in various forums and doing so reinforces a single source of the truth in a web full of rumours and misinformation.
-		</p>
-		<ul>
-			<li>Roger Carpenter, Classic Mini NLA: Rare & Alternative parts</li>
-			<li>Leopold Gunther, mems-rosco</li>
-			<li>James Portman, rovermems.com</li>
-			<li>Colin Bourassa, memsgauge / memsreader</li>
-			<li>The MiniForum, SPI Section, in particular the articles by Sprocket</li>
-			<li>Black Box Solutions, FCR diagnostics</li>
-		</ul>
-	</div>
-	<div>
-		<p>
-			In addition, a number of organizations have been generous enough to support the development and distribution of open-source software.
-			Thanks to:
-		<ul>
-			<li>Jetbrains who provide IntelliJ for open-source software development</li>
-			<li>Advanced Installer who provided the installation software for Windows distribution</li>
-		</ul>
-		</p>
-	</div>
+    <!-- guide-to-introduction.html -->
+    <div class="accordion-item">
+        <div class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseIntroduction" aria-expanded="false" aria-controls="collapseIntroduction">
+                Identifying the Rover MEMS ECU
+            </button>
+        </div>
+        <div id="collapseIntroduction" class="accordion-collapse collapse hide" data-bs-parent="#memsGuide">
+            <div class="accordion-body">
+                <div>
+                    <h5>The Rover Modular Engine Management System (MEMS) ECU</h5>
+                    <p>
+                        The Rover MEMS ECU is a sophisticated engine management system.
+                        It's principle role is to create the most optimised air / fuel mixture for the engine given the current conditions.
+                        To do this the ECU needs to know the load and environmental conditions that it uses in the complex air / fuel ratio (AFR) calculation.
+                    </p>
+                    <div class="row row-cols-8 my-2">
+                        <div class="col-1">
+                            <img src="/static/images/mems-1.3.jpg" style="width:100%;" class="rounded" alt="emssion control systems">
+                        </div>
+                        <div class="col">
+                            <p>
+                                The early SPI (pre-1993) is fitted with the Rover MEMS 1.3, this ECU is distinguishable from later versions as it has 2 connectors.
+                                This ECU does not support O2 System information.
+                            </p>
+                        </div>
+                        <div class="col-1">
+                            <img src="/static/images/mems-1.6.jpg" style="width:100%;" class="rounded" alt="emssion control systems">
+                        </div>
+                        <div class="col">
+                            <p>
+                                Later SPI's are fitted with the Rover MEMS ECU 1.6.
+                                This version of the ECU has a single connector and provides additional data for management of the O2 System / Closed-loop operation.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /guide-to-introduction.html -->
+
+    <!-- credits -->
+    <div class="accordion-item">
+        <div class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCredits" aria-expanded="false" aria-controls="collapseCredits">
+                Credits
+            </button>
+        </div>
+        <div id="collapseCredits" class="accordion-collapse collapse hide" data-bs-parent="#memsGuide">
+            <div class="accordion-body">
+                <div class="card-body">
+                    <p>
+                        Much of the information and guidance has been sourced from the community, if your images or words feature and I haven't thanked you specifically for your contribution, then thank you.
+                        I have reused guides and images as these are publicly searchable and available in various forums and doing so reinforces a single source of the truth in a web full of rumours and misinformation.
+                    </p>
+                    <ul>
+                        <li>Roger Carpenter, Classic Mini NLA: Rare & Alternative parts</li>
+                        <li>Leopold Gunther, mems-rosco</li>
+                        <li>James Portman, rovermems.com</li>
+                        <li>Colin Bourassa, memsgauge / memsreader</li>
+                        <li>The MiniForum, SPI Section, in particular the articles by Sprocket</li>
+                        <li>Black Box Solutions, FCR diagnostics</li>
+                    </ul>
+                </div>
+                <div>
+                    <p>
+                        In addition, a number of organizations have been generous enough to support the development and distribution of open-source software.
+                        Thanks to:
+                    <ul>
+                        <li>Jetbrains who provide IntelliJ for open-source software development</li>
+                        <li>Advanced Installer who provided the installation software for Windows distribution</li>
+                    </ul>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /credits -->
+
 </div>
-<!-- credits.html -->
+
