@@ -12,6 +12,12 @@ MIN_OS_VERSION=11.6.7
 MIN_DEPLOYMENT_TARGET=-mmacosx-version-min=$(MIN_OS_VERSION)
 DEVID="Developer ID Application: Andrew Jackson (MD9E767XF5)"
 
+## load env variables
+ifneq (,$(wildcard ./.env))
+    include .env
+    export
+endif
+
 .PHONY: clean help build_go build_macapp
 
 default: help
