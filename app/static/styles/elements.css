@@ -16,6 +16,10 @@ body {
     background-color: orangered;
 }
 
+.fault-nofault {
+    background-color: yellowgreen;
+}
+
 .fault-alert {
     background-color: orangered;
 }
@@ -26,6 +30,14 @@ body {
 
 .fault-info {
     background-color: lightblue;
+}
+
+.fault-testing {
+    background-color: rgba(187, 231, 187, 0.3);
+}
+
+.fault-passive {
+    background-color: white;
 }
 
 .nofault {

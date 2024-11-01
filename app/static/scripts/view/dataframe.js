@@ -45,6 +45,29 @@ export function dataframeReceived(ecuResponse) {
     Chart.updateCharts(df, currentFaults);
 }
 
+function colouriseFaults(faults) {
+    if (faults !== undefined) {
+        Object.entries(faults).forEach((fault) => {
+            const [key, value] = fault;
+            const metric = `${Identifier.ecuDataMetric}_${key}`;
+            colouriseMetric(metric, value);
+        });
+    }
+}
+
+function colouriseMetric(id, faulty) {
+    let elements = document.querySelectorAll(`.${id}`);
+    for (let i = 0; i < elements.length; i++) {
+        elements[i].classList.remove("fault");
+        elements[i].classList.remove("nofault");
+        if (faulty) {
+            elements[i].classList.add("fault");
+        } else {
+            elements[i].classList.add("nofault");
+        }
+    }
+}
+
 //
 // update the table in the UI that displays the ECU values
 //
@@ -93,29 +116,6 @@ function refreshStatus(entry) {
             elements[i].innerHTML = entry.on;
         } else {
             elements[i].innerHTML = entry.off;
-        }
-    }
-}
-
-function colouriseFaults(faults) {
-    if (faults !== undefined) {
-        Object.entries(faults).forEach((fault) => {
-            const [key, value] = fault;
-            const metric = `${Identifier.ecuDataMetric}_${key}`;
-            colouriseMetric(metric, value);
-        });
-    }
-}
-
-function colouriseMetric(id, faulty) {
-    let elements = document.querySelectorAll(`.${id}`);
-    for (let i = 0; i < elements.length; i++) {
-        elements[i].classList.remove("fault");
-        elements[i].classList.remove("nofault");
-        if (faulty) {
-            elements[i].classList.add("fault");
-        } else {
-            elements[i].classList.add("nofault");
         }
     }
 }
