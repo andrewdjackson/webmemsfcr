@@ -3,6 +3,25 @@ import * as Constant from "./analysis-constants.js";
 export const SENSOR_FAULTY = true;
 export const SENSOR_WORKING = false;
 
+export const SensorState = {
+    PASSIVE: "passive",
+    TESTING: "testing",
+    WARNING: "warning",
+    FAULTY : "fault",
+    WORKING: "nofault"
+}
+
+export class SensorStatus {
+    faulty;
+    state;
+
+    constructor(state, faulty) {
+        this.state = state;
+        this.faulty = faulty;
+    }
+}
+
+
 export class SensorEvent {
     index;
     dataframe;
@@ -16,6 +35,7 @@ export class SensorEvent {
 }
 
 export class Sensor {
+    _status;
     _dataframes;
     _firstDataframe;
     _previousDataframe;
@@ -23,6 +43,7 @@ export class Sensor {
     _currentTime;
 
     constructor() {
+        this._status = new SensorStatus(SensorState.WORKING, SENSOR_WORKING)
     }
 
     update(dataframes) {
@@ -40,7 +61,11 @@ export class Sensor {
         }
     }
 
+    Status() {
+        return this._status;
+    }
+
     isFaulty() {
-        return SENSOR_WORKING;
+        return this.state.faulty;
     }
 }
