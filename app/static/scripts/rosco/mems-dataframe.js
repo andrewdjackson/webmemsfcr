@@ -81,10 +81,10 @@ export class Dataframe80 {
         this._80x17_CoilTime = ((ecuResponse80Data[0x17] << 8) + ecuResponse80Data[0x18]) * 0.002;
         this._80x17_CoilTime = roundDecimalPlaces(this._80x17_CoilTime);
         this._80x19_CrankshaftPositionSensor = ecuResponse80Data[0x19];
-        this.CoolantTempSensorFault = ((ecuResponse80Data[13] >> 0) & 1 ) > 0;
-        this.IntakeAirTempSensorFault = ((ecuResponse80Data[13] >> 2) & 1 ) > 0;
-        this.FuelPumpCircuitFault = ((ecuResponse80Data[14] >> 1) & 3) > 0;
-        this.ThrottlePotCircuitFault = ((ecuResponse80Data[14] >> 7) & 4) > 0;
+        this.CoolantTempSensorFault = (ecuResponse80Data[0x0d] & 0x01 ) !== 0;
+        this.IntakeAirTempSensorFault = (ecuResponse80Data[0x0d] & 0x02 ) !== 0;
+        this.FuelPumpCircuitFault = (ecuResponse80Data[0x0e] & 0x02) !== 0;
+        this.ThrottlePotCircuitFault = (ecuResponse80Data[0x0e] & 0x80) !== 0;
         this._80_RawData = arrayAsHexString(ecuResponse.response);
     }
 }
