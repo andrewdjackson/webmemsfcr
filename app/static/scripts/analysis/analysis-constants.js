@@ -58,9 +58,8 @@ export const MIN_BATTERY_RECOVERY_TIME          = 5    // time in seconds to all
 export const MAX_COOLANT_TEMPERATURE            = 120
 export const MIN_ENGINE_OPERATING_TEMPERATURE   = 78
 export const ECU_ENGINE_OPERATING_TEMPERATURE   = 80
-export const THERMOSTAT_OPEN_TEMPERATURE        = 89
-export const SECONDS_PER_DEGREE                 = 11
-export const THERMOSTAT_OPEN_DELAY              = SECONDS_PER_DEGREE * 3
+//export const SECONDS_PER_DEGREE                 = 11
+//export const THERMOSTAT_OPEN_DELAY              = SECONDS_PER_DEGREE * 3
 
 //
 // Lambda and O2 System Constants

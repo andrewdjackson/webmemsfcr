@@ -1,9 +1,10 @@
-import * as Constant from "./analysis-constants.js"
 import {SensorEvent, Sensor} from "./sensor.js";
 
 export const THERMOSTAT_FAULTY = true;
 export const THERMOSTAT_WORKING = false;
+export const THERMOSTAT_OPEN_TEMPERATURE = 89
 export const THERMOSTAT_OPEN_DEGREES_DROP = 4;
+export const THERMOSTAT_SECONDS_PER_DEGREE = 11
 export const THERMOSTAT_OPEN = true;
 export const THERMOSTAT_CLOSED = false;
 export const THERMOSTAT_READINGS_AFTER_PEAK = 10;
@@ -53,7 +54,7 @@ export class Thermostat extends Sensor {
 
     _engineTooColdForThermostatToOpen() {
         if (this._maxTemperatureDataframe === undefined) return true;
-        return this._maxTemperatureDataframe.value < Constant.THERMOSTAT_OPEN_TEMPERATURE;
+        return this._maxTemperatureDataframe.value < THERMOSTAT_OPEN_TEMPERATURE;
     }
 
     _tooEarlyToDiagnose() {
@@ -86,8 +87,8 @@ export class Thermostat extends Sensor {
     _getLatestThermostatOpenTime() {
         // predict the thermostat opening time
         const currentTime = new Date(this._currentDataframe._80x00_Time);
-        const degreesToOpen = Constant.THERMOSTAT_OPEN_TEMPERATURE - this._currentDataframe._80x03_CoolantTemp;
-        const secondsToOpen = (degreesToOpen * Constant.SECONDS_PER_DEGREE);// + Constant.THERMOSTAT_OPEN_DELAY;
+        const degreesToOpen = THERMOSTAT_OPEN_TEMPERATURE - this._currentDataframe._80x03_CoolantTemp;
+        const secondsToOpen = (degreesToOpen * THERMOSTAT_SECONDS_PER_DEGREE);// + Constant.THERMOSTAT_OPEN_DELAY;
         return new Date(currentTime.getTime() + (secondsToOpen * 1000));
     }
 }
