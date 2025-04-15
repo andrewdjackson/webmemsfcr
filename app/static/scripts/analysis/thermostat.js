@@ -2,9 +2,9 @@ import {SensorEvent, Sensor} from "./sensor.js";
 
 export const THERMOSTAT_FAULTY = true;
 export const THERMOSTAT_WORKING = false;
-export const THERMOSTAT_OPEN_TEMPERATURE = 89
+export const THERMOSTAT_OPEN_TEMPERATURE = 95;
 export const THERMOSTAT_OPEN_DEGREES_DROP = 4;
-export const THERMOSTAT_SECONDS_PER_DEGREE = 11
+export const THERMOSTAT_SECONDS_PER_DEGREE = 11;
 export const THERMOSTAT_OPEN = true;
 export const THERMOSTAT_CLOSED = false;
 export const THERMOSTAT_READINGS_AFTER_PEAK = 10;
